@@ -3,7 +3,8 @@
 public class Main{
 
     public static void main(String args[]){
-        new LandingPage();
+        //new LandingPage();
+        new JobOwnerLogic();
     }
 
   //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
