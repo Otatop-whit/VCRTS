@@ -1,8 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
 
-public class GUI {
-    public GUI(){
+public class LandingPage {
+    public LandingPage(){
         JFrame frame = new JFrame("My First JFrame");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(600,400);

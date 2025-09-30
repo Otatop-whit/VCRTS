@@ -3,7 +3,7 @@
 public class Main{
 
     public static void main(String args[]){
-        new GUI();
+        new LandingPage();
     }
 
   //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
