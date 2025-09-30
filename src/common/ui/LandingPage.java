@@ -1,3 +1,5 @@
+package common.ui;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -15,7 +17,7 @@ public class LandingPage {
         menuBar.add(fileMenu);
         JLabel label = new JLabel("VCRT Project Label thing");
         JPanel panel= new JPanel();
-        JButton JobOwnerbutton = new JButton("JobOwner");
+        JButton JobOwnerbutton = new JButton("job.model.JobOwner");
         JButton VehicleOwnerbutton = new JButton("VehicleOwner");
         panel.add(JobOwnerbutton);
         panel.add(VehicleOwnerbutton);

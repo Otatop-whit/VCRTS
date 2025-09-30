@@ -1,3 +1,5 @@
+package job.model;
+
 import java.util.Objects;
 
 public class JobOwner {
