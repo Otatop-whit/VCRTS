@@ -3,8 +3,9 @@
 public class Main{
 
     public static void main(String args[]){
+        JobOwner dataOne = new JobOwner(1,"testUser2","2 hours", "oct 4");
         //new LandingPage();
-        new JobOwnerLogic();
+        new JobOwnerLogic(dataOne);
     }
 
   //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text

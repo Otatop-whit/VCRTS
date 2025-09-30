@@ -1,1 +1,18 @@
-Job Owner Data:
+Job Owner Data: 
+
+Data entry 1:
+
+JobOwnerID: 1
+JobOwnerName: testUser
+ApproximateDuration: 12 hours
+JobDeadline: oct 2
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Data entry 2:
+
+JobOwnerID: 1
+JobOwnerName: testUser2
+ApproximateDuration: 2 hours
+JobDeadline: oct 4
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
