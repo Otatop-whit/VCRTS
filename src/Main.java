@@ -7,11 +7,9 @@ import job.service.JobOwnerServiceImpl;
 public class Main{
 
     public static void main(String args[]){
-        JobOwner dataTwo = new JobOwner(2,"testUser2","2 hours", "oct 4");
-        //new common.ui.LandingPage();
+        new common.ui.LandingPage();
 
-        JobOwnerService jobOwner = new JobOwnerServiceImpl();
-        jobOwner.addJobOwner(dataTwo);
+      
     }
 
   //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
