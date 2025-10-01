@@ -13,7 +13,6 @@ public class JobOwnerServiceImpl implements JobOwnerService {
             try {
                 BufferedReader reader = new BufferedReader(new FileReader("src/job/repo/Data.txt"));
                 entryNumber = Integer.valueOf(reader.readLine());
-                System.out.println(entryNumber);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
