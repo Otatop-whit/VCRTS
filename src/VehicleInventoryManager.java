@@ -20,4 +20,14 @@ public class VehicleInventoryManager{
     public void removeVehicle(String vehicleID){
         vehicleInventory.remove(vehicleID);
     }
+
+    public Vehicle findVehicle(String vehicleID){
+        Vehicle findableVehicle = vehicleInventory.get(vehicleID);
+        if (findableVehicle == null){
+            System.err.println("Vehicle Not Found");
+        }
+        return findableVehicle;
+    }
+
+    
 }

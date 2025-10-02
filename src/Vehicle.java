@@ -43,7 +43,25 @@ public class Vehicle {
         return resident;
     }
 
+    //Set Commands
+    public void setVehicleModel(String model){
+        vehicleModel = model;
+    }
+    public void setVehicleMake(String make){
+        vehicleMake = make;
+    }
+    public void setVehicleYear(LocalDateTime year){
+        vehicleYear = year;
+    }
+    public void setArrivalDate(LocalDateTime arriveDate){
+        arrivalDate = arriveDate;
+    }
+
+    public void setDepartureDate(LocalDateTime departDate){
+        departureDate = departDate;
+    }
     public void setResident(String status){
         resident = status;
     }
+
 }
