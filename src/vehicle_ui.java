@@ -1,4 +1,3 @@
-package cus1166;
 import javax.swing.*;
 import java.awt.Color;
 import java.awt.GridLayout;
@@ -148,4 +147,5 @@ public class vehicle_ui {
         });
         window.add(panel);
     }
+
 }
