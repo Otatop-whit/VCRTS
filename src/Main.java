@@ -7,7 +7,8 @@ import job.service.JobOwnerServiceImpl;
 public class Main{
 
     public static void main(String args[]){
-        new common.ui.LandingPage();
+      new common.ui.WelcomePage();
+
 
       
     }
