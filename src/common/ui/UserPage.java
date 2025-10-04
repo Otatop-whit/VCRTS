@@ -19,9 +19,15 @@ public class UserPage {
         JPanel panel= new JPanel();
         JButton JobOwnerbutton = new JButton("JobOwner");
         JButton VehicleOwnerbutton = new JButton("VehicleOwner");
+
         panel.add(JobOwnerbutton);
         panel.add(VehicleOwnerbutton);
         frame.setLayout(new BorderLayout());
+        logoutItem.addActionListener(e -> {
+            frame.dispose();
+            new WelcomePage();
+
+        });
         frame.setJMenuBar(menuBar);
         frame.add(label, BorderLayout.NORTH);
         frame.add(panel, BorderLayout.CENTER);
