@@ -3,8 +3,8 @@ package common.ui;
 import javax.swing.*;
 import java.awt.*;
 
-public class LandingPage {
-    public LandingPage(){
+public class UserPage {
+    public UserPage(){
         JFrame frame = new JFrame("My First JFrame");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(600,400);
