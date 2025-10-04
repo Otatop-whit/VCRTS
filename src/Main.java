@@ -1,13 +1,14 @@
 import job.model.JobOwner;
 import job.service.JobOwnerService;
 import job.service.JobOwnerServiceImpl;
+import common.ui.WelcomePage;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main{
 
     public static void main(String args[]){
-        new common.ui.WelcomePage();
+        new WelcomePage();
 
     }
 
