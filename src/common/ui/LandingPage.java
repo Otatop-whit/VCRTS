@@ -1,5 +1,7 @@
 package common.ui;
 
+import job.ui.JobOwnerPage;
+
 import javax.swing.*;
 import java.awt.*;
 

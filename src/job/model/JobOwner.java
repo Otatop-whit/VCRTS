@@ -7,6 +7,7 @@ public class JobOwner {
     private String jobOwnerName;
     private String approximateJobDuration;
     private String jobDeadline;
+    private String requirements;
 
     public JobOwner(){
     }
@@ -47,6 +48,14 @@ public class JobOwner {
 
     public void setJobDeadline(String jobDeadline) {
         this.jobDeadline = jobDeadline;
+    }
+
+    public String getRequirements() {
+        return requirements;
+    }
+
+    public void setRequirements(String requirements) {
+        this.requirements = requirements;
     }
 
     @Override
