@@ -7,8 +7,9 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class vehicle_ui {
-	
+
     public static void main(String[] args) {
+        VehicleInventoryController inventoryController =  new VehicleInventoryController();
         JFrame window = new JFrame("Vehicle owner");
       //60px from left edge of window, 100px from right, width is 500, height is 600
         window.setBounds(60,100,500,600); 
@@ -58,17 +59,26 @@ public class vehicle_ui {
         	 JTextField year = new JTextField();
         	 JTextField licensePlate = new JTextField();
         	 
+             
+
         	 Object[]message = {
         			 "Model: ", model,
         			 "Manufacturer: ", make,
         			 "Manufacture Year: ", year,
         			 "LicensePlate: ",licensePlate,
         	 };
+
+
         	 int options1 = JOptionPane.showConfirmDialog(null, message, "Register New Vehicle", JOptionPane.OK_CANCEL_OPTION);
+             if(options1 == JOptionPane.OK_OPTION){
+                inventoryController.addVehicle(licensePlate,model,make,year);
+                
+             }
          }
          //need to connect here
         	 private void viewVehicleInfo() {
         		JOptionPane.showMessageDialog(null, null, "My Vehicle", JOptionPane.INFORMATION_MESSAGE);
+
         	 }
          
             });

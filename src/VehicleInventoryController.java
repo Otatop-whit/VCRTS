@@ -16,6 +16,9 @@ public class VehicleInventoryController {
         Year vehicleYear = Year.parse(year.getText());
         Vehicle vehicle = new Vehicle.VehicleBuilder().setLicensePlate(vehiclePlate).setVehicleModel(vehicleModel).setVehicleMake(vehicleMake).setVehicleYear(vehicleYear).build();
         vehicleInventory.addVehicle(vehicle.getLicensePlate(), vehicle);
+        System.out.println("Vehicle's License Plate: " + vehicleInventory.findVehicle(vehiclePlate).getLicensePlate());
+        System.out.println("Vehicle has been added!");
+        
     }
 
     public void setAvailability(String plateNumber, JTextField arriveDate, JTextField departureDate){

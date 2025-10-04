@@ -19,7 +19,7 @@ public class Vehicle {
         this.vehicleMake = builder.vehicleMake;
         this.arrivalDate = builder.arrivalDate;
         this.departureDate = builder.departureDate;
-        this.resident = builder.resident;
+        this.resident = builder.residency;
     }
 
     //Get Commands
@@ -75,7 +75,7 @@ public class Vehicle {
         private Year vehicleYear;
         private LocalDateTime arrivalDate;
         private LocalDateTime departureDate;
-        private String resident;
+        private String residency;
         public VehicleBuilder setLicensePlate(String plateNumber){
             this.licensePlate = plateNumber;
             return this;
@@ -98,6 +98,10 @@ public class Vehicle {
         }
         public VehicleBuilder setDepatureDate(LocalDateTime departureDate){
             this.departureDate = departureDate;
+            return this;
+        }
+        public VehicleBuilder setResidency(String residency){
+            this.residency = residency;
             return this;
         }
         public Vehicle build(){
