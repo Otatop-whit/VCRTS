@@ -3,16 +3,18 @@ import java.time.Year;
 
 public class Vehicle {
     //Required Vehicle Information
+    private final String vehicleOwnerID;
     private String licensePlate;
     private String vehicleModel;
     private String vehicleMake;
     private Year vehicleYear;
-
     private LocalDateTime arrivalDate;
     private LocalDateTime departureDate;
     private String resident;
+    
 
     public Vehicle(VehicleBuilder builder){
+        this.vehicleOwnerID = builder.vehicleOwnerID;
         this.licensePlate = builder.licensePlate;
         this.vehicleModel = builder.vehicleModel;
         this.vehicleYear = builder.vehicleYear;
@@ -44,6 +46,9 @@ public class Vehicle {
     public String getResident(){
         return resident;
     }
+    public String getVehicleOwnerID(){
+        return vehicleOwnerID;
+    }
 
     //Allows for users to fix any errors/typos
     public void setLicensePlate(String plateNumber){
@@ -69,6 +74,7 @@ public class Vehicle {
     }
 
     public static class VehicleBuilder{
+        private String vehicleOwnerID;
         private String licensePlate;
         private String vehicleModel;
         private String vehicleMake;
@@ -76,6 +82,10 @@ public class Vehicle {
         private LocalDateTime arrivalDate;
         private LocalDateTime departureDate;
         private String residency;
+        public VehicleBuilder setVehicleOwnerID(String ownerID){
+            this.vehicleOwnerID = ownerID;
+            return this;
+        }
         public VehicleBuilder setLicensePlate(String plateNumber){
             this.licensePlate = plateNumber;
             return this;
