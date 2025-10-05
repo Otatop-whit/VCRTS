@@ -78,7 +78,7 @@ public class vehicle_ui {
          //need to connect here
         	 private void viewVehicleInfo() {
         		JOptionPane.showMessageDialog(null, null, "My Vehicle", JOptionPane.INFORMATION_MESSAGE);
-
+                
         	 }
          
             });
