@@ -32,35 +32,3 @@ ApproximateDuration: 2 hours
 JobDeadline: oct 4
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Data entry 17:
-
-JobOwnerID: 2
-JobOwnerName: testUser2
-ApproximateDuration: 2 hours
-JobDeadline: oct 4
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Data entry 18:
-
-JobOwnerID: 2
-JobOwnerName: testUser2
-ApproximateDuration: 2 hours
-JobDeadline: oct 4
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Data entry 19:
-
-JobOwnerID: 2
-JobOwnerName: testUser2
-ApproximateDuration: 2 hours
-JobDeadline: oct 4
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Data entry 20:
-
-JobOwnerID: 2
-JobOwnerName: testUser2
-ApproximateDuration: 2 hours
-JobDeadline: oct 4
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

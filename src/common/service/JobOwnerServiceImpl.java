@@ -1,6 +1,7 @@
-package job.service;
+package common.service;
 
 import job.model.JobOwner;
+import job.service.JobOwnerService;
 
 import java.io.*;
 
@@ -13,6 +14,8 @@ public class JobOwnerServiceImpl implements JobOwnerService {
             try {
                 BufferedReader reader = new BufferedReader(new FileReader("src/job/repo/Data.txt"));
                 entryNumber = Integer.valueOf(reader.readLine());
+                System.out.println(entryNumber);
+                reader.close();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -28,7 +31,6 @@ public class JobOwnerServiceImpl implements JobOwnerService {
                 writer.write("\nJobOwnerName: " + jobOwner.getJobOwnerName());
                 writer.write("\nApproximateDuration: " + jobOwner.getApproximateJobDuration());
                 writer.write("\nJobDeadline: " + jobOwner.getJobDeadline());
-                writer.write("\nRequirements: " + jobOwner.getRequirements());
 
                 writer.write("\n");
                 writer.write("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
