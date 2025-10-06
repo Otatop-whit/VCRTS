@@ -1,4 +1,7 @@
 import javax.swing.*;
+
+import vehicle.service.VehicleInventoryController;
+
 import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
