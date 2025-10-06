@@ -1,6 +1,9 @@
 package common.ui;
 
 import javax.swing.*;
+
+import vehicle.ui.vehicle_ui;
+
 import java.awt.*;
 
 public class UserPage {
@@ -19,9 +22,12 @@ public class UserPage {
         JPanel panel= new JPanel();
         JButton JobOwnerbutton = new JButton("JobOwner");
         JButton VehicleOwnerbutton = new JButton("VehicleOwner");
-
         panel.add(JobOwnerbutton);
         panel.add(VehicleOwnerbutton);
+        VehicleOwnerbutton.addActionListener(e -> {
+            frame.dispose();
+            new vehicle_ui();
+        });
         frame.setLayout(new BorderLayout());
         logoutItem.addActionListener(e -> {
             frame.dispose();
