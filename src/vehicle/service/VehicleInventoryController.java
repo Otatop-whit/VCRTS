@@ -37,6 +37,7 @@ public class VehicleInventoryController {
 
     public void displayVehicles(){
         ArrayList<Vehicle> listOfVehicles = vehicleInventory.convertToArray();
+        
     }
 
     
