@@ -1,12 +1,17 @@
+package vehicle.service;
 import java.time.LocalDateTime;
 import java.time.Year;
+import java.util.ArrayList;
 
 import javax.swing.JTextField;
 
+import vehicle.model.Vehicle;
+import vehicle.model.VehicleInventory;
+
 public class VehicleInventoryController {
-    private final VehicleInventory vehicleInventory;
+    private VehicleInventory vehicleInventory;
     public VehicleInventoryController(){
-        this.vehicleInventory = VehicleInventory.getInstance();
+        this.vehicleInventory = new VehicleInventory();
     }
 
     public void addVehicle(JTextField licensePlate, JTextField model, JTextField make, JTextField year){
@@ -28,6 +33,10 @@ public class VehicleInventoryController {
         LocalDateTime depDate = LocalDateTime.parse(departDate);
         vehicleInventory.findVehicle(plateNumber).setArrivalDate(arrDate);
         vehicleInventory.findVehicle(plateNumber).setDepartureDate(depDate);
+    }
+
+    public void displayVehicles(){
+        ArrayList<Vehicle> listOfVehicles = vehicleInventory.convertToArray();
     }
 
     

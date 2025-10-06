@@ -1,5 +1,7 @@
+package vehicle.model;
 import java.time.LocalDateTime;
 import java.time.Year;
+import java.util.Objects;
 
 public class Vehicle {
     //Required Vehicle Information
@@ -10,7 +12,7 @@ public class Vehicle {
     private Year vehicleYear;
     private LocalDateTime arrivalDate;
     private LocalDateTime departureDate;
-    private String resident;
+    private String residency;
     
 
     public Vehicle(VehicleBuilder builder){
@@ -21,10 +23,9 @@ public class Vehicle {
         this.vehicleMake = builder.vehicleMake;
         this.arrivalDate = builder.arrivalDate;
         this.departureDate = builder.departureDate;
-        this.resident = builder.residency;
+        this.residency = builder.residency;
     }
 
-    //Get Commands
     public String getLicensePlate(){
         return licensePlate;
     }
@@ -40,11 +41,11 @@ public class Vehicle {
     public LocalDateTime getArriveDate(){
         return arrivalDate;
     }
-    public LocalDateTime getDepartDateTime(){
+    public LocalDateTime getDepartDate(){
         return departureDate;
     }
-    public String getResident(){
-        return resident;
+    public String getResidency(){
+        return residency;
     }
     public String getVehicleOwnerID(){
         return vehicleOwnerID;
@@ -69,8 +70,8 @@ public class Vehicle {
     public void setDepartureDate(LocalDateTime departDate){
         departureDate = departDate;
     }
-    public void setResident(String status){
-        resident = status;
+    public void setResidency(String status){
+        residency = status;
     }
 
     public static class VehicleBuilder{
@@ -119,4 +120,22 @@ public class Vehicle {
         }
     }
 
+    @Override
+    public boolean equals(Object o){
+        if (o == null || getClass() != o.getClass()) return false;
+        Vehicle vehicle = (Vehicle) o;
+        return vehicleOwnerID == vehicle.getVehicleOwnerID() && 
+        Objects.equals(licensePlate, vehicle.licensePlate) && 
+        Objects.equals(vehicleModel, vehicle.vehicleModel) && 
+        Objects.equals(vehicleMake, vehicle.vehicleMake) &&
+        Objects.equals(vehicleYear, vehicle.vehicleYear) &&
+        Objects.equals(arrivalDate, vehicle.arrivalDate) &&
+        Objects.equals(departureDate, vehicle.departureDate) &&
+        Objects.equals(residency, vehicle.residency);
+    }
+
+    @Override
+    public int hashCode(){
+        return Objects.hash(vehicleOwnerID, licensePlate, vehicleModel, vehicleMake, vehicleYear, arrivalDate, departureDate, residency);
+    }
 }

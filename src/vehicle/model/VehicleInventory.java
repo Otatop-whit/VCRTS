@@ -1,18 +1,15 @@
+package vehicle.model;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class VehicleInventory{
-    private static VehicleInventory inventory_instance;
     private HashMap<String, Vehicle> vehicleInventory;
-    private VehicleInventory(){
-        vehicleInventory = new HashMap<String, Vehicle>();
+    public VehicleInventory(){
+        this.vehicleInventory = new HashMap<String, Vehicle>();
     }
-    public static VehicleInventory getInstance(){
-        if(inventory_instance == null){
-            inventory_instance = new VehicleInventory();
-        }
-        return inventory_instance;
+    public HashMap<String, Vehicle> get(){
+        return vehicleInventory;
     }
-
     public void addVehicle(String licensePlate, Vehicle vehicle){
         vehicleInventory.put(licensePlate, vehicle);
     }
@@ -34,5 +31,12 @@ public class VehicleInventory{
         return foundVehicle;
     }
 
+    public ArrayList<Vehicle> convertToArray(){
+        ArrayList<Vehicle> vehicleList = new ArrayList<Vehicle>();
+        for(Vehicle vehicles : vehicleInventory.values()){
+            vehicleList.add(vehicles);
+        }
+        return vehicleList;
+    }
     
 }

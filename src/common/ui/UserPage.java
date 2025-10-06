@@ -1,8 +1,10 @@
+package common.ui;
+
 import javax.swing.*;
 import java.awt.*;
 
-public class GUI {
-    public GUI(){
+public class UserPage {
+    public UserPage(){
         JFrame frame = new JFrame("My First JFrame");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(600,400);
@@ -17,9 +19,15 @@ public class GUI {
         JPanel panel= new JPanel();
         JButton JobOwnerbutton = new JButton("JobOwner");
         JButton VehicleOwnerbutton = new JButton("VehicleOwner");
+
         panel.add(JobOwnerbutton);
         panel.add(VehicleOwnerbutton);
         frame.setLayout(new BorderLayout());
+        logoutItem.addActionListener(e -> {
+            frame.dispose();
+            new WelcomePage();
+
+        });
         frame.setJMenuBar(menuBar);
         frame.add(label, BorderLayout.NORTH);
         frame.add(panel, BorderLayout.CENTER);
@@ -27,11 +35,4 @@ public class GUI {
 
 
     }
-    public static void main(String[] args){
-        
-        new GUI();
-    }
-    
-
-    
 }
