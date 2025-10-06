@@ -1,5 +1,7 @@
 package common.ui;
 
+import job.ui.JobOwnerPage;
+
 import javax.swing.*;
 
 import vehicle.ui.vehicle_ui;
@@ -24,6 +26,10 @@ public class UserPage {
         JButton VehicleOwnerbutton = new JButton("VehicleOwner");
         panel.add(JobOwnerbutton);
         panel.add(VehicleOwnerbutton);
+        JobOwnerbutton.addActionListener(e -> {
+            frame.dispose();
+            new JobOwnerPage().setVisible(true);
+        });
         VehicleOwnerbutton.addActionListener(e -> {
             frame.dispose();
             new vehicle_ui();
