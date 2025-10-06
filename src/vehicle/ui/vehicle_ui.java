@@ -7,6 +7,8 @@ import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -72,11 +74,21 @@ public class vehicle_ui {
         			 "Residency: ", residency,
         	 };
         	 int registerOption = JOptionPane.showConfirmDialog(null, message, "Register New Vehicle", JOptionPane.OK_CANCEL_OPTION);
+             if(registerOption == JOptionPane.OK_OPTION){
+                inventoryController.addVehicle(licensePlate,model,make,year,residency);
+             }
          }
          //need to connect here
         	 private void viewVehicleInfo() {
         		JOptionPane.showMessageDialog(null, null, "My Vehicle", JOptionPane.INFORMATION_MESSAGE);
-        	 }
+                JTextArea area = new JTextArea();
+                try{
+                    byte[] data = Files.readAllBytes(Paths.get("src/vehicle/repo/VehicleData.txt"));
+                    area.setText(new String(data));
+                } catch(java.io.IOException e){
+                    area.setText("");
+                }
+            }
          
             });
        
@@ -129,6 +141,7 @@ public class vehicle_ui {
                         //store to database
                     }
                     
+                    inventoryController.setAvailability(license, ArrivalTime, DepartureTime);
             
                     
                 }
