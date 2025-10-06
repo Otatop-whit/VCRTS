@@ -45,7 +45,7 @@ public class vehicle_ui {
         vehicle_btn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-            	String[]options = {"Register vehicle", "View vehicle info"};
+            	String[]options = {"Register Vehicle", "View Vehicle Vnfo"};
             	//choose an option: register vehicle or view vehicle info, the first option needs to input info, the second option needs message ,options array and initial value is 0
             	int selectedOption = JOptionPane.showOptionDialog(null, "choose an option", null, JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
             
@@ -63,8 +63,6 @@ public class vehicle_ui {
         	 JTextField year = new JTextField();
         	 JTextField licensePlate = new JTextField();
         	 
-             
-
         	 Object[]message = {
         			 "Model: ", model,
         			 "Manufacturer: ", make,
