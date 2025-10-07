@@ -3,14 +3,13 @@ import javax.swing.*;
 
 import vehicle.service.VehicleInventoryController;
 
-import java.awt.Color;
+
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
-import java.util.*;
 
 public class vehicle_ui {
 
@@ -106,7 +105,6 @@ public class vehicle_ui {
                     String license = licensePlate.getText();
                     String arrival = ArrivalTime.getText();
                     String departure = DepartureTime.getText();
-                    
                   
                     if (license.isEmpty()) {
                         JOptionPane.showMessageDialog(null, 
