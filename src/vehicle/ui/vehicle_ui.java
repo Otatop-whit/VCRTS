@@ -55,7 +55,7 @@ public class vehicle_ui {
             		registerVehicle();
             		
             	}else if(selectedOption == 1) {
-            		viewVehicleInfo();
+            		new ViewVehicleInfo().setVisible(true);
             	}
         }
         
@@ -78,17 +78,6 @@ public class vehicle_ui {
                 inventoryController.addVehicle(licensePlate,model,make,year,residency);
              }
          }
-         //need to connect here
-        	 private void viewVehicleInfo() {
-        		JOptionPane.showMessageDialog(null, null, "My Vehicle", JOptionPane.INFORMATION_MESSAGE);
-                JTextArea area = new JTextArea();
-                try{
-                    byte[] data = Files.readAllBytes(Paths.get("src/vehicle/repo/VehicleData.txt"));
-                    area.setText(new String(data));
-                } catch(java.io.IOException e){
-                    area.setText("");
-                }
-            }
          
             });
        
@@ -174,4 +163,23 @@ public class vehicle_ui {
      window.add(panel);   
     }
     
+    static class ViewVehicleInfo extends JFrame{
+        private JTextArea area = new JTextArea();
+        ViewVehicleInfo(){
+            setTitle("List of Vehicles");
+            setSize(650, 500);
+            add(new JScrollPane(area));
+            loadFile();
+        }
+
+        private void loadFile(){
+            try{
+                byte[] data = Files.readAllBytes(Paths.get("src/vehicle/repo/VehicleData.txt"));
+                area.setText(new String(data));
+                area.setVisible(true);
+            } catch(java.io.IOException e){
+                area.setText("");
+            }
+        }
+    }
 }
