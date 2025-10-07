@@ -30,6 +30,7 @@ public class WelcomePage {
             "Register vehicles, submit compute jobs, and monitor progress in real time.\n" +
             "Use your account to access dashboards and manage jobs."
         );
+        desc.setAlignmentX(Component.CENTER_ALIGNMENT);
         desc.setEditable(false);
         desc.setFocusable(false);
         desc.setOpaque(false);
