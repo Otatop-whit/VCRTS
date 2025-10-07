@@ -1,0 +1,13 @@
+
+Vehicle Data Entry 1:
+Vehicle Entry 1:
+VehicleLicense: D
+VehicleModel: B
+VehicleMake: C
+VehicleYear: 2000
+VehicleArrivalDate: null
+VehicleDepartureDate: null
+Residency: E
+VehicleOwnerID Assigned: null
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
