@@ -16,7 +16,7 @@ public class vehicle_ui {
 
     public vehicle_ui(){
         VehicleInventoryController inventoryController =  new VehicleInventoryController();
-            JFrame window = new JFrame(title:"Vehicle owner");
+            JFrame window = new JFrame("Vehicle owner");
       //60px from left edge of window, 100px from right, width is 500, height is 600
         window.setBounds(60,100,500,600); 
       //make window visible
@@ -178,7 +178,7 @@ public class vehicle_ui {
                 area.setText(new String(data));
                 area.setVisible(true);
             } catch(java.io.IOException e){
-                area.setText("");
+                area.setText("Error! File Not Found.");
             }
         }
     }
