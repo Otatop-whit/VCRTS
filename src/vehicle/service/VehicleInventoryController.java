@@ -1,8 +1,8 @@
 package vehicle.service;
-import java.time.LocalDateTime;
+import java.io.IOException;
+import java.time.LocalDate;
 import java.time.Year;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
 
 import javax.swing.JTextField;
 
@@ -13,8 +13,16 @@ public class VehicleInventoryController {
     private VehicleInventory vehicleInventory;
     private VehicleOwnerServiceImpl vehOwnServ;
     public VehicleInventoryController(){
-        this.vehicleInventory = new VehicleInventory();
         this.vehOwnServ = new VehicleOwnerServiceImpl();
+        this.vehicleInventory = start();
+    }
+    public VehicleInventory start(){
+        try{
+            vehicleInventory = vehOwnServ.FileRead("src/vehicle/repo/VehicleData.txt");
+        }catch(IOException e){
+            System.err.println("Error, File not Found!");
+        }
+        return vehicleInventory;
     }
 
     public void addVehicle(JTextField licensePlate, JTextField model, JTextField make, JTextField year, JTextField residency){
@@ -28,7 +36,7 @@ public class VehicleInventoryController {
         vehicleInventory.addVehicle(vehicle.getLicensePlate(), vehicle);
         System.out.println("Vehicle's License Plate: " + vehicleInventory.findVehicle(vehiclePlate).getLicensePlate());
         System.out.println("Vehicle has been added!");
-        vehOwnServ.addVehicle(vehicleInventory);
+        saveChanges("src/vehicle/repo/VehicleData.txt", vehicleInventory);
         }
         catch(DateTimeParseException e){
         }
@@ -37,18 +45,16 @@ public class VehicleInventoryController {
     public void setAvailability(String plateNumber, JTextField arriveDate, JTextField departureDate){
         String arrivalDate = arriveDate.getText();
         String departDate = departureDate.getText();
-        LocalDateTime arrDate = LocalDateTime.parse(arrivalDate);
-        LocalDateTime depDate = LocalDateTime.parse(departDate);
+        LocalDate arrDate = LocalDate.parse(arrivalDate);
+        LocalDate depDate = LocalDate.parse(departDate);
         vehicleInventory.findVehicle(plateNumber).setArrivalDate(arrDate);
         vehicleInventory.findVehicle(plateNumber).setDepartureDate(depDate);
         System.out.println("Arrival Date: " + arrDate);
         System.out.println("Departure Date: " + depDate);
-    }
-
-    public void displayVehicles(){
-        ArrayList<Vehicle> listOfVehicles = vehicleInventory.convertToArray();
+        saveChanges("src/vehicle/repo/VehicleData.txt", vehicleInventory);
 
     }
-
-    
+    public void saveChanges(String fileName, VehicleInventory vehicleInventory){
+        vehOwnServ.addVehicle(vehicleInventory);
+    }
 }
