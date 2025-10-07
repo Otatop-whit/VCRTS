@@ -4,7 +4,9 @@ import vehicle.model.VehicleOwner;
 import vehicle.model.VehicleInventory;
 import vehicle.model.Vehicle;
 import java.io.*;
-import java.util.Scanner;
+import java.time.LocalDate;
+import java.time.Year;
+import java.util.ArrayList;
 
 
 public class VehicleOwnerServiceImpl implements VehicleOwnerService{
@@ -73,7 +75,7 @@ public class VehicleOwnerServiceImpl implements VehicleOwnerService{
                     writer.write("VehicleArrivalDate: " + vehicles.getArriveDate() + "\n");
                     writer.write("VehicleDepartureDate: " + vehicles.getDepartDate() + "\n");
                     writer.write("Residency: " + vehicles.getResidency() + "\n");
-                    writer.write("VehicleOwnerID Assigned: " + vehicles.getVehicleOwnerID());
+                    writer.write("VehicleOwnerID Assigned: " + vehicles.getVehicleOwnerID() + "\n");
                 }
                 writer.write("\n");
                 writer.write("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
@@ -91,15 +93,48 @@ public class VehicleOwnerServiceImpl implements VehicleOwnerService{
         }
     }
 
-    public void FileRead(String filename) throws IOException{
+    public VehicleInventory FileRead(String filename) throws IOException{
+        VehicleInventory inventory = new VehicleInventory();
         try{
             BufferedReader reader = new BufferedReader(new FileReader(filename));
-            while( reader.readLine() != null){
-                System.out.println("File is not empty");
+            Vehicle vehicle;
+            String vehicleInfo;
+            reader.readLine();
+            reader.readLine();
+            reader.readLine();
+            ArrayList<String> vehicleCreator = new ArrayList<String>();
+            while((vehicleInfo = reader.readLine()) != null){
+                vehicleInfo = vehicleInfo.substring(vehicleInfo.indexOf(":") + 1, vehicleInfo.length());
+                vehicleCreator.add(vehicleInfo);
+                if(vehicleCreator.size() == 8){
+                    String licensePlate = vehicleCreator.get(0);
+                    if(licensePlate.startsWith(" ")) licensePlate.substring(1, licensePlate.length());
+                    String model = vehicleCreator.get(1);
+                    String make = vehicleCreator.get(2);
+                    Year year = Year.parse(vehicleCreator.get(3).substring(1));
+                    String residency = vehicleCreator.get(6);
+                    String vehicleOwnerId = vehicleCreator.get(7);
+                    vehicle = new Vehicle.VehicleBuilder().setVehicleOwnerID(vehicleOwnerId).setLicensePlate(licensePlate)
+                    .setVehicleModel(model).setVehicleMake(make).setVehicleYear(year).setResidency(residency).build();
+                    if(!vehicleCreator.get(4).contains("null")){
+                        LocalDate arrivalDate = LocalDate.parse(vehicleCreator.get(4));
+                        vehicle.setArrivalDate(arrivalDate);
+                    }
+                    if(!vehicleCreator.get(5).contains("null")){
+                        LocalDate departureDate = LocalDate.parse(vehicleCreator.get(4));
+                        vehicle.setDepartureDate(departureDate);
+                    }
+                    inventory.get().put(vehicle.getLicensePlate(), vehicle);
+                    vehicleCreator.clear();
+                    reader.readLine();
+                    reader.readLine();
+                }
             }
+            reader.close();  
         } catch(FileNotFoundException e){
             System.err.println("Error! File not found.\n" + e.getStackTrace());
         }
+        return inventory;  
     }
 
 }
