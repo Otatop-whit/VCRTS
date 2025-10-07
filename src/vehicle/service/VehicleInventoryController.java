@@ -43,8 +43,8 @@ public class VehicleInventoryController {
     }
 
     public void setAvailability(String plateNumber, JTextField arriveDate, JTextField departureDate){
-        String arrivalDate = arriveDate.getText();
-        String departDate = departureDate.getText();
+        String arrivalDate = arriveDate.getText().trim();
+        String departDate = departureDate.getText().trim();
         LocalDate arrDate = LocalDate.parse(arrivalDate);
         LocalDate depDate = LocalDate.parse(departDate);
         vehicleInventory.findVehicle(plateNumber).setArrivalDate(arrDate);
