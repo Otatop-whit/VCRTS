@@ -8,7 +8,6 @@ import javax.swing.JTextField;
 
 import vehicle.model.Vehicle;
 import vehicle.model.VehicleInventory;
-import vehicle.service.VehicleOwnerServiceImpl;
 
 public class VehicleInventoryController {
     private VehicleInventory vehicleInventory;
@@ -29,7 +28,7 @@ public class VehicleInventoryController {
         vehicleInventory.addVehicle(vehicle.getLicensePlate(), vehicle);
         System.out.println("Vehicle's License Plate: " + vehicleInventory.findVehicle(vehiclePlate).getLicensePlate());
         System.out.println("Vehicle has been added!");
-        vehOwnServ.addVehicleOwner(null, vehicleInventory);
+        vehOwnServ.addVehicle(vehicleInventory);
         }
         catch(DateTimeParseException e){
         }
