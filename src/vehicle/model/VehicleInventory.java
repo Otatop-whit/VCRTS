@@ -19,7 +19,7 @@ public class VehicleInventory{
     }
 
     public Vehicle findVehicle(String licensePlate){
-        Vehicle foundVehicle = vehicleInventory.get(" " + licensePlate);
+        Vehicle foundVehicle = vehicleInventory.get("  " + licensePlate);
         if (foundVehicle == null){
             System.err.println("Vehicle Not Found");
         }
