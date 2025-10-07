@@ -79,14 +79,14 @@ public class JobOwnerPage extends JFrame {
         submitJob.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
                 int enteredId = Integer.parseInt(id.getText());
-                String enteredName = name.getText(); //MAKE SUR E TO ADD THIS
+                String enteredName = name.getText();
                 String enteredDuration = duration.getText();
                 String enteredDeadline = deadline.getText();
                 String enteredReqs = reqs.getText();
 
                 JobOwner jo = new JobOwner();
                 jo.setId(enteredId);
-                jo.setJobOwnerName(enteredName); //NEED TO ADD THIS TO THE USER ENTER FORM
+                jo.setJobOwnerName(enteredName); 
                 jo.setApproximateJobDuration(enteredDuration);
                 jo.setJobDeadline(enteredDeadline);
                 jo.setRequirements(enteredReqs);
