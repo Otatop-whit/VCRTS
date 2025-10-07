@@ -104,25 +104,28 @@ public class VehicleOwnerServiceImpl implements VehicleOwnerService{
             reader.readLine();
             ArrayList<String> vehicleCreator = new ArrayList<String>();
             while((vehicleInfo = reader.readLine()) != null){
-                vehicleInfo = vehicleInfo.substring(vehicleInfo.indexOf(":") + 1, vehicleInfo.length());
+                vehicleInfo = vehicleInfo.substring(vehicleInfo.indexOf(":") + 1).trim();
                 vehicleCreator.add(vehicleInfo);
+                
                 if(vehicleCreator.size() == 8){
-                    String licensePlate = vehicleCreator.get(0);
-                    if(licensePlate.startsWith(" ")) licensePlate.substring(1, licensePlate.length());
-                    String model = vehicleCreator.get(1);
-                    String make = vehicleCreator.get(2);
-                    Year year = Year.parse(vehicleCreator.get(3).substring(1));
-                    String residency = vehicleCreator.get(6);
-                    String vehicleOwnerId = vehicleCreator.get(7);
+                    String licensePlate = vehicleCreator.get(0).trim();
+                    String model = vehicleCreator.get(1).trim();
+                    String make = vehicleCreator.get(2).trim();
+                    Year year = Year.parse(vehicleCreator.get(3).trim());
+                    String arrivalDate = vehicleCreator.get(4).trim();
+                    String departureDate = vehicleCreator.get(5).trim();
+                    String residency = vehicleCreator.get(6).trim();
+                    String vehicleOwnerId = vehicleCreator.get(7).trim();
                     vehicle = new Vehicle.VehicleBuilder().setVehicleOwnerID(vehicleOwnerId).setLicensePlate(licensePlate)
                     .setVehicleModel(model).setVehicleMake(make).setVehicleYear(year).setResidency(residency).build();
-                    if(!vehicleCreator.get(4).contains("null")){
-                        LocalDate arrivalDate = LocalDate.parse(vehicleCreator.get(4));
-                        vehicle.setArrivalDate(arrivalDate);
+                    if(!arrivalDate.contains("null")){
+                        LocalDate arrDate = LocalDate.parse(arrivalDate);
+                        vehicle.setArrivalDate(arrDate);
+                        
                     }
-                    if(!vehicleCreator.get(5).contains("null")){
-                        LocalDate departureDate = LocalDate.parse(vehicleCreator.get(4));
-                        vehicle.setDepartureDate(departureDate);
+                    if(!departureDate.contains("null")){
+                        LocalDate departDate = LocalDate.parse(departureDate);
+                        vehicle.setDepartureDate(departDate);
                     }
                     inventory.get().put(vehicle.getLicensePlate(), vehicle);
                     vehicleCreator.clear();
