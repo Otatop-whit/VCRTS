@@ -19,12 +19,7 @@ public class VehicleInventory{
     }
 
     public Vehicle findVehicle(String licensePlate){
-        Vehicle foundVehicle = null;
-        for(Vehicle vehicles : vehicleInventory.values()){
-            if(licensePlate.equalsIgnoreCase(vehicles.getLicensePlate())){
-                foundVehicle = vehicleInventory.get(licensePlate);
-            }
-        }
+        Vehicle foundVehicle = vehicleInventory.get(" " + licensePlate);
         if (foundVehicle == null){
             System.err.println("Vehicle Not Found");
         }
@@ -32,11 +27,7 @@ public class VehicleInventory{
     }
 
     public ArrayList<Vehicle> convertToArray(){
-        ArrayList<Vehicle> vehicleList = new ArrayList<Vehicle>();
-        for(Vehicle vehicles : vehicleInventory.values()){
-            vehicleList.add(vehicles);
-        }
+        ArrayList<Vehicle> vehicleList = new ArrayList<>(vehicleInventory.values());
         return vehicleList;
     }
-    
 }
