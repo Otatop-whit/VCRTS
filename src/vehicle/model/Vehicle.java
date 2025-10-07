@@ -1,5 +1,5 @@
 package vehicle.model;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.Year;
 import java.util.Objects;
 
@@ -10,8 +10,8 @@ public class Vehicle {
     private String vehicleModel;
     private String vehicleMake;
     private Year vehicleYear;
-    private LocalDateTime arrivalDate;
-    private LocalDateTime departureDate;
+    private LocalDate arrivalDate;
+    private LocalDate departureDate;
     private String residency;
     
 
@@ -38,10 +38,10 @@ public class Vehicle {
     public Year getYear(){
         return vehicleYear;
     }
-    public LocalDateTime getArriveDate(){
+    public LocalDate getArriveDate(){
         return arrivalDate;
     }
-    public LocalDateTime getDepartDate(){
+    public LocalDate getDepartDate(){
         return departureDate;
     }
     public String getResidency(){
@@ -64,10 +64,10 @@ public class Vehicle {
     public void setVehicleYear(Year year){
         vehicleYear = year;
     }
-    public void setArrivalDate(LocalDateTime arriveDate){
+    public void setArrivalDate(LocalDate arriveDate){
         arrivalDate = arriveDate;
     }
-    public void setDepartureDate(LocalDateTime departDate){
+    public void setDepartureDate(LocalDate departDate){
         departureDate = departDate;
     }
     public void setResidency(String status){
@@ -80,8 +80,8 @@ public class Vehicle {
         private String vehicleModel;
         private String vehicleMake;
         private Year vehicleYear;
-        private LocalDateTime arrivalDate;
-        private LocalDateTime departureDate;
+        private LocalDate arrivalDate;
+        private LocalDate departureDate;
         private String residency;
         public VehicleBuilder setVehicleOwnerID(String ownerID){
             this.vehicleOwnerID = ownerID;
@@ -103,11 +103,11 @@ public class Vehicle {
             this.vehicleYear = vehicleYear;
             return this;
         }
-        public VehicleBuilder setArrivalDate(LocalDateTime arrivalDate){
+        public VehicleBuilder setArrivalDate(LocalDate arrivalDate){
             this.arrivalDate = arrivalDate;
             return this;
         }
-        public VehicleBuilder setDepatureDate(LocalDateTime departureDate){
+        public VehicleBuilder setDepatureDate(LocalDate departureDate){
             this.departureDate = departureDate;
             return this;
         }
