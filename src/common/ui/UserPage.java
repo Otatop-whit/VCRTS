@@ -1,11 +1,18 @@
 package common.ui;
 
+import job.ui.JobOwnerPage;
+
 import javax.swing.*;
+
+import vehicle.ui.vehicle_ui;
+
 import java.awt.*;
 
 public class UserPage {
     public UserPage(){
-        JFrame frame = createJFrame("VCRTS", 720,480);
+        JFrame frame = new JFrame("My First JFrame");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(600,400);
         JMenuBar menuBar = new JMenuBar();
         JMenu fileMenu = new JMenu("User");
         JMenuItem logoutItem = new JMenuItem("Log-Out");
@@ -14,24 +21,19 @@ public class UserPage {
         fileMenu.add(exitItem);
         menuBar.add(fileMenu);
         JLabel label = new JLabel("VCRT Project Label thing");
-        label.setAlignmentX(Component.CENTER_ALIGNMENT);
-        label.setFont(new Font("SansSerif", Font.BOLD, 26));
-        label.setForeground(new Color(25, 50, 120)); // deep navy
-
-
-        JPanel rootPanel= new JPanel();
-        rootPanel.setLayout(new BoxLayout(rootPanel,BoxLayout.Y_AXIS));
-        rootPanel.setBorder(BorderFactory.createEmptyBorder(32,40,32,40));
-        rootPanel.setBackground(new Color(240,248,255));
+        JPanel panel= new JPanel();
         JButton JobOwnerbutton = new JButton("JobOwner");
         JButton VehicleOwnerbutton = new JButton("VehicleOwner");
-        JPanel buttonPanel = new JPanel();
-
-
-        //styleButton();
-        rootPanel.add(label);
-        rootPanel.add(JobOwnerbutton);
-        rootPanel.add(VehicleOwnerbutton);
+        panel.add(JobOwnerbutton);
+        panel.add(VehicleOwnerbutton);
+        JobOwnerbutton.addActionListener(e -> {
+            frame.dispose();
+            new JobOwnerPage().setVisible(true);
+        });
+        VehicleOwnerbutton.addActionListener(e -> {
+            frame.dispose();
+            new vehicle_ui();
+        });
         frame.setLayout(new BorderLayout());
         logoutItem.addActionListener(e -> {
             frame.dispose();
@@ -39,22 +41,10 @@ public class UserPage {
 
         });
         frame.setJMenuBar(menuBar);
-        frame.setContentPane(rootPanel);
+        frame.add(label, BorderLayout.NORTH);
+        frame.add(panel, BorderLayout.CENTER);
         frame.setVisible(true);
 
 
     }
-    private void styleButton(){
-
-    }
-    private JFrame createJFrame(String title, int width, int height){
-        JFrame frame = new JFrame(title);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(width,height);
-        return frame;
-    }
-    private JPanel createPanel(){
-        return null;
-    }
-
 }

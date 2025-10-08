@@ -1,0 +1,34 @@
+
+Vehicle Data Entry 1:
+Vehicle Entry 1:
+VehicleLicense: D
+VehicleModel: B
+VehicleMake: C
+VehicleYear: 2000
+VehicleArrivalDate: 2025-10-08
+VehicleDepartureDate: 2025-11-06
+Residency: E
+VehicleOwnerID Assigned: null
+
+Vehicle Entry 2:
+VehicleLicense: AJ4324B
+VehicleModel: Cybertruck
+VehicleMake: Tesla
+VehicleYear: 2023
+VehicleArrivalDate: 2025-10-07
+VehicleDepartureDate: 2026-11-13
+Residency: New York
+VehicleOwnerID Assigned: null
+
+Vehicle Entry 3:
+VehicleLicense: 784ZC
+VehicleModel: Civic
+VehicleMake: Honda
+VehicleYear: 1972
+VehicleArrivalDate: null
+VehicleDepartureDate: null
+Residency: New Jersey
+VehicleOwnerID Assigned: null
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
