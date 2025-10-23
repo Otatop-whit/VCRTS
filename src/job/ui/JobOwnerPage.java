@@ -18,6 +18,7 @@ public class JobOwnerPage extends JFrame {
     {
         setTitle("Job Dashboard");
         setSize(650,500);
+        setLocationRelativeTo(null);
         JLabel dashIntro = new JLabel("What would you like to do?", SwingConstants.CENTER);
         JButton submitJob = new JButton("Submit New Job");
         JButton viewJob = new JButton("View Current/Previous Jobs");
@@ -54,6 +55,7 @@ public class JobOwnerPage extends JFrame {
         SubmitJobFrame() {
             setTitle("Submit New Job");
             setSize(650, 500);
+            setLocationRelativeTo(null);
             setLayout(new BorderLayout(10,10));
 
         JLabel idLabel = new JLabel("Job Owner ID:");
@@ -110,6 +112,7 @@ public class JobOwnerPage extends JFrame {
 
             setTitle("Current/Previous Jobs");
             setSize(650, 500);
+            setLocationRelativeTo(null);
             add(new JScrollPane(area));
             loadFile();
         }
