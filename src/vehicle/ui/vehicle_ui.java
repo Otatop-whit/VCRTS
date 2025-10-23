@@ -17,7 +17,8 @@ public class vehicle_ui {
         VehicleInventoryController inventoryController =  new VehicleInventoryController();
             JFrame window = new JFrame("Vehicle owner");
       //60px from left edge of window, 100px from right, width is 500, height is 600
-        window.setBounds(60,100,500,600); 
+      window.setSize(500, 600);
+      window.setLocationRelativeTo(null);
       //make window visible
         window.setVisible(true); 
         window.setLayout(new GridLayout(3,1));
@@ -166,6 +167,7 @@ public class vehicle_ui {
         ViewVehicleInfo(){
             setTitle("List of Vehicles");
             setSize(650, 500);
+            setLocationRelativeTo(null);
             add(new JScrollPane(area));
             loadFile();
         }
