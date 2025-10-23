@@ -10,7 +10,7 @@ public class UserPage {
     public UserPage(){
         JFrame frame = new JFrame("VCRTS — Vehicular Cloud Real Time System");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(600,400);
+        frame.setSize(720,480);
 
         // Subtitle below main title 
         JLabel subtitle = new JLabel("Please select your role to continue."); 

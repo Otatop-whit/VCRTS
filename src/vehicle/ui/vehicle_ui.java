@@ -17,7 +17,7 @@ public class vehicle_ui {
         VehicleInventoryController inventoryController =  new VehicleInventoryController();
             JFrame window = new JFrame("Vehicle owner");
       //60px from left edge of window, 100px from right, width is 500, height is 600
-      window.setSize(500, 600);
+      window.setSize(720, 480);
       window.setLocationRelativeTo(null);
       //make window visible
         window.setVisible(true); 
