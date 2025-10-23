@@ -17,7 +17,7 @@ public class JobOwnerPage extends JFrame {
     public JobOwnerPage()
     {
         setTitle("Job Dashboard");
-        setSize(650,500);
+        setSize(720,480);
         setLocationRelativeTo(null);
         JLabel dashIntro = new JLabel("What would you like to do?", SwingConstants.CENTER);
         JButton submitJob = new JButton("Submit New Job");
