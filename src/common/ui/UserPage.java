@@ -33,7 +33,9 @@ public class UserPage {
                 frame.dispose();
                 new WelcomePage();
             });
-
+            fileMenu.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            logoutItem.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            
 
         frame.setJMenuBar(menuBar); 
 
@@ -155,5 +157,27 @@ public class UserPage {
         );
 
         frame.setVisible(true); 
-    }
-}
+
+        // === Back Arrow in Menu Bar 
+        JButton backBtn = new JButton("⟵");
+        backBtn.setFont(new Font("SansSerif", Font.BOLD, 16));
+        backBtn.setFocusPainted(false);
+        backBtn.setBorder(BorderFactory.createEmptyBorder(2,10,2,10));
+        backBtn.setContentAreaFilled(false);
+        backBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        // When clicked, go back to the previous screen 
+        backBtn.addActionListener(e -> {
+            frame.dispose();
+            new WelcomePage(); // adjust as needed
+        });
+
+        menuBar.add(backBtn);
+        menuBar.add(Box.createHorizontalStrut(8)); // optional spacing
+
+
+                
+            }
+        }
+
+        
