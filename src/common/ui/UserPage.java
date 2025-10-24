@@ -65,6 +65,48 @@ public class UserPage {
         JobOwnerbutton.setBorder(BorderFactory.createEmptyBorder(10, 18, 10, 18)); 
         JobOwnerbutton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)); 
 
+        // Job Owner Button styling
+        JobOwnerbutton.setFont(btnFont); 
+        JobOwnerbutton.setPreferredSize(btnSize); 
+        JobOwnerbutton.setFocusPainted(false); 
+        Color jobOwnerBaseColor = new Color(35, 99, 188); 
+        JobOwnerbutton.setBackground(jobOwnerBaseColor);
+        JobOwnerbutton.setForeground(Color.WHITE);
+        JobOwnerbutton.setOpaque(true);
+        JobOwnerbutton.setBorder(BorderFactory.createEmptyBorder(10, 18, 10, 18)); 
+        JobOwnerbutton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        // Add hover effect for Job Owner button
+        JobOwnerbutton.addMouseListener(new java.awt.event.MouseAdapter() {
+        public void mouseEntered(java.awt.event.MouseEvent evt) {
+        JobOwnerbutton.setBackground(jobOwnerBaseColor.darker()); 
+    }
+         public void mouseExited(java.awt.event.MouseEvent evt) {
+        JobOwnerbutton.setBackground(jobOwnerBaseColor);
+    }
+});
+
+        // Vehicle Owner Button styling
+        VehicleOwnerbutton.setFont(btnFont); 
+        VehicleOwnerbutton.setPreferredSize(btnSize); 
+        VehicleOwnerbutton.setFocusPainted(false);
+        Color vehicleOwnerBaseColor = new Color(25, 140, 100); 
+        VehicleOwnerbutton.setBackground(vehicleOwnerBaseColor);
+        VehicleOwnerbutton.setForeground(Color.WHITE); 
+        VehicleOwnerbutton.setOpaque(true); 
+        VehicleOwnerbutton.setBorder(BorderFactory.createEmptyBorder(10, 18, 10, 18)); 
+        VehicleOwnerbutton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        // Add hover effect for Vehicle Owner button
+        VehicleOwnerbutton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                VehicleOwnerbutton.setBackground(vehicleOwnerBaseColor.darker()); 
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                VehicleOwnerbutton.setBackground(vehicleOwnerBaseColor);
+    }
+});
+
         VehicleOwnerbutton.setFont(btnFont); 
         VehicleOwnerbutton.setPreferredSize(btnSize); 
         VehicleOwnerbutton.setFocusPainted(false); 

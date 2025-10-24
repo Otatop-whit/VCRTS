@@ -118,5 +118,19 @@ public class WelcomePage {
         button.setOpaque(true);
         button.setBorder(BorderFactory.createEmptyBorder(10, 18, 10, 18));
         button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button.setBackground(baseColor.darker());
+            }
+
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                button.setBackground(baseColor);
+
+
+
+
+            }
+        });
     }
 }
