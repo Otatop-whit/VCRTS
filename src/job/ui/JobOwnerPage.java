@@ -109,6 +109,8 @@ public class JobOwnerPage extends JFrame {
 
     //Submit New Job
     static class SubmitJobFrame extends JFrame {
+
+
         private JTextField id = new JTextField();
         private JTextField name = new JTextField();
         private JTextField duration = new JTextField();
@@ -119,7 +121,7 @@ public class JobOwnerPage extends JFrame {
 
         SubmitJobFrame() {
             setTitle("Submit New Job");
-            setSize(650, 500);
+            setSize(720, 480);
             setLocationRelativeTo(null);
             setLayout(new BorderLayout(10,10));
 
