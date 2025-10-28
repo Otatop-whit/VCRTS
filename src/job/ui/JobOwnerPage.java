@@ -13,15 +13,52 @@ import java.nio.file.Paths;
 
 public class JobOwnerPage extends JFrame {
 
+    //Theme of welcome and user page
+    private static final Color background = new Color(240, 248, 255);
+    private static final Color titlecolor = new Color(25, 50, 120);
+    private static final Color buttoncolor = new Color(35, 99, 188);
+    private static final Color buttoncolorgreen = new Color(25, 140, 100);
+    private static final Font titlefont = new Font("SansSerif", Font.BOLD, 22);
+    private static final Font buttonfont = new Font("SansSerif", Font.BOLD, 18);
+    private static final Font labelfont = new Font("SansSerif", Font.PLAIN, 16);
+    private static final Dimension buttonsize = new Dimension(220, 56);
+    
     //Job Owner Dashboard Intro Window
     public JobOwnerPage()
     {
-        setTitle("Job Dashboard");
+        setTitle("VCRTS — Vehicular Cloud Real Time System");
         setSize(720,480);
         setLocationRelativeTo(null);
+
+        JPanel root = new JPanel();
+        root.setLayout(new BoxLayout(root, BoxLayout.Y_AXIS));
+        root.setBackground(background);
+
+        JLabel dashTitle = new JLabel("Job Owner Dashboard");
+        dashTitle.setFont(titlefont);
+        dashTitle.setForeground(titlecolor);
+        dashTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+
         JLabel dashIntro = new JLabel("What would you like to do?", SwingConstants.CENTER);
+        dashIntro.setFont(labelfont);
+        dashIntro.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        //Button design
+        JPanel buttonPanel = new JPanel(new GridBagLayout());
+        buttonPanel.setOpaque(false);
+
         JButton submitJob = new JButton("Submit New Job");
-        JButton viewJob = new JButton("View Current/Previous Jobs");
+        styleButton(submitJob,buttoncolor, buttonfont, buttonsize);
+
+        JButton viewJob = new JButton("View Jobs History");
+        styleButton(viewJob,buttoncolorgreen, buttonfont, buttonsize);
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(12, 12, 12, 12);
+        
+        buttonPanel.add(submitJob, gbc);
+        buttonPanel.add(viewJob, gbc);
+        //
 
         submitJob.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
@@ -35,15 +72,45 @@ public class JobOwnerPage extends JFrame {
             }
         });
 
-        JPanel panel = new JPanel(new GridLayout(3, 1));
-        panel.add(dashIntro);
-        panel.add(submitJob);
-        panel.add(viewJob);
-        add(panel);
+        root.add(Box.createVerticalStrut(35));
+        root.add(dashTitle);
+        root.add(Box.createVerticalStrut(75));
+        root.add(dashIntro);
+        root.add(buttonPanel);
+        setContentPane(root);
+
+    }
+
+    //Button styling
+    private void styleButton(JButton button, Color baseColor, Font font, Dimension size) {
+        button.setFont(font);
+        button.setPreferredSize(size);
+        button.setFocusPainted(false);
+        button.setBackground(baseColor);
+        button.setForeground(Color.WHITE);
+        button.setOpaque(true);
+        button.setBorder(BorderFactory.createEmptyBorder(10, 18, 10, 18));
+        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button.setBackground(baseColor.darker());
+            }
+
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                button.setBackground(baseColor);
+
+
+
+
+            }
+        });
     }
 
     //Submit New Job
     static class SubmitJobFrame extends JFrame {
+
+
         private JTextField id = new JTextField();
         private JTextField name = new JTextField();
         private JTextField duration = new JTextField();
@@ -54,7 +121,7 @@ public class JobOwnerPage extends JFrame {
 
         SubmitJobFrame() {
             setTitle("Submit New Job");
-            setSize(650, 500);
+            setSize(720, 480);
             setLocationRelativeTo(null);
             setLayout(new BorderLayout(10,10));
 
