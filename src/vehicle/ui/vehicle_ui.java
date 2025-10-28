@@ -191,16 +191,33 @@ public class vehicle_ui {
                          
     });
      
-        JButton residency_btn = new JButton("Residency");
-        window.add(residency_btn);   
-        
-        residency_btn.addActionListener(new ActionListener() {
-        	@Override
-        	public void actionPerformed(ActionEvent e) {
-        	JOptionPane.showMessageDialog(null, "location: ", "Residency", JOptionPane.OK_CANCEL_OPTION, null);
-        }
+        JButton editVehicle_btn = new JButton("Edit Vehicle");
+        window.add(editVehicle_btn);
+
+        editVehicle_btn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JPanel panel = new JPanel(new GridLayout(0, 2, 5, 5));
+                
+                JTextField licenseField = new JTextField(10);
+                JTextField arrivalField = new JTextField(10);
+                JTextField departureField = new JTextField(10);
+                
+                panel.add(new JLabel("License Plate:"));
+                panel.add(licenseField);
+                panel.add(new JLabel("Arrival Time:"));
+                panel.add(arrivalField);
+                panel.add(new JLabel("Departure Time:"));
+                panel.add(departureField);
+                
+                int result = JOptionPane.showConfirmDialog(null, panel, "Edit Vehicle", 
+                          JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+                
+                if (result == JOptionPane.OK_OPTION) {
+                    JOptionPane.showMessageDialog(null, "Vehicle information updated!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                }
+            }
         });
-        
         
      window.add(panel);   
     }
