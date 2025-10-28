@@ -1,5 +1,6 @@
 package vehicle.model;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Year;
 import java.util.Objects;
 
@@ -13,7 +14,7 @@ public class Vehicle {
     private LocalDate arrivalDate;
     private LocalDate departureDate;
     private String residency;
-    
+    private LocalDateTime timestamp;
 
     public Vehicle(VehicleBuilder builder){
         this.vehicleOwnerID = builder.vehicleOwnerID;
@@ -50,6 +51,9 @@ public class Vehicle {
     public String getVehicleOwnerID(){
         return vehicleOwnerID;
     }
+    public LocalDateTime getTimestamp(){
+        return timestamp;
+    }
 
     //Allows for users to fix any errors/typos
     public void setLicensePlate(String plateNumber){
@@ -83,6 +87,7 @@ public class Vehicle {
         private LocalDate arrivalDate;
         private LocalDate departureDate;
         private String residency;
+        private LocalDateTime timestamp;
         public VehicleBuilder setVehicleOwnerID(String ownerID){
             this.vehicleOwnerID = ownerID;
             return this;
@@ -116,6 +121,7 @@ public class Vehicle {
             return this;
         }
         public Vehicle build(){
+            this.timestamp = LocalDateTime.now();
             return new Vehicle(this);
         }
     }
@@ -131,11 +137,12 @@ public class Vehicle {
         Objects.equals(vehicleYear, vehicle.vehicleYear) &&
         Objects.equals(arrivalDate, vehicle.arrivalDate) &&
         Objects.equals(departureDate, vehicle.departureDate) &&
-        Objects.equals(residency, vehicle.residency);
+        Objects.equals(residency, vehicle.residency) &&
+        Objects.equals(timestamp, vehicle.timestamp);
     }
 
     @Override
     public int hashCode(){
-        return Objects.hash(vehicleOwnerID, licensePlate, vehicleModel, vehicleMake, vehicleYear, arrivalDate, departureDate, residency);
+        return Objects.hash(vehicleOwnerID, licensePlate, vehicleModel, vehicleMake, vehicleYear, arrivalDate, departureDate, residency, timestamp);
     }
 }
