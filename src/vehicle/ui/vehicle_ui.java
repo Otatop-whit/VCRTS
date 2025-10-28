@@ -10,6 +10,8 @@ import java.awt.event.ActionListener;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class vehicle_ui {
 
@@ -68,15 +70,52 @@ public class vehicle_ui {
         	 
         	 Object[]message = {
         			 "Model: ", model,
-        			 "Manufacturer: ", make,
-        			 "Manufacture Year: ", year,
+        			 "Make: ", make,
+        			 "Year: ", year,
         			 "LicensePlate: ",licensePlate,
         			 "Residency: ", residency,
         	 };
         	 int registerOption = JOptionPane.showConfirmDialog(null, message, "Register New Vehicle", JOptionPane.OK_CANCEL_OPTION);
-             if(registerOption == JOptionPane.OK_OPTION){
-                inventoryController.addVehicle(licensePlate,model,make,year,residency);
-             }
+        	 if(registerOption == JOptionPane.OK_OPTION){
+        		 if(model.getText().trim().isEmpty()) {
+        	            JOptionPane.showMessageDialog(null, 
+        	                "Model cannot be empty!", "Error", 
+        	                JOptionPane.ERROR_MESSAGE);
+        	            return;
+        	        }
+        	        if(make.getText().trim().isEmpty()) {
+        	            JOptionPane.showMessageDialog(null, 
+        	                "Make cannot be empty!", "Error", 
+        	                JOptionPane.ERROR_MESSAGE);
+        	            return;
+        	        }
+        	        if(year.getText().trim().isEmpty()) {
+        	            JOptionPane.showMessageDialog(null, 
+        	                "Year cannot be empty!", "Error", 
+        	                JOptionPane.ERROR_MESSAGE);
+        	            return;
+        	        }
+        	        if(licensePlate.getText().trim().isEmpty()) {
+        	            JOptionPane.showMessageDialog(null, 
+        	                "License Plate cannot be empty!", "Error", 
+        	                JOptionPane.ERROR_MESSAGE);
+        	            return;
+        	        }
+        	        if(residency.getText().trim().isEmpty()) {
+        	            JOptionPane.showMessageDialog(null, 
+        	                "Residency cannot be empty!", "Error", 
+        	                JOptionPane.ERROR_MESSAGE);
+        	            return;
+        	        }
+        	        
+        	        
+        		    String timestamp = getCurrentTimestamp();
+        		    System.out.println("[" + timestamp + "] Vehicle registered: " + licensePlate.getText());
+        		    inventoryController.addVehicle(licensePlate,model,make,year,residency);
+        		    JOptionPane.showMessageDialog(null, 
+        		        "Vehicle registered successfully!\nTimestamp: " + timestamp, 
+        		        "Success", JOptionPane.INFORMATION_MESSAGE);
+        		}
          }
          
             });
@@ -126,12 +165,16 @@ public class vehicle_ui {
                             "Invalid departure date format! Please use YYYY-MM-DD", 
                             "Error", JOptionPane.ERROR_MESSAGE);
                         return;
-                        //store to database
+                        //store to data file
                     }
-                    
-                    inventoryController.setAvailability(license, ArrivalTime, DepartureTime);
-            
-                    
+
+               // timestamp
+                  String timestamp = getCurrentTimestamp();
+                  System.out.println("[" + timestamp + "] Time selection set for license: " + license);
+                  inventoryController.setAvailability(license, ArrivalTime, DepartureTime);
+                  JOptionPane.showMessageDialog(null, 
+                      "Time selection saved successfully!\nTimestamp: " + timestamp, 
+                      "Success", JOptionPane.INFORMATION_MESSAGE);
                 }
         };
     
@@ -148,18 +191,42 @@ public class vehicle_ui {
                          
     });
      
-        JButton residency_btn = new JButton("Residency");
-        window.add(residency_btn);   
-        
-        residency_btn.addActionListener(new ActionListener() {
-        	@Override
-        	public void actionPerformed(ActionEvent e) {
-        	JOptionPane.showMessageDialog(null, "location: ", "Residency", JOptionPane.OK_CANCEL_OPTION, null);
-        }
+        JButton editVehicle_btn = new JButton("Edit Vehicle");
+        window.add(editVehicle_btn);
+
+        editVehicle_btn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JPanel panel = new JPanel(new GridLayout(0, 2, 5, 5));
+                
+                JTextField licenseField = new JTextField(10);
+                JTextField arrivalField = new JTextField(10);
+                JTextField departureField = new JTextField(10);
+                
+                panel.add(new JLabel("License Plate:"));
+                panel.add(licenseField);
+                panel.add(new JLabel("Arrival Time (YYYY-MM-DD):"));
+                panel.add(arrivalField);
+                panel.add(new JLabel("Departure Time (YYYY-MM-DD):"));
+                panel.add(departureField);
+                
+                int result = JOptionPane.showConfirmDialog(null, panel, "Edit Vehicle", 
+                          JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+                
+                if (result == JOptionPane.OK_OPTION) {
+                    JOptionPane.showMessageDialog(null, "Vehicle information updated!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                }
+            }
         });
         
-        
      window.add(panel);   
+    }
+    
+ // update: get current timestamp
+    private static String getCurrentTimestamp() {
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        return now.format(formatter);
     }
     
     static class ViewVehicleInfo extends JFrame{
