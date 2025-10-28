@@ -4,6 +4,10 @@ import job.model.JobOwner;
 
 import java.io.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 public class JobOwnerServiceImpl implements JobOwnerService {
     private int entryNumber;
 
@@ -17,6 +21,8 @@ public class JobOwnerServiceImpl implements JobOwnerService {
                 throw new RuntimeException(e);
             }
 
+            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+
             try {
 
                 BufferedWriter writer = new BufferedWriter(new FileWriter("src/job/repo/JobOwnerData.txt", true));
@@ -24,6 +30,7 @@ public class JobOwnerServiceImpl implements JobOwnerService {
                 writer.write("\n");
                 writer.write("Data entry " + entryNumber + ":");
                 writer.write("\n");
+                writer.write("Timestamp: " + timestamp);
                 writer.write("\nJobOwnerID: " + jobOwner.getId());
                 writer.write("\nJobOwnerName: " + jobOwner.getJobOwnerName());
                 writer.write("\nApproximateDuration: " + jobOwner.getApproximateJobDuration());
