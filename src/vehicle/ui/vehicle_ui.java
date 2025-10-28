@@ -205,9 +205,9 @@ public class vehicle_ui {
                 
                 panel.add(new JLabel("License Plate:"));
                 panel.add(licenseField);
-                panel.add(new JLabel("Arrival Time:"));
+                panel.add(new JLabel("Arrival Time (YYYY-MM-DD):"));
                 panel.add(arrivalField);
-                panel.add(new JLabel("Departure Time:"));
+                panel.add(new JLabel("Departure Time (YYYY-MM-DD):"));
                 panel.add(departureField);
                 
                 int result = JOptionPane.showConfirmDialog(null, panel, "Edit Vehicle", 
