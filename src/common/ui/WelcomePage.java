@@ -77,12 +77,11 @@ public class WelcomePage {
             toggleButtons(false); // hide buttons
             showLoginPanelWithFade();
         });
-        createBtn.addActionListener(e -> JOptionPane.showMessageDialog(
-                frame,
-                "Create Account is coming soon.\n(We’ll plug in RegisterPage here when it’s ready.)",
-                "Create Account",
-                JOptionPane.INFORMATION_MESSAGE
-        ));
+      createBtn.addActionListener(e -> {
+                frame.dispose();
+                new createAccount();
+       
+        });
 
         
         root.add(Box.createVerticalStrut(40));
