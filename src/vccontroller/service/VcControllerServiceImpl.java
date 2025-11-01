@@ -35,6 +35,7 @@ public class VcControllerServiceImpl {
 
     }
     public void submitJob(JobOwner jobOwner){
+
             int entryNumber = 1;
 //
 //            try {
@@ -64,14 +65,7 @@ public class VcControllerServiceImpl {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-            try {
-                entryNumber++;
-                BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("src/job/repo/Data.txt"));
-                bufferedWriter.write(String.valueOf(entryNumber));
-                bufferedWriter.close();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+
 
 
 
