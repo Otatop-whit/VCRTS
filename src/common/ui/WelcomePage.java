@@ -11,6 +11,8 @@ public class WelcomePage {
     private JLabel loginMsg;
     private Timer fadeTimer;
     private float panelOpacity = 0f;
+    private CreateAccount createPanel;
+
 
     private JPanel buttonPanel;
 
@@ -72,15 +74,46 @@ public class WelcomePage {
         // Smaller login box
         buildLoginPanel();
 
+        createPanel = new CreateAccount(new CreateAccount.Listener() {
+            @Override
+            public void onCreate(String name, String email, String password) {
+                // For now just show success, DB later on
+                JOptionPane.showMessageDialog(
+                    frame,
+                    "✅ Account created!\nName: " + name + "\nEmail: " + email,
+                    "Success",
+                    JOptionPane.INFORMATION_MESSAGE
+                );
+                createPanel.setSuccess("Account created successfully!");
+                // Hide form and return to main buttons 
+                createPanel.setVisible(false);
+                // show main buttons again:
+                buttonPanel.setVisible(true);
+             
+            }
+        
+            @Override
+            public void onCancel() {
+                createPanel.setVisible(false);
+                // bring back main buttons
+                buttonPanel.setVisible(true);
+            }
+        });
+        
+
         // Actions
         loginBtn.addActionListener(e -> {
             toggleButtons(false); // hide buttons
             showLoginPanelWithFade();
         });
-      createBtn.addActionListener(e -> {
-                frame.dispose();
-                new createAccount();
-       
+        createBtn.addActionListener(e -> {
+            // Hide the big buttons row so it matches the login flow
+            buttonPanel.setVisible(false);
+            // Hide login panel 
+            loginPanel.setVisible(false);
+            // Reset and show CreateAccount inline card
+            createPanel.clearFields();
+            createPanel.setVisible(true);
         });
 
         
@@ -92,6 +125,7 @@ public class WelcomePage {
         root.add(buttonPanel);
         root.add(Box.createVerticalStrut(12));
         root.add(loginPanel);
+        root.add(createPanel); 
         root.add(Box.createVerticalStrut(20));
 
         // Footer 
