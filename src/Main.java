@@ -10,13 +10,13 @@ import vehicle.ui.vehicle_ui;
 public class Main{
 
     public static void main(String args[]){
-        //new WelcomePage();
+        new WelcomePage();
         //new vehicle_ui();
-
-        VcControllerServiceImpl vcController = new VcControllerServiceImpl();
-        JobInfo jobInfo = vcController.jobCalculations(JobReq.Medium);
-        System.out.println(jobInfo.getJobDuration());
-        System.out.println(jobInfo.getJobCompletionTime());
+//
+//        VcControllerServiceImpl vcController = new VcControllerServiceImpl();
+//        JobInfo jobInfo = vcController.jobCalculations(JobReq.Medium);
+//        System.out.println(jobInfo.getJobDuration());
+//        System.out.println(jobInfo.getJobCompletionTime());
 
     }
 

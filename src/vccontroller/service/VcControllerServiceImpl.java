@@ -1,10 +1,11 @@
 package vccontroller.service;
+import job.model.JobOwner;
 import vccontroller.model.JobInfo;
 import vccontroller.model.JobReq;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Random;
 
 public class VcControllerServiceImpl {
@@ -33,6 +34,47 @@ public class VcControllerServiceImpl {
 
 
     }
+    public void submitJob(JobOwner jobOwner){
+            int entryNumber = 1;
+//
+//            try {
+//                BufferedReader reader = new BufferedReader(new FileReader("src/job/repo/Data.txt"));
+//                entryNumber = Integer.valueOf(reader.readLine());
+//            } catch (IOException e) {
+//                throw new RuntimeException(e);
+//            }
 
+            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+
+            try {
+
+                BufferedWriter writer = new BufferedWriter(new FileWriter("src/vccontroller/repo/JobData.txt", true));
+
+                writer.write("\n");
+                writer.write("Data entry " + entryNumber + ":");
+                writer.write("\n");
+                writer.write("Timestamp: " + timestamp);
+                writer.write("\nDuration: " + jobOwner.getApproximateJobDuration());
+                writer.write("\nJobCompletionTime: " + jobOwner.getJobDeadline());
+                writer.write("\nRequirements: " + jobOwner.getRequirements());
+
+                writer.write("\n");
+                writer.write("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                writer.close();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            try {
+                entryNumber++;
+                BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("src/job/repo/Data.txt"));
+                bufferedWriter.write(String.valueOf(entryNumber));
+                bufferedWriter.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+
+
+    }
 
 }
