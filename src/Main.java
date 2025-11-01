@@ -1,5 +1,8 @@
 
 import common.ui.WelcomePage;
+import vccontroller.model.JobInfo;
+import vccontroller.model.JobReq;
+import vccontroller.service.VcControllerServiceImpl;
 import vehicle.ui.vehicle_ui;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
@@ -8,7 +11,12 @@ public class Main{
 
     public static void main(String args[]){
         //new WelcomePage();
-        new vehicle_ui();
+        //new vehicle_ui();
+
+        VcControllerServiceImpl vcController = new VcControllerServiceImpl();
+        JobInfo jobInfo = vcController.jobCalculations(JobReq.Medium);
+        System.out.println(jobInfo.getJobDuration());
+        System.out.println(jobInfo.getJobCompletionTime());
 
     }
 
