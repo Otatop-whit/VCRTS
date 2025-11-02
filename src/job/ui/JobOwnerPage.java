@@ -82,7 +82,7 @@ public class JobOwnerPage extends JFrame {
     }
 
     //Button styling
-    private void styleButton(JButton button, Color baseColor, Font font, Dimension size) {
+    private static void styleButton(JButton button, Color baseColor, Font font, Dimension size) {
         button.setFont(font);
         button.setPreferredSize(size);
         button.setFocusPainted(false);
@@ -110,52 +110,57 @@ public class JobOwnerPage extends JFrame {
     //Submit New Job
     static class SubmitJobFrame extends JFrame {
 
-
-        private JTextField id = new JTextField();
-        private JTextField name = new JTextField();
         private JTextField duration = new JTextField();
         private JTextField deadline = new JTextField();
-        private JTextField reqs = new JTextField();
+        private JComboBox<String> reqs = new JComboBox<>(new String[] {"Low", "Medium", "High"});
 
         private JobOwnerService service = new JobOwnerServiceImpl();
 
         SubmitJobFrame() {
-            setTitle("Submit New Job");
+            setTitle("Create New Job");
             setSize(720, 480);
             setLocationRelativeTo(null);
-            setLayout(new BorderLayout(10,10));
 
-        JLabel idLabel = new JLabel("Job Owner ID:");
-        JLabel nameLabel = new JLabel("Job Owner Name:");
+        JLabel title = new JLabel("Create New Job");
+        title.setFont(titlefont);
+        title.setForeground(titlecolor);
+        title.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JPanel root = new JPanel();
+        root.setLayout(new BoxLayout(root, BoxLayout.Y_AXIS));
+        root.setBackground(background);
+        root.setBorder(BorderFactory.createEmptyBorder(24,32,23,32));
+
+        JPanel form = new JPanel(new GridLayout(3, 2, 10, 10));
+        form.setOpaque(false);
+            
         JLabel durationLabel = new JLabel("Approximate Job Duration:");
+        durationLabel.setFont(labelfont);
         JLabel deadlineLabel = new JLabel("Job Deadline:");
-        JLabel reqsLabel = new JLabel("Job Requirements (If needed):");
+        deadlineLabel.setFont(labelfont);
+        JLabel reqsLabel = new JLabel("Job Requirements:");
+        reqsLabel.setFont(labelfont);
 
-        JPanel panel = new JPanel(new GridLayout(5,2));
-        panel.add(idLabel);
-        panel.add(id);
-        panel.add(nameLabel);
-        panel.add(name);
-        panel.add(durationLabel);
-        panel.add(duration);
-        panel.add(deadlineLabel);
-        panel.add(deadline);
-        panel.add(reqsLabel);
-        panel.add(reqs);
+        form.add(durationLabel);
+        form.add(duration);
+        form.add(deadlineLabel);
+        form.add(deadline);
+        form.add(reqsLabel);
+        form.add(reqs);
 
+        JPanel buttonsRow = new JPanel(new GridBagLayout());
+        buttonsRow.setOpaque(false);
         JButton submitJob = new JButton("Submit");
+        styleButton(submitJob, buttoncolorgreen, buttonfont, buttonsize);
+        buttonsRow.add(submitJob);
 
         submitJob.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
-                int enteredId = Integer.parseInt(id.getText());
-                String enteredName = name.getText();
                 String enteredDuration = duration.getText();
                 String enteredDeadline = deadline.getText();
-                String enteredReqs = reqs.getText();
+                String enteredReqs = (String) reqs.getSelectedItem();
 
                 JobOwner jo = new JobOwner();
-                jo.setId(enteredId);
-                jo.setJobOwnerName(enteredName); 
                 jo.setApproximateJobDuration(enteredDuration);
                 jo.setJobDeadline(enteredDeadline);
                 jo.setRequirements(enteredReqs);
@@ -163,8 +168,11 @@ public class JobOwnerPage extends JFrame {
             }
         });
 
-        add(panel, BorderLayout.CENTER);
-        add(submitJob, BorderLayout.SOUTH);
+        root.add(title);
+        root.add(Box.createVerticalStrut(60));
+        root.add(form);
+        root.add(buttonsRow);
+        setContentPane(root);
 
         }
 
