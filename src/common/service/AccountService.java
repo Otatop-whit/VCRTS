@@ -21,5 +21,8 @@ public class AccountService {
     public boolean validateLogin(String email, String password) {
         return accountRepo.validateLogin(email, password);
     }
+	 public java.util.List<Account> getAllAccounts() {
+        return accountRepo.getAllAccounts();
+    }
 }
 
