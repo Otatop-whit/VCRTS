@@ -2,11 +2,16 @@ package common.ui;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import common.service.AccountService;
 
 
  //"Create Account" card embeded inside WelcomePage | Fields: Name, Email, Password. No role selection, for now..
 
-public class CreateAccount extends JPanel {
+class CreateAccount extends JPanel {
 
     public interface Listener {
         void onCreate(String name, String email, String password);
@@ -66,10 +71,15 @@ public class CreateAccount extends JPanel {
         actionRow.setOpaque(false);
         JButton okBtn = new JButton("OK");
         JButton cancelBtn = new JButton("Cancel");
+        JButton viewAccountBtn = new JButton("View Account");
         styleButton(okBtn, new Color(25, 140, 100), new Font("SansSerif", Font.BOLD, 13), new Dimension(100, 32));
         styleButton(cancelBtn, new Color(140, 140, 140), new Font("SansSerif", Font.BOLD, 13), new Dimension(90, 30));
+        styleButton(viewAccountBtn, new Color(35, 99, 188), new Font("SansSerif", Font.BOLD, 13), new Dimension(120, 30));
         actionRow.add(okBtn);
         actionRow.add(cancelBtn);
+        actionRow.add(viewAccountBtn);
+        
+        
 
         // Status line
         statusMsg = new JLabel(" ");
@@ -86,14 +96,28 @@ public class CreateAccount extends JPanel {
             if (name.length() < 2) { setError("Please enter your full name."); return; }
             if (!isValidEmail(email)) { setError("Invalid email. Please try again."); return; }
             if (password.length() < 6) { setError("Password must be at least 6 characters."); return; }
-
+            
+            AccountService accountService = new AccountService();
+            boolean success = accountService.createNewAccount(name, email, password);
+            
+            if (success) {
+                setSuccess("Account created successfully!");
+                clearFields();
+            } else {
+                setError("Email already exists! Please use a different email.");
+            }
+            
             if (listener != null) listener.onCreate(name, email, password);
         });
 
         cancelBtn.addActionListener(e -> {
             if (listener != null) listener.onCancel();
         });
-
+        
+        viewAccountBtn.addActionListener(e -> {
+            showAccountData();
+        });
+        
         // Enter submits
         passwordField.addActionListener(e -> okBtn.doClick());
 
@@ -151,4 +175,52 @@ public class CreateAccount extends JPanel {
         passwordField.setText("");
         statusMsg.setText(" ");
     }
-}
+    private void showAccountData() {
+        try {
+            File file = new File("accounts.dat");
+            if (!file.exists()) {
+                JOptionPane.showMessageDialog(this, 
+                    "No account file found.", 
+                    "Account File", 
+                    JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+
+          
+            StringBuilder content = new StringBuilder();
+            try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    content.append(line).append("\n");
+                }
+            }
+
+            if (content.length() == 0) {
+                JOptionPane.showMessageDialog(this, 
+                    "Account file is empty.", 
+                    "Account File", 
+                    JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+
+        
+            JTextArea textArea = new JTextArea(content.toString(), 15, 40);
+            textArea.setEditable(false);
+            textArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
+            JScrollPane scrollPane = new JScrollPane(textArea);
+            
+            JOptionPane.showMessageDialog(this, 
+                scrollPane, 
+                "Account File - accounts.dat", 
+                JOptionPane.INFORMATION_MESSAGE);
+
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, 
+                "Error reading account file: " + ex.getMessage(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    } 
+
