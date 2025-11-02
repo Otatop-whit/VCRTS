@@ -175,35 +175,31 @@ class CreateAccount extends JPanel {
         passwordField.setText("");
         statusMsg.setText(" ");
     }
-    private void showAccountData() {
+   private void showAccountData() {
         try {
-            File file = new File("accounts.dat");
-            if (!file.exists()) {
+            AccountService accountService = new AccountService();
+            java.util.List<common.model.Account> accounts = accountService.getAllAccounts();
+            
+            if (accounts.isEmpty()) {
                 JOptionPane.showMessageDialog(this, 
-                    "No account file found.", 
+                    "No accounts found.", 
                     "Account File", 
                     JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
 
-          
             StringBuilder content = new StringBuilder();
-            try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    content.append(line).append("\n");
-                }
+            content.append("Total accounts: ").append(accounts.size()).append("\n\n");
+            
+            for (int i = 0; i < accounts.size(); i++) {
+                common.model.Account account = accounts.get(i);
+                content.append("Account ").append(i + 1).append(":\n");
+                content.append("  Name: ").append(account.getName()).append("\n");
+                content.append("  Email: ").append(account.getEmail()).append("\n");
+                content.append("  Password: ").append(account.getPassword()).append("\n");
+                content.append("-------------------\n");
             }
 
-            if (content.length() == 0) {
-                JOptionPane.showMessageDialog(this, 
-                    "Account file is empty.", 
-                    "Account File", 
-                    JOptionPane.INFORMATION_MESSAGE);
-                return;
-            }
-
-        
             JTextArea textArea = new JTextArea(content.toString(), 15, 40);
             textArea.setEditable(false);
             textArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
@@ -211,16 +207,17 @@ class CreateAccount extends JPanel {
             
             JOptionPane.showMessageDialog(this, 
                 scrollPane, 
-                "Account File - accounts.dat", 
+                "Account Information", 
                 JOptionPane.INFORMATION_MESSAGE);
 
-        } catch (IOException ex) {
+        } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, 
-                "Error reading account file: " + ex.getMessage(), 
+                "Error reading account data: " + ex.getMessage(), 
                 "Error", 
                 JOptionPane.ERROR_MESSAGE);
         }
     }
+
 
     } 
 
