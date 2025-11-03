@@ -3,8 +3,6 @@ import javax.swing.*;
 
 import vehicle.service.VehicleInventoryController;
 
-
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.nio.file.Files;
@@ -31,6 +29,26 @@ public class vehicle_ui {
         window.setSize(720, 480);
         window.setLocationRelativeTo(null);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+                //  Back Arrow in Menu Bar 
+        JButton backBtn = new JButton("⟵");
+        backBtn.setFont(new Font("SansSerif", Font.BOLD, 16));
+        backBtn.setFocusPainted(false);
+        backBtn.setBorder(BorderFactory.createEmptyBorder(2, 10, 2, 10));
+        backBtn.setContentAreaFilled(false);
+        backBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        // When clicked, go back to UserPage
+        backBtn.addActionListener(e -> {
+            window.dispose(); // closes current Vehicle UI window
+            new common.ui.UserPage(); // navigates back to UserPage
+        });
+
+        // Add to top menu or a small bar
+        JMenuBar menuBar = new JMenuBar();
+        menuBar.add(backBtn);
+        menuBar.add(Box.createHorizontalStrut(8)); 
+        window.setJMenuBar(menuBar);
         
       
         window.getContentPane().setBackground(BACKGROUND_COLOR);
