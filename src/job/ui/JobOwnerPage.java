@@ -211,7 +211,7 @@ public class JobOwnerPage extends JFrame {
                 String enteredDuration = duration.getText();
                 String enteredDeadline = deadline.getText();
                 String enteredReqs = (String) reqs.getSelectedItem();
-                EstimateJobFrame estimatePage = new EstimateJobFrame(enteredDuration, enteredDeadline, enteredReqs);
+                EstimateJobFrame estimatePage = new EstimateJobFrame();
                 estimatePage.setVisible(true);
             }
         });
