@@ -2,6 +2,7 @@ package vehicle.model;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Year;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 public class Vehicle {
@@ -151,11 +152,13 @@ public class Vehicle {
             return this;
         }
         public VehicleBuilder setTimestamp(String timestamp){
-            this.timestamp = LocalDateTime.parse(timestamp);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            this.timestamp = LocalDateTime.parse(timestamp, formatter);
             return this;
         }
         public VehicleBuilder setLastModified(String lastModified){
-            this.lastModified = LocalDateTime.parse(lastModified);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            this.lastModified = LocalDateTime.parse(lastModified, formatter);
             return this;
         }
         public Vehicle build(){
