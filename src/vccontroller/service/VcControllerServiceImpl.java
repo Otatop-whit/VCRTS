@@ -55,8 +55,10 @@ public class VcControllerServiceImpl {
                 writer.write("Data entry " + entryNumber + ":");
                 writer.write("\n");
                 writer.write("Timestamp: " + timestamp);
+                writer.write("\nJob Name: " + jobOwner.getJobOwnerName());
+                writer.write("\nJob Deadline: " + jobOwner.getJobDeadline());
                 writer.write("\nDuration: " + jobOwner.getApproximateJobDuration());
-                writer.write("\nJobCompletionTime: " + jobOwner.getJobDeadline());
+                writer.write("\nJob Completion Time: " + jobOwner.getJobDeadline());
                 writer.write("\nRequirements: " + jobOwner.getRequirements());
 
                 writer.write("\n");
