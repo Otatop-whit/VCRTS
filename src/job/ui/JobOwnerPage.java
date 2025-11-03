@@ -8,8 +8,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.DocumentEvent;
 
 public class JobOwnerPage extends JFrame {
 
@@ -94,11 +98,15 @@ public class JobOwnerPage extends JFrame {
 
         button.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                button.setBackground(baseColor.darker());
+                if (button.isEnabled()) {
+                    button.setBackground(baseColor.darker());
+                }
             }
 
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                button.setBackground(baseColor);
+                if (button.isEnabled()) {
+                    button.setBackground(baseColor);
+                }
 
 
 
@@ -113,6 +121,16 @@ public class JobOwnerPage extends JFrame {
         private JTextField duration = new JTextField();
         private JTextField deadline = new JTextField();
         private JComboBox<String> reqs = new JComboBox<>(new String[] {"Low", "Medium", "High"});
+
+        private void checkField(JButton estimateJob) {
+            boolean filled = !duration.getText().isEmpty() && !deadline.getText().isEmpty() && reqs.getSelectedIndex()!=-1;
+            estimateJob.setEnabled(filled);
+            if (filled) {
+                estimateJob.setBackground(buttoncolorgreen);
+            } else {
+                estimateJob.setBackground(Color.gray);
+            }
+        }
 
         private JobOwnerService service = new JobOwnerServiceImpl();
 
@@ -141,6 +159,8 @@ public class JobOwnerPage extends JFrame {
         JLabel reqsLabel = new JLabel("Job Requirements:");
         reqsLabel.setFont(labelfont);
 
+        reqs.setSelectedIndex(-1);
+
         form.add(durationLabel);
         form.add(duration);
         form.add(deadlineLabel);
@@ -150,21 +170,49 @@ public class JobOwnerPage extends JFrame {
 
         JPanel buttonsRow = new JPanel(new GridBagLayout());
         buttonsRow.setOpaque(false);
-        JButton submitJob = new JButton("Submit");
-        styleButton(submitJob, buttoncolorgreen, buttonfont, buttonsize);
-        buttonsRow.add(submitJob);
+        JButton estimateJob = new JButton("Calculate Estimated Completion Time");
+        styleButton(estimateJob, buttoncolorgreen, buttonfont, buttonsize);
+        buttonsRow.add(estimateJob);
+        estimateJob.setPreferredSize(new Dimension(380, 50));
+        estimateJob.setBackground(Color.gray);
+        estimateJob.setEnabled(false);
 
-        submitJob.addActionListener(new ActionListener() {
+        //When all fields are filled, button will turn green and become clickable
+
+        DocumentListener listener = new DocumentListener() {
+
+            public void insertUpdate(DocumentEvent event) {
+                checkField(estimateJob);
+            }
+
+            public void removeUpdate(DocumentEvent event) {
+                checkField(estimateJob);
+            }
+
+            public void changedUpdate(DocumentEvent event) {
+                checkField(estimateJob);
+            }
+
+        };
+
+        duration.getDocument().addDocumentListener(listener);
+        deadline.getDocument().addDocumentListener(listener);
+
+        reqs.addItemListener(new ItemListener() {
+
+            public void itemStateChanged(ItemEvent event) {
+                checkField(estimateJob);
+            }
+            
+        });
+
+        estimateJob.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
                 String enteredDuration = duration.getText();
                 String enteredDeadline = deadline.getText();
                 String enteredReqs = (String) reqs.getSelectedItem();
-
-                JobOwner jo = new JobOwner();
-                jo.setApproximateJobDuration(enteredDuration);
-                jo.setJobDeadline(enteredDeadline);
-                jo.setRequirements(enteredReqs);
-                service.addJobOwner(jo);
+                EstimateJobFrame estimatePage = new EstimateJobFrame(enteredDuration, enteredDeadline, enteredReqs);
+                estimatePage.setVisible(true);
             }
         });
 
@@ -175,6 +223,10 @@ public class JobOwnerPage extends JFrame {
         setContentPane(root);
 
         }
+
+    }
+
+    static class EstimateJobFrame extends JFrame {
 
     }
 
