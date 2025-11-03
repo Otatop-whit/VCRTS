@@ -1,8 +1,9 @@
 package job.ui;
 
 import job.model.JobOwner;
-import job.service.JobOwnerService;
-import job.service.JobOwnerServiceImpl;
+import vccontroller.model.JobInfo;
+import vccontroller.model.JobReq;
+import vccontroller.service.VcControllerServiceImpl;
 
 import javax.swing.*;
 import java.awt.*;
@@ -140,12 +141,12 @@ public class JobOwnerPage extends JFrame {
     //Submit New Job
     static class SubmitJobFrame extends JFrame {
 
-        private JTextField duration = new JTextField();
+        private JTextField jobName = new JTextField();
         private JTextField deadline = new JTextField();
         private JComboBox<String> reqs = new JComboBox<>(new String[] {"Low", "Medium", "High"});
 
         private void checkField(JButton estimateJob) {
-            boolean filled = !duration.getText().isEmpty() && !deadline.getText().isEmpty() && reqs.getSelectedIndex()!=-1;
+            boolean filled = !jobName.getText().isEmpty() && !deadline.getText().isEmpty() && reqs.getSelectedIndex()!=-1;
             estimateJob.setEnabled(filled);
             if (filled) {
                 estimateJob.setBackground(buttoncolorgreen);
@@ -153,8 +154,6 @@ public class JobOwnerPage extends JFrame {
                 estimateJob.setBackground(Color.gray);
             }
         }
-
-        private JobOwnerService service = new JobOwnerServiceImpl();
 
         SubmitJobFrame() {
             setTitle("Create New Job");
@@ -195,17 +194,17 @@ public class JobOwnerPage extends JFrame {
         JPanel form = new JPanel(new GridLayout(3, 2, 10, 10));
         form.setOpaque(false);
             
-        JLabel durationLabel = new JLabel("Approximate Job Duration:");
-        durationLabel.setFont(labelfont);
+        JLabel jobLabel = new JLabel("Job Name:");
+        jobLabel.setFont(labelfont);
         JLabel deadlineLabel = new JLabel("Job Deadline:");
         deadlineLabel.setFont(labelfont);
-        JLabel reqsLabel = new JLabel("Job Requirements:");
+        JLabel reqsLabel = new JLabel("Job Requirement Level:");
         reqsLabel.setFont(labelfont);
 
         reqs.setSelectedIndex(-1);
 
-        form.add(durationLabel);
-        form.add(duration);
+        form.add(jobLabel);
+        form.add(jobName);
         form.add(deadlineLabel);
         form.add(deadline);
         form.add(reqsLabel);
@@ -238,7 +237,7 @@ public class JobOwnerPage extends JFrame {
 
         };
 
-        duration.getDocument().addDocumentListener(listener);
+        jobName.getDocument().addDocumentListener(listener);
         deadline.getDocument().addDocumentListener(listener);
 
         reqs.addItemListener(new ItemListener() {
@@ -251,10 +250,10 @@ public class JobOwnerPage extends JFrame {
 
         estimateJob.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
-                String enteredDuration = duration.getText();
+                String enteredName = jobName.getText();
                 String enteredDeadline = deadline.getText();
                 String enteredReqs = (String) reqs.getSelectedItem();
-                EstimateJobFrame estimatePage = new EstimateJobFrame(enteredDuration, enteredDeadline, enteredReqs);
+                EstimateJobFrame estimatePage = new EstimateJobFrame(enteredName, enteredDeadline, enteredReqs);
                 estimatePage.setVisible(true);
             }
         });
@@ -269,7 +268,87 @@ public class JobOwnerPage extends JFrame {
 
     }
 
+    //Estimate Job Completion Time and Submit Job
     static class EstimateJobFrame extends JFrame {
+
+        private final String enteredName; 
+        private final String enteredDeadline; 
+        private final String enteredReqs;
+
+        private final VcControllerServiceImpl controller = new VcControllerServiceImpl();
+
+        public EstimateJobFrame(String name, String deadline, String reqs) {
+
+            this.enteredName = name; 
+            this.enteredDeadline = deadline;
+            this.enteredReqs = reqs;
+
+            setTitle("Job Information:");
+            setSize(720, 480);
+            setLocationRelativeTo(null);
+            setLayout(new BorderLayout(10,10));
+            getContentPane().setBackground(background);
+
+            JobReq level = JobReq.valueOf(this.enteredReqs);
+            JobInfo info = controller.jobCalculations(level);
+            int computedDurationHours = info.getJobDuration();
+            int estimatedCompletionRun = info.getJobCompletionTime();
+
+            JobOwner job = new JobOwner();
+            job.setJobOwnerName(enteredName);
+            job.setApproximateJobDuration(computedDurationHours + " hours");
+            job.setJobDeadline(enteredDeadline);
+            job.setRequirements(this.enteredReqs);
+
+            JTextArea jobinfo = new JTextArea();
+            jobinfo.setEditable(false);
+            jobinfo.setFont(labelfont);
+            jobinfo.setBorder(BorderFactory.createLineBorder(titlecolor, 1));
+            jobinfo.setBackground(background);
+            StringBuilder sb = new StringBuilder();
+            sb.append(" Job Name: ").append(this.enteredName).append("\n");
+            sb.append(" Job Deadline: ").append(this.enteredDeadline).append("\n");
+            sb.append(" Requirement Level: ").append(this.enteredReqs).append("\n");
+            sb.append(" Computed Duration: ").append(computedDurationHours + " hours").append("\n");
+            sb.append(" Estimated Completion Time: ").append(estimatedCompletionRun + " hours").append("\n");
+            jobinfo.setText(sb.toString());
+
+            jobinfo.setPreferredSize(new Dimension(500,200));
+
+            JPanel jobPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 20));
+            jobPanel.add(jobinfo);
+            jobPanel.setBackground(background);
+            add(jobPanel, BorderLayout.CENTER);
+
+            JLabel question = new JLabel("Would you like to submit this Job?");
+            question.setFont(titlefont);
+            question.setForeground(titlecolor);
+            
+            JPanel questionPanel = new JPanel();
+            questionPanel.setBackground(background);
+            questionPanel.add(question);
+            add(questionPanel, BorderLayout.NORTH);
+
+            JPanel buttons = new JPanel(new GridBagLayout());
+            buttons.setBackground(background);
+
+            JButton submit = new JButton("Submit");
+            styleButton(submit, buttoncolorgreen, buttonfont, buttonsize);
+
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.insets = new Insets(8, 8, 16, 8);
+            buttons.add(submit, gbc);
+
+            add(buttons, BorderLayout.SOUTH);
+
+            submit.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent event) {
+                    controller.submitJob(job);
+                    JOptionPane.showMessageDialog(EstimateJobFrame.this, "Job Successfully Submitted!");
+                }
+            });
+
+        }
 
     }
 
