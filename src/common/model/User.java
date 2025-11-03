@@ -1,11 +1,11 @@
 package common.model;
 
 public class User {
-    private final int id;
-    private final String username;   // or email as username
-    private final String email;
-    private final String name;
-    private final Role role;
+    protected int id;
+    protected String username;   // or email as username
+    protected String email;
+    protected String name;
+    protected Role role;
 
     public User(int id, String username, String email, String name, Role role) {
         this.id = id;
