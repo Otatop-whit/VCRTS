@@ -94,14 +94,20 @@ public class vehicle_ui {
                 JTextField model = new JTextField();
                 JTextField make = new JTextField();
                 JTextField year = new JTextField();
+                JTextField computingPower = new JTextField();
                 JTextField licensePlate = new JTextField();
+                JTextField arrivalDate = new JTextField();
+                JTextField departureDate = new JTextField();
                 JTextField residency = new JTextField();
                  
                 Object[] message = {
                     "Model: ", model,
                     "Make: ", make,
                     "Year: ", year,
+                    "Computing Power: ", computingPower,
                     "LicensePlate: ", licensePlate,
+                    "Arrival Date: ", arrivalDate,
+                    "Departure Date: ",departureDate,
                     "Residency: ", residency,
                 };
                  
@@ -122,6 +128,12 @@ public class vehicle_ui {
                     if(year.getText().trim().isEmpty()) {
                         JOptionPane.showMessageDialog(null, 
                             "Year cannot be empty!", "Error", 
+                            JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                    if(computingPower.getText().trim().isEmpty()) {
+                        JOptionPane.showMessageDialog(null, 
+                            "Computing power cannot be empty!", "Error", 
                             JOptionPane.ERROR_MESSAGE);
                         return;
                     }
