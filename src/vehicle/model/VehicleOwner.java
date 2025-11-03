@@ -19,6 +19,7 @@ import javax.swing.JTextField;
 
 import common.model.Role;
 import common.model.User;
+import vehicle.service.VehicleOwnerServiceImpl;
 
 
 public class VehicleOwner extends User {
@@ -70,19 +71,24 @@ public class VehicleOwner extends User {
         this.filename = filename;
     }
 
-    //Takes list of text fields made from User Inputs and creates a Vehicle
-    public Vehicle createVehicle(JTextField licensePlate, JTextField model, JTextField make, JTextField year, JTextField arriveDate, JTextField departureDate, JTextField residency){
+    //Creates Vehicle from UI
+    public Vehicle createVehicle(JTextField licensePlate, JTextField model, JTextField make, JTextField year, JTextField computingPower ,JTextField arriveDate, JTextField departureDate, JTextField residency){
        try{
             String vehiclePlate = licensePlate.getText().trim();
             String vehicleModel = model.getText().trim();
             String vehicleMake = make.getText().trim();
             Year vehicleYear = Year.parse(year.getText().trim());
+            String computePower = computingPower.getText().trim();
+
             String arrivalDate = arriveDate.getText().trim();
             String departDate = departureDate.getText().trim();
             String resident = residency.getText().trim();
+
             this.vehicle = new Vehicle.VehicleBuilder().setVehicleOwnerID(id).setLicensePlate(vehiclePlate)
             .setVehicleModel(vehicleModel).setVehicleMake(vehicleMake).setVehicleYear(vehicleYear)
-            .setArrivalDate(arrivalDate).setDepatureDate(departDate).setResidency(resident).build();
+            .setComputingPower(computePower).setArrivalDate(arrivalDate).setDepatureDate(departDate)
+            .setResidency(resident).build();
+            
             numOfVehicles++;
        }
        catch(Exception e){
@@ -91,17 +97,37 @@ public class VehicleOwner extends User {
        }
         return vehicle;
     }
-    //Stores the vehicle constructed into personal Vehicle Inventory
+
+    //Creates Vehicle from File
+    public Vehicle importVehicle(Vehicle fileVehicle){
+        this.vehicle = fileVehicle;
+        return vehicle;
+    }
+
+    //Stores Vehicle in userInventory
     public void storeVehicle(){
         userInventory.addVehicle(this.vehicle.getLicensePlate(), this.vehicle);
     }
+
     //Removes the vehicle constructed from personal Vehicle Inventory
     public void removeVehicle(String licensePlate){
         userInventory.removeVehicle(licensePlate);
         numOfVehicles--;
     }
     
-
+    //Modifies Duration of Vehicle's Residency
+       public void setAvailability(String plateNumber, JTextField arriveDate, JTextField departureDate){
+        String arrivalDate = arriveDate.getText().trim();
+        String departDate = departureDate.getText().trim();
+        LocalDate arrDate = LocalDate.parse(arrivalDate);
+        LocalDate depDate = LocalDate.parse(departDate);
+        userInventory.findVehicle(plateNumber).setArrivalDate(arrDate);
+        userInventory.findVehicle(plateNumber).setDepartureDate(depDate);
+        System.out.println("Arrival Date: " + arrDate);
+        System.out.println("Departure Date: " + depDate);
+        VehicleOwnerServiceImpl.writeFile(this);
+    }
+    
     @Override
     public boolean equals(Object o){
         if (o == null || getClass() != o.getClass()) return false;
