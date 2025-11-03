@@ -11,6 +11,8 @@ public class WelcomePage {
     private JLabel loginMsg;
     private Timer fadeTimer;
     private float panelOpacity = 0f;
+    private CreateAccount createPanel;
+
 
     private JPanel buttonPanel;
 
@@ -72,15 +74,46 @@ public class WelcomePage {
         // Smaller login box
         buildLoginPanel();
 
+        createPanel = new CreateAccount(new CreateAccount.Listener() {
+            @Override
+            public void onCreate(String name, String email, String password) {
+                // For now just show success, DB later on
+                JOptionPane.showMessageDialog(
+                    frame,
+                    "✅ Account created!\nName: " + name + "\nEmail: " + email,
+                    "Success",
+                    JOptionPane.INFORMATION_MESSAGE
+                );
+                createPanel.setSuccess("Account created successfully!");
+                // Hide form and return to main buttons 
+                createPanel.setVisible(false);
+                // show main buttons again:
+                buttonPanel.setVisible(true);
+             
+            }
+        
+            @Override
+            public void onCancel() {
+                createPanel.setVisible(false);
+                // bring back main buttons
+                buttonPanel.setVisible(true);
+            }
+        });
+        
+
         // Actions
         loginBtn.addActionListener(e -> {
             toggleButtons(false); // hide buttons
             showLoginPanelWithFade();
         });
-      createBtn.addActionListener(e -> {
-                frame.dispose();
-                new createAccount();
-       
+        createBtn.addActionListener(e -> {
+            // Hide the big buttons row so it matches the login flow
+            buttonPanel.setVisible(false);
+            // Hide login panel 
+            loginPanel.setVisible(false);
+            // Reset and show CreateAccount inline card
+            createPanel.clearFields();
+            createPanel.setVisible(true);
         });
 
         
@@ -92,6 +125,7 @@ public class WelcomePage {
         root.add(buttonPanel);
         root.add(Box.createVerticalStrut(12));
         root.add(loginPanel);
+        root.add(createPanel); 
         root.add(Box.createVerticalStrut(20));
 
         // Footer 
@@ -161,10 +195,14 @@ public class WelcomePage {
         actionRow.setOpaque(false);
         JButton signIn = new JButton("Sign In");
         styleButton(signIn, new Color(35, 99, 188), new Font("SansSerif", Font.BOLD, 13), new Dimension(100, 32));
+        JButton testSignIn = new JButton("Test Sign In");
+        styleButton(signIn, new Color(35, 99, 188), new Font("SansSerif", Font.BOLD, 13), new Dimension(100, 32));
+
         JButton cancel = new JButton("Cancel");
         styleButton(cancel, new Color(140, 140, 140), new Font("SansSerif", Font.BOLD, 13), new Dimension(90, 30));
         actionRow.add(signIn);
         actionRow.add(cancel);
+        actionRow.add(testSignIn);
 
         loginMsg = new JLabel(" ");
         loginMsg.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -172,6 +210,7 @@ public class WelcomePage {
         loginMsg.setForeground(new Color(170, 30, 30));
 
         signIn.addActionListener(e -> doLogin());
+        testSignIn.addActionListener(e -> testLogin());
         cancel.addActionListener(e -> {
             toggleLoginPanel(false);
             toggleButtons(true);
@@ -245,6 +284,20 @@ public class WelcomePage {
             loginMsg.setForeground(new Color(170, 30, 30));
             loginMsg.setText("Invalid email or password.");
         }
+    }
+    private void testLogin() {
+            loginMsg.setForeground(new Color(20, 120, 60));
+            loginMsg.setText("Login successful!");
+
+            JOptionPane.showMessageDialog(
+                    frame,
+                    "✅ Login successful! Welcome to VCRTS.",
+                    "Success",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+
+            frame.dispose();
+            new UserPage();
     }
 
     // Styling helper 
