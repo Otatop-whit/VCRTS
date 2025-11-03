@@ -6,15 +6,17 @@ import java.util.Objects;
 
 public class Vehicle {
     //Required Vehicle Information
-    private final String vehicleOwnerID;
+    private final int vehicleOwnerID;
     private String licensePlate;
     private String vehicleModel;
     private String vehicleMake;
     private Year vehicleYear;
+    private String computingPower;
     private LocalDate arrivalDate;
     private LocalDate departureDate;
     private String residency;
     private LocalDateTime timestamp;
+    private LocalDateTime lastModified; // Records if data was changed
 
     public Vehicle(VehicleBuilder builder){
         this.vehicleOwnerID = builder.vehicleOwnerID;
@@ -22,11 +24,15 @@ public class Vehicle {
         this.vehicleModel = builder.vehicleModel;
         this.vehicleYear = builder.vehicleYear;
         this.vehicleMake = builder.vehicleMake;
+        this.computingPower = builder.computingPower;
         this.arrivalDate = builder.arrivalDate;
         this.departureDate = builder.departureDate;
         this.residency = builder.residency;
+        this.timestamp = builder.timestamp;
+        this.lastModified = builder.lastModified;
     }
 
+    //Getters
     public String getLicensePlate(){
         return licensePlate;
     }
@@ -48,47 +54,67 @@ public class Vehicle {
     public String getResidency(){
         return residency;
     }
-    public String getVehicleOwnerID(){
+    public int getVehicleOwnerID(){
         return vehicleOwnerID;
+    }
+    public String getComputingPower(){
+        return computingPower;
     }
     public LocalDateTime getTimestamp(){
         return timestamp;
+    }
+    public LocalDateTime getLastModified(){
+        return lastModified;
     }
 
     //Allows for users to fix any errors/typos
     public void setLicensePlate(String plateNumber){
         licensePlate = plateNumber;
+        lastModified = LocalDateTime.now();
     }
     public void setVehicleModel(String model){
         vehicleModel = model;
+        lastModified = LocalDateTime.now();
     }
     public void setVehicleMake(String make){
         vehicleMake = make;
+        lastModified = LocalDateTime.now();
     }
     public void setVehicleYear(Year year){
         vehicleYear = year;
+        lastModified = LocalDateTime.now();
     }
     public void setArrivalDate(LocalDate arriveDate){
         arrivalDate = arriveDate;
+        lastModified = LocalDateTime.now();
     }
     public void setDepartureDate(LocalDate departDate){
         departureDate = departDate;
+        lastModified = LocalDateTime.now();
     }
     public void setResidency(String status){
         residency = status;
+        lastModified = LocalDateTime.now();
+    }
+    public void setComputingPower(String computationPower){
+        computingPower = computationPower;
+        lastModified = LocalDateTime.now();
     }
 
     public static class VehicleBuilder{
-        private String vehicleOwnerID;
+        private int vehicleOwnerID;
         private String licensePlate;
         private String vehicleModel;
         private String vehicleMake;
         private Year vehicleYear;
+        private String computingPower;
         private LocalDate arrivalDate;
         private LocalDate departureDate;
         private String residency;
         private LocalDateTime timestamp;
-        public VehicleBuilder setVehicleOwnerID(String ownerID){
+        private LocalDateTime lastModified;
+
+        public VehicleBuilder setVehicleOwnerID(int ownerID){
             this.vehicleOwnerID = ownerID;
             return this;
         }
@@ -108,20 +134,33 @@ public class Vehicle {
             this.vehicleYear = vehicleYear;
             return this;
         }
-        public VehicleBuilder setArrivalDate(LocalDate arrivalDate){
-            this.arrivalDate = arrivalDate;
+        public VehicleBuilder setArrivalDate(String arrivalDate){
+            this.arrivalDate = LocalDate.parse(arrivalDate);
             return this;
         }
-        public VehicleBuilder setDepatureDate(LocalDate departureDate){
-            this.departureDate = departureDate;
+        public VehicleBuilder setDepatureDate(String departureDate){
+            this.departureDate = LocalDate.parse(departureDate);
             return this;
         }
         public VehicleBuilder setResidency(String residency){
             this.residency = residency;
             return this;
         }
+        public VehicleBuilder setComputingPower(String computingPower){
+            this.computingPower = computingPower;
+            return this;
+        }
+        public VehicleBuilder setTimestamp(String timestamp){
+            this.timestamp = LocalDateTime.parse(timestamp);
+            return this;
+        }
+        public VehicleBuilder setLastModified(String lastModified){
+            this.lastModified = LocalDateTime.parse(lastModified);
+            return this;
+        }
         public Vehicle build(){
-            this.timestamp = LocalDateTime.now();
+            if(timestamp == null){this.timestamp = LocalDateTime.now();}
+            if(lastModified == null){this.lastModified = LocalDateTime.now();}
             return new Vehicle(this);
         }
     }
@@ -138,11 +177,12 @@ public class Vehicle {
         Objects.equals(arrivalDate, vehicle.arrivalDate) &&
         Objects.equals(departureDate, vehicle.departureDate) &&
         Objects.equals(residency, vehicle.residency) &&
+        Objects.equals(computingPower, vehicle.computingPower) &&
         Objects.equals(timestamp, vehicle.timestamp);
     }
 
     @Override
     public int hashCode(){
-        return Objects.hash(vehicleOwnerID, licensePlate, vehicleModel, vehicleMake, vehicleYear, arrivalDate, departureDate, residency, timestamp);
+        return Objects.hash(vehicleOwnerID, licensePlate, vehicleModel, vehicleMake, vehicleYear, arrivalDate, departureDate, residency, computingPower,timestamp);
     }
 }
