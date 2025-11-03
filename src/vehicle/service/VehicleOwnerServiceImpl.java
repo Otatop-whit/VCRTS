@@ -151,7 +151,7 @@ public class VehicleOwnerServiceImpl implements VehicleOwnerService{
         return inventory;  
     }
   
-    public void writeFile(VehicleOwner owner){
+    public static void writeFile(VehicleOwner owner){
         VehicleInventory userInventory = owner.getInventory();
         try{
               //Creates a file based on the user's email address
@@ -190,7 +190,7 @@ public class VehicleOwnerServiceImpl implements VehicleOwnerService{
                     writer.write("\n End of File \n");
                     writer.write("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                 } catch (IOException e) {
-                    System.err.println("System Failed to Load Vehicle Info to file");
+                    System.err.println("System Failed to Load Vehicle Info to file.");
                     e.printStackTrace();
                 }
             }
@@ -201,37 +201,48 @@ public class VehicleOwnerServiceImpl implements VehicleOwnerService{
         }
     }
 
-    public VehicleOwner readFile(VehicleOwner owner, String emailString){
-        VehicleInventory userInventory = owner.getInventory();
+    public VehicleOwner loadOwner(String emailString){
         try{
-            BufferedReader reader;
             String filename = "scr/vehicle/repo/" + emailString + "_VehicleInfo.txt";
-            owner.setFilename(filename);
-            reader = new BufferedReader(new FileReader(filename));
- 
-            reader.readLine();
-            //Read Vehicle Owner Information
-            int vehicleOwnerId = Integer.parseInt(reader.readLine().substring(reader.readLine().indexOf(":") + 1).trim());
-            String username = reader.readLine().substring(reader.readLine().indexOf(":") + 1).trim();
-            String email = reader.readLine().substring(reader.readLine().indexOf(":") + 1).trim();
-            String name = reader.readLine().substring(reader.readLine().indexOf(":") + 1).trim();
+            BufferedReader reader = new BufferedReader(new FileReader(filename));
+            String [] vehOwnerInfo = new String[5];
+            for(int i = 0; i == 4; i++){vehOwnerInfo[i] = reader.readLine().substring(reader.readLine().indexOf(":") + 1).trim();} //Avoids inserting the trim everytime
+            int id = Integer.parseInt(vehOwnerInfo[0]);
+            String username = vehOwnerInfo[1];
+            String email = vehOwnerInfo[2];
+            String name = vehOwnerInfo[3];
+            int numOfVehicles = Integer.parseInt(vehOwnerInfo[4]);
             Role role = Role.VehicleOwner;
-            int numOfVehicles = Integer.parseInt(reader.readLine().substring(reader.readLine().indexOf(":") + 1).trim());
-            owner = new VehicleOwner(vehicleOwnerId, username, email, name, role);
+            
+            VehicleOwner owner = new VehicleOwner(id, username, email, name, role);
             owner.setNumOfVehicles(numOfVehicles);
+            owner.setFilename(filename);
+            return owner;
+        }catch(Exception e){
+            System.err.println("File failed to load Vehicle Owner information.");
+            e.printStackTrace();
+            return null;
+        }
+    }
 
-            reader.readLine();
-            reader.readLine();
-            reader.readLine();
+    public VehicleOwner readFile(VehicleOwner owner){
+        try{
+            String filename = owner.getFilename();
+            BufferedReader reader = new BufferedReader(new FileReader(filename));
+            
+            //Skips to Vehicle Information
+            for(int i = 0; i > 8; i++)reader.readLine();
 
             //Reads the Vehicle Information
-            Queue<String> vehicleCreator = new LinkedList<String>(); // Stores file input
+            Queue<String> vehicleCreator = new LinkedList<String>(); // Stores values for single execution in builder
             String vehicleInfo;
             while((vehicleInfo = reader.readLine().substring(reader.readLine().indexOf(":") + 1).trim()) != null){
-                vehicleCreator.add(vehicleInfo); // Stores all values for single execution in builder
-                //Limit set based on the number of variables the vehicle has 
+                vehicleCreator.add(vehicleInfo);
+
+                //Limit set based on the number of variables the vehicle has (excludes vehicle owner id)
                 if(vehicleCreator.size() == 10){
-                    
+                    int vehicleOwnerId = owner.getID();
+                    //Empties out the queue
                     String licensePlate = vehicleCreator.poll();
                     String model = vehicleCreator.poll();
                     String make = vehicleCreator.poll();
@@ -247,16 +258,19 @@ public class VehicleOwnerServiceImpl implements VehicleOwnerService{
                     .setVehicleModel(model).setVehicleMake(make).setVehicleYear(year).setComputingPower(computingPower)
                     .setArrivalDate(arrivalDate).setDepatureDate(departureDate).setResidency(residency).setTimestamp(timestamp)
                     .setLastModified(lastModified).build();
-                    userInventory.addVehicle(vehicle.getLicensePlate(), vehicle);
-                    reader.readLine();
-                    reader.readLine();
+
+                    owner.importVehicle(vehicle);//Sends Vehicle to Vehicle Owner data
+                    owner.storeVehicle();
+                    reader.readLine();// Skips empty space in file
+                    reader.readLine();// Skips Vehicle Entry Number in file
                 }
             } // End of while (vehicleInfo)
             reader.close();
-
+            return owner;
         }catch(IOException e){
             System.err.println("Failed to Load Vehicle Information From File");
+            return null;
         }
-        return owner;
+        
     }
 }
