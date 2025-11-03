@@ -1,5 +1,7 @@
 package vehicle.model;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 
 public class VehicleInventory{
@@ -29,5 +31,28 @@ public class VehicleInventory{
     public ArrayList<Vehicle> convertToArray(){
         ArrayList<Vehicle> vehicleList = new ArrayList<>(vehicleInventory.values());
         return vehicleList;
+    }
+
+    //Comparator made to sort through timestamps
+    class SortByTimestamp implements Comparator<Vehicle>{
+        public int compare(Vehicle vehicle1, Vehicle vehicle2){
+            return vehicle1.getTimestamp().compareTo(vehicle2.getTimestamp());
+        }
+    }
+
+    //Sorts the list of vehicles by timestamps (entry dates) for file writer
+    public ArrayList<Vehicle> sortByEntryDate(){
+        Comparator<Vehicle> yearSort = new SortByTimestamp();
+        ArrayList<Vehicle> sortedVehicles = new ArrayList<>(vehicleInventory.values());
+        Collections.sort(sortedVehicles, yearSort);
+        return sortedVehicles;
+    }
+
+    //Allows for isEmpty method to be used without needing vehicleInventory.get()
+    public boolean isEmpty(){
+        if(vehicleInventory.isEmpty() == true){
+            return true;
+        }
+        return false;
     }
 }
