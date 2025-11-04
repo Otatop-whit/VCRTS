@@ -7,7 +7,7 @@ public class JobOwner {
     private String jobOwnerName;
     private int duration;
     private int completionTime;
-
+    private String jobDeadline;
     private String requirements;
 
     public JobOwner(){
@@ -46,11 +46,17 @@ public class JobOwner {
     public int getCompletionTime() {
         return completionTime;
     }
-
-    public void setJobDeadline(int completionTime) {
-        this.completionTime = completionTime;
+    public void setCompletionTime(int completionTime){
+        this.completionTime =  completionTime;
     }
 
+    public void setJobDeadline(String jobDeadline) {
+        this.jobDeadline = jobDeadline;
+    }
+
+    public String getJobDeadline() {
+        return jobDeadline;
+    }
     public String getRequirements() {
         return requirements;
     }

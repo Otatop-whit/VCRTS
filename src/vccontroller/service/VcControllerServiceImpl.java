@@ -36,7 +36,6 @@ public class VcControllerServiceImpl {
     }
     public void submitJob(JobOwner jobOwner){
 
-            int entryNumber = 1;
 //
 //            try {
 //                BufferedReader reader = new BufferedReader(new FileReader("src/job/repo/Data.txt"));
@@ -52,13 +51,11 @@ public class VcControllerServiceImpl {
                 BufferedWriter writer = new BufferedWriter(new FileWriter("src/vccontroller/repo/JobData.txt", true));
 
                 writer.write("\n");
-                writer.write("Data entry " + entryNumber + ":");
-                writer.write("\n");
                 writer.write("Timestamp: " + timestamp);
                 writer.write("\nJob Name: " + jobOwner.getJobOwnerName());
-                writer.write("\nJob Deadline: " + jobOwner.getJobDeadline());
-                writer.write("\nDuration: " + jobOwner.getApproximateJobDuration());
-                writer.write("\nJob Completion Time: " + jobOwner.getJobDeadline());
+                writer.write("\nDuration: " + jobOwner.getDuration());
+                writer.write("\nJob Completion Time: " + jobOwner.getCompletionTime());
+                writer.write("\nJob Deadline: " + jobOwner.getJobDeadline() );
                 writer.write("\nRequirements: " + jobOwner.getRequirements());
 
                 writer.write("\n");
@@ -67,6 +64,14 @@ public class VcControllerServiceImpl {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
+        try {
+            int completionTime = jobOwner.getCompletionTime();
+            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("src/vccontroller/repo/Data.txt"));
+            bufferedWriter.write(String.valueOf(completionTime));
+            bufferedWriter.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
 
 

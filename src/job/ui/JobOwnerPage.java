@@ -296,7 +296,8 @@ public class JobOwnerPage extends JFrame {
 
             JobOwner job = new JobOwner();
             job.setJobOwnerName(enteredName);
-            job.setApproximateJobDuration(computedDurationHours + " hours");
+            job.setDuration(computedDurationHours);
+            job.setCompletionTime(estimatedCompletionRun );
             job.setJobDeadline(enteredDeadline);
             job.setRequirements(this.enteredReqs);
 
