@@ -7,6 +7,7 @@ import java.io.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Year;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -158,61 +159,78 @@ public class VehicleOwnerServiceImpl{
         VehicleInventory userInventory = owner.getInventory();
         try{
               //Creates a file based on the user's email address
+              BufferedWriter writer;
               if(owner.getFilename().isEmpty()){
-                owner.setFilename("scr/vehicle/repo/" + owner.getEmail() + "_VehicleInfo.txt");
+                owner.setFilename("src/vehicle/repo/" + owner.getEmail() + "_VehicleInfo.txt");
               }
-              String filename = owner.getFilename();
-            BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
-            if(userInventory.isEmpty() == false){
-                try {
-                    //Confirms who owns the vehicle information
-                    writer.write("Username: " + owner.getUsername());
-                    writer.write("Email: " + owner.getEmail());
-                    writer.write("Vehicles Registered:" + owner.getNumOfVehicles());
-                    LocalDateTime fileTimestamp = LocalDateTime.now();
-                    writer.write("Time of File Created: " + fileTimestamp.toString());
-                    
-                    int entryNumber = 1;
-                    for(Vehicle vehicles: userInventory.sortByEntryDate()){
-                        writer.write("\n");
-                        writer.write("Vehicle Entry: " + entryNumber);
-                        writer.write("Vehicle License: " + vehicles.getLicensePlate());
-                        writer.write("Vehicle Model: " + vehicles.getModel());
-                        writer.write("Vehicle Make: " + vehicles.getMake());
-                        writer.write("Vehicle Manufacture Year: " + vehicles.getYear());
-                        writer.write("Vehicle Computing Power: " + vehicles.getComputingPower());
-                        writer.write("Vehicle Arrival Date: " + vehicles.getArriveDate());
-                        writer.write("Vehicle Departure Date: " + vehicles.getDepartDate());
-                        writer.write("Vehicle Residency: " + vehicles.getResidency());
-                        writer.write("Vehicle Entry Date: " + vehicles.getTimestamp());
-                        writer.write("Recent Vehicle Data Modified Date:" + vehicles.getLastModified());
-                        entryNumber++;
-                    }
-                    writer.write("\n End of File \n");
-                    writer.write("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-                } catch (IOException e) {
-                    System.err.println("System Failed to Load Vehicle Info to file.");
-                    e.printStackTrace();
+                String filename = owner.getFilename();
+                File file = new File(filename);
+                if(file.createNewFile()){
+                    System.out.println("File: " + filename + " was Created!");  
                 }
-            }
+                
+
+                writer = new BufferedWriter(new FileWriter(filename));
+                if(userInventory.isEmpty() == false){
+                    try {
+                        //Confirms who owns the vehicle information
+                        writer.write("Username: " + owner.getUsername() + "\n");
+                        writer.write("Email: " + owner.getEmail() + "\n");
+                        writer.write("Vehicles Registered:" + owner.getNumOfVehicles() + "\n");
+                        LocalDateTime fileTimestamp = LocalDateTime.now();
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                        writer.write("Time of File Created: " + fileTimestamp.format(formatter) + "\n\n");
+                        
+
+                        int entryNumber = 1;
+                        for(Vehicle vehicles: userInventory.sortByEntryDate()){
+                            writer.write("\n");
+                            writer.write("Vehicle Entry: " + entryNumber + "\n");
+                            writer.write("Vehicle License: " + vehicles.getLicensePlate() + "\n");
+                            writer.write("Vehicle Model: " + vehicles.getModel() + "\n");
+                            writer.write("Vehicle Make: " + vehicles.getMake() + "\n");
+                            writer.write("Vehicle Manufacture Year: " + vehicles.getYear() + "\n");
+                            writer.write("Vehicle Computing Power: " + vehicles.getComputingPower() + "\n");
+                            writer.write("Vehicle Arrival Date: " + vehicles.getArriveDate() + "\n");
+                            writer.write("Vehicle Departure Date: " + vehicles.getDepartDate() + "\n");
+                            writer.write("Vehicle Residency: " + vehicles.getResidency() + "\n");
+                            writer.write("Vehicle Entry Date: " + vehicles.getTimestamp().format(formatter) + "\n");
+                            writer.write("Recent Vehicle Data Modified Date:" + vehicles.getLastModified().format(formatter) + "\n");
+                            entryNumber++;
+                        }
+                        writer.write("\n End of File \n");
+                        writer.write("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                    } catch (IOException e) {
+                        System.err.println("System Failed to Load Vehicle Info to file.");
+                        e.printStackTrace();
+                    }
+                }
             writer.close();
         }
         catch(IOException e){
-            System.err.println("Problem Occured When Writing File \n" + e.getCause().toString());
+            System.err.println("Problem Occured When Writing File \n");
+            e.printStackTrace();
         }
     }
 
     public static VehicleOwner loadOwner(User user){
         try{
-            String filename = "scr/vehicle/repo/" + user.getEmail() + "_VehicleInfo.txt";
-            BufferedReader reader = new BufferedReader(new FileReader(filename));
-            reader.readLine();
-            reader.readLine();
-            String vehicleNum = reader.readLine().substring(reader.readLine().indexOf(":") + 1).trim();
-            int numOfVehicles = Integer.parseInt(vehicleNum);
+            String filename = "src/vehicle/repo/" + user.getEmail() + "_VehicleInfo.txt";
             VehicleOwner owner = new VehicleOwner();
-            owner.setNumOfVehicles(numOfVehicles);
             owner.setFilename(filename);
+            File file = new File(filename);
+            if(!file.exists()){
+                return owner;
+            }
+            BufferedReader reader = new BufferedReader(new FileReader(filename));
+            System.out.println("File Successfully Read.");
+            reader.readLine();
+            reader.readLine();
+            String vehicleNum = reader.readLine().substring(reader.readLine().indexOf(": ") + 1).trim();
+            int numOfVehicles = Integer.parseInt(vehicleNum);
+            
+            owner.setNumOfVehicles(numOfVehicles);
+            
             
             reader.close();
             return owner;
@@ -226,15 +244,23 @@ public class VehicleOwnerServiceImpl{
     public static VehicleOwner loadVehicles(VehicleOwner owner){
         try{
             String filename = owner.getFilename();
+            File file = new File(filename);
+            if(!file.exists()){
+                return owner;
+            }
             BufferedReader reader = new BufferedReader(new FileReader(filename));
             
             //Skips to Vehicle Information
-            for(int i = 0; i > 8; i++)reader.readLine();
-
+            for(int i = 0; i < 6; i++){
+                reader.readLine();
+            }
+            
+            
             //Reads the Vehicle Information
             Queue<String> vehicleCreator = new LinkedList<String>(); // Stores values for single execution in builder
             String vehicleInfo;
-            while((vehicleInfo = reader.readLine().substring(reader.readLine().indexOf(":") + 1).trim()) != null){
+            while((vehicleInfo = reader.readLine()) != null){
+                vehicleInfo = vehicleInfo.substring(vehicleInfo.indexOf(":") + 1).trim();
                 vehicleCreator.add(vehicleInfo);
 
                 //Limit set based on the number of variables the vehicle has (excludes vehicle owner id)
