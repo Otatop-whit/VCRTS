@@ -24,11 +24,12 @@ public class vehicle_ui {
     private static final Font TITLE_FONT = new Font("SansSerif", Font.BOLD, 22);
     private static final Font BUTTON_FONT = new Font("SansSerif", Font.BOLD, 16);
     private static final Font LABEL_FONT = new Font("SansSerif", Font.PLAIN, 14);
-
+    User user = User.getInstance();
+    VehicleOwner vehicleOwner = VehicleOwnerServiceImpl.loadOwner(user);
+    
     public vehicle_ui(){
-        User user = User.getInstance();
-        final VehicleOwner vehicleOwner = VehicleOwnerServiceImpl.loadOwner(user);
-        VehicleOwnerServiceImpl.loadVehicles(vehicleOwner);
+        vehicleOwner = VehicleOwnerServiceImpl.loadVehicles(vehicleOwner);
+
         JFrame window = new JFrame("VCRTS — Vehicle Owner Portal");
         window.setSize(720, 480);
         window.setLocationRelativeTo(null);
@@ -175,6 +176,7 @@ public class vehicle_ui {
                     String timestamp = getCurrentTimestamp();
                     System.out.println("[" + timestamp + "] Vehicle registered: " + licensePlate.getText());
                     vehicleOwner.createVehicle(licensePlate, model, make, year, computingPower, arrivalDate, departureDate, residency);
+                    vehicleOwner.storeVehicle();
                     JOptionPane.showMessageDialog(null, 
                         "Vehicle registered successfully!\nTimestamp: " + timestamp, 
                         "Success", JOptionPane.INFORMATION_MESSAGE);
@@ -312,19 +314,19 @@ public class vehicle_ui {
         return now.format(formatter);
     }
     
-    static class ViewVehicleInfo extends JFrame{
+    public class ViewVehicleInfo extends JFrame{
         private JTextArea area = new JTextArea();
         ViewVehicleInfo(){
             setTitle("Vehicle Information");
             setSize(650, 500);
             setLocationRelativeTo(null);
             add(new JScrollPane(area));
-            loadFile();
+            loadFile(vehicleOwner);
         }
 
-        private void loadFile(){
+        private void loadFile(VehicleOwner vehicleOwner){
             try{
-                byte[] data = Files.readAllBytes(Paths.get("src/vehicle/repo/VehicleData.txt"));
+                byte[] data = Files.readAllBytes(Paths.get(vehicleOwner.getFilename()));
                 area.setText(new String(data));
                 area.setVisible(true);
             } catch(java.io.IOException e){
