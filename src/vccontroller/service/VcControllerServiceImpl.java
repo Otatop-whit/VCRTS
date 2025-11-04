@@ -52,8 +52,10 @@ public class VcControllerServiceImpl {
 
                 writer.write("\n");
                 writer.write("Timestamp: " + timestamp);
+                writer.write("\nJob Name: " + jobOwner.getJobOwnerName());
                 writer.write("\nDuration: " + jobOwner.getDuration());
-                writer.write("\nJobCompletionTime: " + jobOwner.getCompletionTime());
+                writer.write("\nJob Completion Time: " + jobOwner.getCompletionTime());
+                writer.write("\nJob Deadline: " + jobOwner.getJobDeadline() );
                 writer.write("\nRequirements: " + jobOwner.getRequirements());
 
                 writer.write("\n");
@@ -62,15 +64,16 @@ public class VcControllerServiceImpl {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-
-
         try {
+            int completionTime = jobOwner.getCompletionTime();
             BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("src/vccontroller/repo/Data.txt"));
-            bufferedWriter.write(String.valueOf(jobOwner.getCompletionTime()));
+            bufferedWriter.write(String.valueOf(completionTime));
             bufferedWriter.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+
 
 
     }
