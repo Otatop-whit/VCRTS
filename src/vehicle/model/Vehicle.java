@@ -157,13 +157,11 @@ public class Vehicle {
             return this;
         }
         public VehicleBuilder setTimestamp(String timestamp){
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-            this.timestamp = LocalDateTime.parse(timestamp, formatter);
+            this.timestamp = LocalDateTime.parse(timestamp);
             return this;
         }
         public VehicleBuilder setLastModified(String lastModified){
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-            this.lastModified = LocalDateTime.parse(lastModified, formatter);
+            this.lastModified = LocalDateTime.parse(lastModified);
             return this;
         }
         public Vehicle build(){
