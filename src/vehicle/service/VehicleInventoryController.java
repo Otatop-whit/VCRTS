@@ -1,3 +1,4 @@
+/** 
 package vehicle.service;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -58,3 +59,4 @@ public class VehicleInventoryController {
         vehOwnServ.addVehicle(vehicleInventory);
     }
 }
+*/
