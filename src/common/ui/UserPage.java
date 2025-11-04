@@ -1,5 +1,6 @@
 package common.ui;
 
+import common.model.User;
 import job.ui.JobOwnerPage;
 import vehicle.ui.vehicle_ui;
 
@@ -7,6 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class UserPage {
+    User user = User.getInstance();
     public UserPage(){
         JFrame frame = new JFrame("VCRTS — Vehicular Cloud Real Time System");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -25,7 +27,7 @@ public class UserPage {
         frame.getContentPane().setBackground(new Color(240, 248, 255)); // light blue background
 
         JMenuBar menuBar = new JMenuBar();
-        JMenu fileMenu = new JMenu("User");
+        JMenu fileMenu = new JMenu(user.getUsername());
         JMenuItem logoutItem = new JMenuItem("Log-Out");
         fileMenu.add(logoutItem);
         menuBar.add(fileMenu); 

@@ -1,11 +1,14 @@
 package common.service;
 import common.model.Account;
+import common.model.AccountCache;
+
 import java.io.*;
 import java.util.*;
 
 	public class AccountData {
-	    private static final String FILE_NAME = "accounts.dat";
+	    private static final String FILE_NAME = "src/common/repo/AccountData.txt";
 	    private Map<String, Account> accountsCache = new HashMap<>();
+        private AccountCache accountCache = AccountCache.getInstance();
 	    
 	    public AccountData() {
 	        checkFile();
@@ -21,7 +24,10 @@ import java.util.*;
 	            while (line != null) {
 	                Account account = Account.fromFileString(line);
 	                if (account != null) {
-	                    accountsCache.put(account.getEmail().toLowerCase(), account);
+	                    //accountsCache.put(account.getEmail().toLowerCase(), account);
+
+                        accountCache.setAccount(account);
+
 	                }
 	                line = buffer.readLine();
 	            }
@@ -34,9 +40,12 @@ import java.util.*;
 	    
 	    public void writeToFile() {
 	        try (PrintWriter writer = new PrintWriter(new FileWriter(FILE_NAME, false))) {
-	            for (Account account : accountsCache.values()) {
-	                writer.println(account.toFileString());
-	            }
+                for (Account account : accountCache.getAllValues()) {
+                    writer.println(account.toFileString());
+                }
+//	            for (Account account : accountsCache.values()) {
+//	                writer.println(account.toFileString());
+//	            }
 	        } catch (IOException e) {
 	            System.err.println("Error saving accounts: " + e.getMessage());
 	        }
@@ -61,26 +70,31 @@ import java.util.*;
 	            return false;
 	        }
 	        
-	        accountsCache.put(account.getEmail().toLowerCase(), account);
+	        //accountsCache.put(account.getEmail().toLowerCase(), account);
+            accountCache.setAccount(account);
 	        writeToFile();
 	        return true;
 	    }
 	    
 	    public boolean emailExists(String email) {
-	        return accountsCache.containsKey(email.toLowerCase());
+	        //return accountsCache.containsKey(email.toLowerCase());
+            return  accountCache.emailExists(email);
+
 	    }
 	    
 	    public List<Account> getAllAccounts() {
-	        return new ArrayList<>(accountsCache.values());
+	        return new ArrayList<>(accountCache.getAllValues());//accountsCache.values()
 	    }
 	    
 	    public boolean validateLogin(String email, String password) {
-	        Account account = accountsCache.get(email.toLowerCase());
+	        //Account account = accountsCache.get(email.toLowerCase());
+            Account account = accountCache.getAccount(email);
 	        return account != null && account.getPassword().equals(password);
 	    }
 	    
 	 
 	    public int getAccountCount() {
-	        return accountsCache.size();
+	        //return accountsCache.size();
+            return accountCache.getSize();
 	    }
 	}

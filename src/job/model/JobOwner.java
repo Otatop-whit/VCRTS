@@ -5,17 +5,18 @@ import java.util.Objects;
 public class JobOwner {
     private int id;
     private String jobOwnerName;
-    private String approximateJobDuration;
-    private String jobDeadline;
+    private int duration;
+    private int completionTime;
+
     private String requirements;
 
     public JobOwner(){
     }
-    public JobOwner(int id, String jobOwnerName, String approximateJobDuration, String jobDeadline) {
+    public JobOwner(int id, String jobOwnerName, int duration, int completionTime) {
         this.id = id;
         this.jobOwnerName = jobOwnerName;
-        this.approximateJobDuration = approximateJobDuration;
-        this.jobDeadline = jobDeadline;
+        this.duration = duration;
+        this.completionTime = completionTime;
     }
 
     public int getId() {
@@ -34,20 +35,20 @@ public class JobOwner {
         this.jobOwnerName = jobOwnerName;
     }
 
-    public String getApproximateJobDuration() {
-        return approximateJobDuration;
+    public int getDuration() {
+        return duration;
     }
 
-    public void setApproximateJobDuration(String approximateJobDuration) {
-        this.approximateJobDuration = approximateJobDuration;
+    public void setDuration(int duration) {
+        this.duration = duration;
     }
 
-    public String getJobDeadline() {
-        return jobDeadline;
+    public int getCompletionTime() {
+        return completionTime;
     }
 
-    public void setJobDeadline(String jobDeadline) {
-        this.jobDeadline = jobDeadline;
+    public void setJobDeadline(int completionTime) {
+        this.completionTime = completionTime;
     }
 
     public String getRequirements() {
@@ -62,11 +63,11 @@ public class JobOwner {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         JobOwner jobOwner = (JobOwner) o;
-        return id == jobOwner.id && Objects.equals(jobOwnerName, jobOwner.jobOwnerName) && Objects.equals(approximateJobDuration, jobOwner.approximateJobDuration) && Objects.equals(jobDeadline, jobOwner.jobDeadline);
+        return id == jobOwner.id && Objects.equals(jobOwnerName, jobOwner.jobOwnerName) && Objects.equals(duration, jobOwner.duration) && Objects.equals(completionTime, jobOwner.completionTime);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, jobOwnerName, approximateJobDuration, jobDeadline);
+        return Objects.hash(id, jobOwnerName, duration, completionTime);
     }
 }

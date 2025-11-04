@@ -33,8 +33,8 @@ public class JobOwnerServiceImpl implements JobOwnerService {
                 writer.write("Timestamp: " + timestamp);
                 writer.write("\nJobOwnerID: " + jobOwner.getId());
                 writer.write("\nJobOwnerName: " + jobOwner.getJobOwnerName());
-                writer.write("\nApproximateDuration: " + jobOwner.getApproximateJobDuration());
-                writer.write("\nJobDeadline: " + jobOwner.getJobDeadline());
+                writer.write("\nDuration: " + jobOwner.getDuration());
+                writer.write("\nCompletiontime: " + jobOwner.getCompletionTime());
                 writer.write("\nRequirements: " + jobOwner.getRequirements());
 
                 writer.write("\n");
