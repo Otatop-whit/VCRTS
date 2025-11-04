@@ -1,0 +1,20 @@
+Username: test
+Email: test@vcrts.com
+Vehicles Registered:1
+Time of File Created: 2025-11-04T02:51:11.197554700
+
+
+Vehicle Entry: 1
+Vehicle License: ABCD
+Vehicle Model: F-150
+Vehicle Make: Ford
+Vehicle Manufacture Year: 202
+Vehicle Computing Power: High
+Vehicle Arrival Date: 2025-11-06
+Vehicle Departure Date: 2025-11-08
+Vehicle Residency: New York
+Vehicle Entry Date: 2025-11-03 23:39:47
+Recent Vehicle Data Modified Date:2025-11-03 23:39:47
+
+ End of File 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
