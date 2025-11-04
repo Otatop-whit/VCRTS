@@ -1,5 +1,6 @@
 package job.service;
 
+import common.model.User;
 import job.model.JobOwner;
 
 import java.io.*;
@@ -10,6 +11,7 @@ import java.time.format.DateTimeFormatter;
 
 public class JobOwnerServiceImpl implements JobOwnerService {
     private int entryNumber;
+    User user = User.getInstance();
 
         public void addJobOwner(JobOwner jobOwner) {
 
@@ -25,14 +27,13 @@ public class JobOwnerServiceImpl implements JobOwnerService {
 
             try {
 
-                BufferedWriter writer = new BufferedWriter(new FileWriter("src/job/repo/JobOwnerData.txt", true));
+                BufferedWriter writer = new BufferedWriter(new FileWriter("src/job/repo/"+user.getEmail()+".txt", true));
 
                 writer.write("\n");
                 writer.write("Data entry " + entryNumber + ":");
                 writer.write("\n");
                 writer.write("Timestamp: " + timestamp);
-                writer.write("\nJobOwnerID: " + jobOwner.getId());
-                writer.write("\nJobOwnerName: " + jobOwner.getJobOwnerName());
+                writer.write("\nJobName: " + jobOwner.getJobOwnerName());
                 writer.write("\nDuration: " + jobOwner.getDuration());
                 writer.write("\nCompletiontime: " + jobOwner.getCompletionTime());
                 writer.write("\nRequirements: " + jobOwner.getRequirements());

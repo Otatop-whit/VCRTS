@@ -1,6 +1,9 @@
 package job.ui;
 
+import common.model.User;
+import common.service.JobOwnerService;
 import job.model.JobOwner;
+import job.service.JobOwnerServiceImpl;
 import vccontroller.model.JobInfo;
 import vccontroller.model.JobReq;
 import vccontroller.service.VcControllerServiceImpl;
@@ -27,7 +30,6 @@ public class JobOwnerPage extends JFrame {
     private static final Font buttonfont = new Font("SansSerif", Font.BOLD, 18);
     private static final Font labelfont = new Font("SansSerif", Font.PLAIN, 16);
     private static final Dimension buttonsize = new Dimension(220, 56);
-    
     //Job Owner Dashboard Intro Window
     public JobOwnerPage()
     {
@@ -344,6 +346,8 @@ public class JobOwnerPage extends JFrame {
 
             submit.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent event) {
+                    JobOwnerServiceImpl jobOwnerService = new JobOwnerServiceImpl();
+                    jobOwnerService.addJobOwner(job);
                     controller.submitJob(job);
                     JOptionPane.showMessageDialog(EstimateJobFrame.this, "Job Successfully Submitted!");
                 }
@@ -369,7 +373,9 @@ public class JobOwnerPage extends JFrame {
 
         private void loadFile() {
             try {
-                byte[] data = Files.readAllBytes(Paths.get("src/job/repo/JobOwnerData.txt"));
+
+                User user = User.getInstance();
+                byte[] data = Files.readAllBytes(Paths.get("src/job/repo/"+user.getEmail()+".txt"));
                 area.setText(new String(data));
             } catch (java.io.IOException e) {
                 area.setText("");
