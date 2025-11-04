@@ -1,6 +1,5 @@
 package vehicle.service;
 
-
 import vehicle.model.VehicleOwner;
 import vehicle.model.VehicleInventory;
 import vehicle.model.Vehicle;
@@ -9,16 +8,16 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Year;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import common.model.Role;
+
+import common.model.User;
 
 
 
-public class VehicleOwnerServiceImpl implements VehicleOwnerService{
+public class VehicleOwnerServiceImpl{
+     /** OLD Code:
     private int entryNumber;
     private int vehicleEntryNumber = 0;
 
@@ -40,7 +39,7 @@ public class VehicleOwnerServiceImpl implements VehicleOwnerService{
             writer.write("\n");
             writer.write("Vehicle Data Entry " + entryNumber + ":");
             writer.write("\n");
-            writer.write("\nVehicleOwnerID: " + vehicleOwner.getID());
+            writer.write("\nVehicleOwnerID: " + vehicleOwner.getEmail());
             writer.write("\nVehicleOwnerName: " + vehicleOwner.getUsername());
             writer.write("\nNumberOfVehicles: " + vehicleOwner.getNumOfVehicles());
             writer.write("\n");
@@ -85,7 +84,7 @@ public class VehicleOwnerServiceImpl implements VehicleOwnerService{
                     writer.write("VehicleArrivalDate: " + vehicles.getArriveDate() + "\n");
                     writer.write("VehicleDepartureDate: " + vehicles.getDepartDate() + "\n");
                     writer.write("Residency: " + vehicles.getResidency() + "\n");
-                    writer.write("VehicleOwnerID Assigned: " + vehicles.getVehicleOwnerID() + "\n");
+                    writer.write("VehicleOwnerID Assigned: " + vehicles.getVehicleOwnerEmail() + "\n");
                 }
                 writer.write("\n");
                 writer.write("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
@@ -126,8 +125,9 @@ public class VehicleOwnerServiceImpl implements VehicleOwnerService{
                     String arrivalDate = vehicleCreator.get(4).trim();
                     String departureDate = vehicleCreator.get(5).trim();
                     String residency = vehicleCreator.get(6).trim();
-                    int vehicleOwnerId = Integer.parseInt(vehicleCreator.get(7).trim());
-                    vehicle = new Vehicle.VehicleBuilder().setVehicleOwnerID(vehicleOwnerId).setLicensePlate(licensePlate)
+                    String vehicleOwnerEmail = vehicleCreator.get(7).trim();
+
+                    vehicle = new Vehicle.VehicleBuilder().setVehicleOwnerEmail(vehicleOwnerEmail).setLicensePlate(licensePlate)
                     .setVehicleModel(model).setVehicleMake(make).setVehicleYear(year).setResidency(residency).build();
                     if(!arrivalDate.contains("null")){
                         LocalDate arrDate = LocalDate.parse(arrivalDate);
@@ -150,7 +150,10 @@ public class VehicleOwnerServiceImpl implements VehicleOwnerService{
         }
         return inventory;  
     }
-  
+    
+    */
+    
+    //New File Writer Code
     public static void writeFile(VehicleOwner owner){
         VehicleInventory userInventory = owner.getInventory();
         try{
@@ -163,10 +166,8 @@ public class VehicleOwnerServiceImpl implements VehicleOwnerService{
             if(userInventory.isEmpty() == false){
                 try {
                     //Confirms who owns the vehicle information
-                    writer.write("File Owner ID: " + owner.getID());
                     writer.write("Username: " + owner.getUsername());
                     writer.write("Email: " + owner.getEmail());
-                    writer.write("Name: " + owner.getName());
                     writer.write("Vehicles Registered:" + owner.getNumOfVehicles());
                     LocalDateTime fileTimestamp = LocalDateTime.now();
                     writer.write("Time of File Created: " + fileTimestamp.toString());
@@ -201,22 +202,19 @@ public class VehicleOwnerServiceImpl implements VehicleOwnerService{
         }
     }
 
-    public VehicleOwner loadOwner(String emailString){
+    public static VehicleOwner loadOwner(User user){
         try{
-            String filename = "scr/vehicle/repo/" + emailString + "_VehicleInfo.txt";
+            String filename = "scr/vehicle/repo/" + user.getEmail() + "_VehicleInfo.txt";
             BufferedReader reader = new BufferedReader(new FileReader(filename));
-            String [] vehOwnerInfo = new String[5];
-            for(int i = 0; i == 4; i++){vehOwnerInfo[i] = reader.readLine().substring(reader.readLine().indexOf(":") + 1).trim();} //Avoids inserting the trim everytime
-            int id = Integer.parseInt(vehOwnerInfo[0]);
-            String username = vehOwnerInfo[1];
-            String email = vehOwnerInfo[2];
-            String name = vehOwnerInfo[3];
-            int numOfVehicles = Integer.parseInt(vehOwnerInfo[4]);
-            Role role = Role.VehicleOwner;
-            
-            VehicleOwner owner = new VehicleOwner(id, username, email, name, role);
+            reader.readLine();
+            reader.readLine();
+            String vehicleNum = reader.readLine().substring(reader.readLine().indexOf(":") + 1).trim();
+            int numOfVehicles = Integer.parseInt(vehicleNum);
+            VehicleOwner owner = new VehicleOwner();
             owner.setNumOfVehicles(numOfVehicles);
             owner.setFilename(filename);
+            
+            reader.close();
             return owner;
         }catch(Exception e){
             System.err.println("File failed to load Vehicle Owner information.");
@@ -225,7 +223,7 @@ public class VehicleOwnerServiceImpl implements VehicleOwnerService{
         }
     }
 
-    public VehicleOwner readFile(VehicleOwner owner){
+    public static VehicleOwner loadVehicles(VehicleOwner owner){
         try{
             String filename = owner.getFilename();
             BufferedReader reader = new BufferedReader(new FileReader(filename));
@@ -241,7 +239,7 @@ public class VehicleOwnerServiceImpl implements VehicleOwnerService{
 
                 //Limit set based on the number of variables the vehicle has (excludes vehicle owner id)
                 if(vehicleCreator.size() == 10){
-                    int vehicleOwnerId = owner.getID();
+                    String vehicleOwnerEmail = owner.getEmail();
                     //Empties out the queue
                     String licensePlate = vehicleCreator.poll();
                     String model = vehicleCreator.poll();
@@ -254,7 +252,7 @@ public class VehicleOwnerServiceImpl implements VehicleOwnerService{
                     String timestamp = vehicleCreator.poll();
                     String lastModified = vehicleCreator.poll();
                     
-                    Vehicle vehicle = new Vehicle.VehicleBuilder().setVehicleOwnerID(vehicleOwnerId).setLicensePlate(licensePlate)
+                    Vehicle vehicle = new Vehicle.VehicleBuilder().setVehicleOwnerEmail(vehicleOwnerEmail).setLicensePlate(licensePlate)
                     .setVehicleModel(model).setVehicleMake(make).setVehicleYear(year).setComputingPower(computingPower)
                     .setArrivalDate(arrivalDate).setDepatureDate(departureDate).setResidency(residency).setTimestamp(timestamp)
                     .setLastModified(lastModified).build();

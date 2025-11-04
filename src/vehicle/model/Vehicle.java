@@ -7,7 +7,7 @@ import java.util.Objects;
 
 public class Vehicle {
     //Required Vehicle Information
-    private final int vehicleOwnerID;
+    private String vehicleOwnerEmail;
     private String licensePlate;
     private String vehicleModel;
     private String vehicleMake;
@@ -20,7 +20,7 @@ public class Vehicle {
     private LocalDateTime lastModified; // Records if data was changed
 
     public Vehicle(VehicleBuilder builder){
-        this.vehicleOwnerID = builder.vehicleOwnerID;
+        this.vehicleOwnerEmail = builder.vehicleOwnerEmail;
         this.licensePlate = builder.licensePlate;
         this.vehicleModel = builder.vehicleModel;
         this.vehicleYear = builder.vehicleYear;
@@ -55,8 +55,8 @@ public class Vehicle {
     public String getResidency(){
         return residency;
     }
-    public int getVehicleOwnerID(){
-        return vehicleOwnerID;
+    public String getVehicleOwnerEmail(){
+        return vehicleOwnerEmail;
     }
     public String getComputingPower(){
         return computingPower;
@@ -69,9 +69,13 @@ public class Vehicle {
     }
 
     //Allows for users to fix any errors/typos
+    public void setVehicleOwnerEmail(String email){
+        vehicleOwnerEmail = email;
+        lastModified = LocalDateTime.now();
+    }
     public void setLicensePlate(String plateNumber){
         licensePlate = plateNumber;
-        lastModified = LocalDateTime.now();
+        
     }
     public void setVehicleModel(String model){
         vehicleModel = model;
@@ -102,8 +106,9 @@ public class Vehicle {
         lastModified = LocalDateTime.now();
     }
 
+    //Created builder to allow null values
     public static class VehicleBuilder{
-        private int vehicleOwnerID;
+        private String vehicleOwnerEmail;
         private String licensePlate;
         private String vehicleModel;
         private String vehicleMake;
@@ -115,8 +120,8 @@ public class Vehicle {
         private LocalDateTime timestamp;
         private LocalDateTime lastModified;
 
-        public VehicleBuilder setVehicleOwnerID(int ownerID){
-            this.vehicleOwnerID = ownerID;
+        public VehicleBuilder setVehicleOwnerEmail(String email){
+            this.vehicleOwnerEmail = email;
             return this;
         }
         public VehicleBuilder setLicensePlate(String plateNumber){
@@ -172,7 +177,7 @@ public class Vehicle {
     public boolean equals(Object o){
         if (o == null || getClass() != o.getClass()) return false;
         Vehicle vehicle = (Vehicle) o;
-        return vehicleOwnerID == vehicle.getVehicleOwnerID() && 
+        return vehicleOwnerEmail == vehicle.getVehicleOwnerEmail() && 
         Objects.equals(licensePlate, vehicle.licensePlate) && 
         Objects.equals(vehicleModel, vehicle.vehicleModel) && 
         Objects.equals(vehicleMake, vehicle.vehicleMake) &&
@@ -186,6 +191,6 @@ public class Vehicle {
 
     @Override
     public int hashCode(){
-        return Objects.hash(vehicleOwnerID, licensePlate, vehicleModel, vehicleMake, vehicleYear, arrivalDate, departureDate, residency, computingPower,timestamp);
+        return Objects.hash(vehicleOwnerEmail, licensePlate, vehicleModel, vehicleMake, vehicleYear, arrivalDate, departureDate, residency, computingPower,timestamp);
     }
 }

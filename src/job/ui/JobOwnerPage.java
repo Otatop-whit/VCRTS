@@ -34,6 +34,28 @@ public class JobOwnerPage extends JFrame {
         setSize(720,480);
         setLocationRelativeTo(null);
 
+    
+        // === Back Arrow in Menu Bar 
+        JButton backBtn = new JButton("⟵");
+        backBtn.setFont(new Font("SansSerif", Font.BOLD, 16));
+        backBtn.setFocusPainted(false);
+        backBtn.setBorder(BorderFactory.createEmptyBorder(2, 10, 2, 10));
+        backBtn.setContentAreaFilled(false);
+        backBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        // When clicked, go back to UserPage
+        backBtn.addActionListener(e -> {
+            dispose(); // closes current JobOwnerPage frame
+            new common.ui.UserPage(); // navigates back to UserPage
+        });
+
+        // Add to top menu or a small bar
+        JMenuBar menuBar = new JMenuBar();
+        menuBar.add(backBtn);
+        menuBar.add(Box.createHorizontalStrut(8)); 
+        setJMenuBar(menuBar);
+
+
         JPanel root = new JPanel();
         root.setLayout(new BoxLayout(root, BoxLayout.Y_AXIS));
         root.setBackground(background);
@@ -138,6 +160,27 @@ public class JobOwnerPage extends JFrame {
             setTitle("Create New Job");
             setSize(720, 480);
             setLocationRelativeTo(null);
+
+         // === Back Arrow in Menu Bar 
+        JButton backBtn = new JButton("⟵");
+        backBtn.setFont(new Font("SansSerif", Font.BOLD, 16));
+        backBtn.setFocusPainted(false);
+        backBtn.setBorder(BorderFactory.createEmptyBorder(2, 10, 2, 10));
+        backBtn.setContentAreaFilled(false);
+        backBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        // When clicked, go back to JobOwnerPage
+        backBtn.addActionListener(e -> {
+            dispose(); // closes SubmitJobFrame
+            new JobOwnerPage().setVisible(true); // returns to Job Owner Dashboard
+        });
+
+        // Add to top menu or a small bar
+        JMenuBar menuBar = new JMenuBar();
+        menuBar.add(backBtn);
+        menuBar.add(Box.createHorizontalStrut(8)); 
+        setJMenuBar(menuBar);
+
 
         JLabel title = new JLabel("Create New Job");
         title.setFont(titlefont);

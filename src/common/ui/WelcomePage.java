@@ -1,7 +1,11 @@
 package common.ui;
 
+import common.model.AccountCache;
+import common.model.User;
+
 import javax.swing.*;
 import java.awt.*;
+import common.service.AccountService;
 
 public class WelcomePage {
     private JFrame frame;
@@ -12,7 +16,7 @@ public class WelcomePage {
     private Timer fadeTimer;
     private float panelOpacity = 0f;
     private CreateAccount createPanel;
-
+    private AccountCache accountCache = AccountCache.getInstance();
 
     private JPanel buttonPanel;
 
@@ -264,13 +268,13 @@ public class WelcomePage {
 
     //  Login logic 
     private void doLogin() {
-        String email = emailField.getText().trim();
+        String email = emailField.getText().trim().toLowerCase();
         String pass = new String(passwordField.getPassword());
-
-        if (email.equalsIgnoreCase("test@vcrts.com") && pass.equals("test")) {
+        if (accountCache.emailExists(email) && accountCache.getAccount(email).getPassword().equals(pass)){
+        //if (email.equalsIgnoreCase("test@vcrts.com") && pass.equals("test")) {
             loginMsg.setForeground(new Color(20, 120, 60));
             loginMsg.setText("Login successful!");
-
+            User.getInstance().login(email, accountCache.getAccount(email).getName());
             JOptionPane.showMessageDialog(
                     frame,
                     "✅ Login successful! Welcome to VCRTS.",
@@ -289,6 +293,8 @@ public class WelcomePage {
             loginMsg.setForeground(new Color(20, 120, 60));
             loginMsg.setText("Login successful!");
 
+            String email = "test@vcrts.com";
+            User.getInstance().login(email, accountCache.getAccount(email).getName());
             JOptionPane.showMessageDialog(
                     frame,
                     "✅ Login successful! Welcome to VCRTS.",

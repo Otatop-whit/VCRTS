@@ -1,53 +1,36 @@
 package vehicle.model;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.Year;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.InputMismatchException;
-import java.util.LinkedList;
 import java.util.Objects;
-import java.util.Queue;
-
 import javax.swing.JTextField;
-
-import common.model.Role;
 import common.model.User;
 import vehicle.service.VehicleOwnerServiceImpl;
 
 
-public class VehicleOwner extends User {
+public class VehicleOwner {
     private int numOfVehicles;
     private VehicleInventory userInventory;
     private Vehicle vehicle;
     private String filename; //Vehicle Owner saves their direct File Link
+    private final User user = User.getInstance();
+    String email;
+    String username;
     
-    public VehicleOwner(int id, String username, String email, String name, Role role){
-        super(id, username, email, name, role);
+    public VehicleOwner(){
+        email = user.getEmail();
+        username = user.getUsername();
         this.userInventory = new VehicleInventory();
     }
     //Getters
-    public int getID(){
-        return id;
-    }
     public String getUsername(){
         return username;
     }
     public String getEmail(){
         return email;
     }
-    public String getName(){
-        return name;
-    }
-    public Role getRole(){
-        return role;
-    }
+
+
     public int getNumOfVehicles(){
         return numOfVehicles;
     }
@@ -84,7 +67,7 @@ public class VehicleOwner extends User {
             String departDate = departureDate.getText().trim();
             String resident = residency.getText().trim();
 
-            this.vehicle = new Vehicle.VehicleBuilder().setVehicleOwnerID(id).setLicensePlate(vehiclePlate)
+            this.vehicle = new Vehicle.VehicleBuilder().setVehicleOwnerEmail(email).setLicensePlate(vehiclePlate)
             .setVehicleModel(vehicleModel).setVehicleMake(vehicleMake).setVehicleYear(vehicleYear)
             .setComputingPower(computePower).setArrivalDate(arrivalDate).setDepatureDate(departDate)
             .setResidency(resident).build();
@@ -127,16 +110,16 @@ public class VehicleOwner extends User {
         System.out.println("Departure Date: " + depDate);
         VehicleOwnerServiceImpl.writeFile(this);
     }
-    
+
     @Override
     public boolean equals(Object o){
         if (o == null || getClass() != o.getClass()) return false;
         VehicleOwner vehicleOwner = (VehicleOwner) o;
-        return id == vehicleOwner.id && Objects.equals(username, vehicleOwner.username) && Objects.equals(numOfVehicles, vehicleOwner.numOfVehicles);
+        return Objects.equals(email, vehicleOwner.email) && Objects.equals(username, vehicleOwner.username) && Objects.equals(numOfVehicles, vehicleOwner.numOfVehicles);
     }
 
     @Override
     public int hashCode(){
-        return Objects.hash(id, username, numOfVehicles);
+        return Objects.hash(email, username, numOfVehicles);
     }
 }
