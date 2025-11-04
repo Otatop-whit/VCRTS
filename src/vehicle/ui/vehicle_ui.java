@@ -1,7 +1,9 @@
 package vehicle.ui;
 import javax.swing.*;
 
-import vehicle.service.VehicleInventoryController;
+import common.model.User;
+import vehicle.model.VehicleOwner;
+import vehicle.service.VehicleOwnerServiceImpl;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,7 +26,9 @@ public class vehicle_ui {
     private static final Font LABEL_FONT = new Font("SansSerif", Font.PLAIN, 14);
 
     public vehicle_ui(){
-        VehicleInventoryController inventoryController =  new VehicleInventoryController();
+        User user = User.getInstance();
+        final VehicleOwner vehicleOwner = VehicleOwnerServiceImpl.loadOwner(user);
+        VehicleOwnerServiceImpl.loadVehicles(vehicleOwner);
         JFrame window = new JFrame("VCRTS — Vehicle Owner Portal");
         window.setSize(720, 480);
         window.setLocationRelativeTo(null);
@@ -170,7 +174,7 @@ public class vehicle_ui {
                      
                     String timestamp = getCurrentTimestamp();
                     System.out.println("[" + timestamp + "] Vehicle registered: " + licensePlate.getText());
-                    inventoryController.addVehicle(licensePlate, model, make, year, residency);
+                    vehicleOwner.createVehicle(licensePlate, model, make, year, computingPower, arrivalDate, departureDate, residency);
                     JOptionPane.showMessageDialog(null, 
                         "Vehicle registered successfully!\nTimestamp: " + timestamp, 
                         "Success", JOptionPane.INFORMATION_MESSAGE);
@@ -227,7 +231,7 @@ public class vehicle_ui {
 
                     String timestamp = getCurrentTimestamp();
                     System.out.println("[" + timestamp + "] Time selection set for license: " + license);
-                    inventoryController.setAvailability(license, ArrivalTime, DepartureTime);
+                    vehicleOwner.setAvailability(license, ArrivalTime, DepartureTime);
                     JOptionPane.showMessageDialog(null, 
                         "Time selection saved successfully!\nTimestamp: " + timestamp, 
                         "Success", JOptionPane.INFORMATION_MESSAGE);
