@@ -90,12 +90,15 @@ public class VehicleOwner {
     //Stores Vehicle in userInventory
     public void storeVehicle(){
         userInventory.addVehicle(this.vehicle.getLicensePlate(), this.vehicle);
+        VehicleOwnerServiceImpl.writeFile(this);
+
     }
 
     //Removes the vehicle constructed from personal Vehicle Inventory
     public void removeVehicle(String licensePlate){
         userInventory.removeVehicle(licensePlate);
         numOfVehicles--;
+        VehicleOwnerServiceImpl.writeFile(this);
     }
     
     //Modifies Duration of Vehicle's Residency
