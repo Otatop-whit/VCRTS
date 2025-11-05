@@ -1,7 +1,7 @@
 package job.ui;
 
 import common.model.User;
-import common.service.JobOwnerService;
+//import common.service.JobOwnerService;
 import job.model.JobOwner;
 import job.service.JobOwnerServiceImpl;
 import vccontroller.model.JobInfo;

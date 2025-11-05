@@ -5,7 +5,7 @@ import common.model.User;
 
 import javax.swing.*;
 import java.awt.*;
-import common.service.AccountService;
+//import common.service.AccountService;
 
 public class WelcomePage {
     private JFrame frame;
