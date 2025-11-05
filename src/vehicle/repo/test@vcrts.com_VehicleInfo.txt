@@ -8,7 +8,7 @@ Vehicle Entry: 1
 Vehicle License: ABCD
 Vehicle Model: F-150
 Vehicle Make: Ford
-Vehicle Manufacture Year: 202
+Vehicle Manufacture Year: 2021
 Vehicle Computing Power: High
 Vehicle Arrival Date: 2025-11-06
 Vehicle Departure Date: 2025-11-08
