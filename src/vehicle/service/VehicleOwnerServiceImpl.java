@@ -227,9 +227,13 @@ public class VehicleOwnerServiceImpl{
             reader.readLine();
             reader.readLine();
             String vehicleNum = reader.readLine().substring(reader.readLine().indexOf(": ") + 1).trim();
-            int numOfVehicles = Integer.parseInt(vehicleNum);
+            if(!vehicleNum.isEmpty()){
+                int numOfVehicles = Integer.parseInt(vehicleNum);
+                owner.setNumOfVehicles(numOfVehicles);
+            }
+                
             
-            owner.setNumOfVehicles(numOfVehicles);
+            
             
             
             reader.close();
