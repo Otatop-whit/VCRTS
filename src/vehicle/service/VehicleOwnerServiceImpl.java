@@ -176,7 +176,7 @@ public class VehicleOwnerServiceImpl{
                         //Confirms who owns the vehicle information
                         writer.write("Username: " + owner.getUsername() + "\n");
                         writer.write("Email: " + owner.getEmail() + "\n");
-                        writer.write("Vehicles Registered:" + owner.getNumOfVehicles() + "\n");
+                        writer.write("Vehicles Registered: " + owner.getNumOfVehicles() + "\n");
                         LocalDateTime fileTimestamp = LocalDateTime.now();
                         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
                         writer.write("Time of File Created: " + fileTimestamp.format(formatter) + "\n\n");
@@ -195,7 +195,7 @@ public class VehicleOwnerServiceImpl{
                             writer.write("Vehicle Departure Date: " + vehicles.getDepartDate() + "\n");
                             writer.write("Vehicle Residency: " + vehicles.getResidency() + "\n");
                             writer.write("Vehicle Entry Date: " + vehicles.getTimestamp().format(formatter) + "\n");
-                            writer.write("Recent Vehicle Data Modified Date:" + vehicles.getLastModified().format(formatter) + "\n");
+                            writer.write("Recent Vehicle Data Modified Date: " + vehicles.getLastModified().format(formatter) + "\n");
                             entryNumber++;
                         }
                         writer.write("\n End of File \n");
@@ -251,7 +251,7 @@ public class VehicleOwnerServiceImpl{
             BufferedReader reader = new BufferedReader(new FileReader(filename));
             
             //Skips to Vehicle Information
-            for(int i = 0; i < 6; i++){
+            for(int i = 0; i < 7; i++){
                 reader.readLine();
             }
             
