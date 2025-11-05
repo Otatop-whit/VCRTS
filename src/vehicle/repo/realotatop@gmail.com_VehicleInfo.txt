@@ -1,0 +1,32 @@
+Username: Otatop
+Email: realotatop@gmail.com
+Vehicles Registered:2
+Time of File Created: 2025-11-04 22:09:04
+
+
+Vehicle Entry: 1
+Vehicle License: C12HIB
+Vehicle Model: Altima
+Vehicle Make: Nissan
+Vehicle Manufacture Year: 2019
+Vehicle Computing Power: Medium
+Vehicle Arrival Date: 2025-12-14
+Vehicle Departure Date: 2026-07-04
+Vehicle Residency: New Jersey
+Vehicle Entry Date: 2025-11-04 22:07:09
+Recent Vehicle Data Modified Date:2025-11-04 22:07:09
+
+Vehicle Entry: 2
+Vehicle License: U5A_FR33D0M
+Vehicle Model: Civic
+Vehicle Make: Honda
+Vehicle Manufacture Year: 2021
+Vehicle Computing Power: High
+Vehicle Arrival Date: 2025-12-12
+Vehicle Departure Date: 2026-03-27
+Vehicle Residency: Virginia
+Vehicle Entry Date: 2025-11-04 22:09:04
+Recent Vehicle Data Modified Date:2025-11-04 22:09:04
+
+ End of File 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
