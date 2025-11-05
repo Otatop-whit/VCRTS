@@ -277,6 +277,7 @@ public class vehicle_ui {
                 
                 if (result == JOptionPane.OK_OPTION) {
                     JOptionPane.showMessageDialog(null, "Vehicle information updated!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    vehicleOwner.setAvailability(licenseField.getText(), arrivalField, departureField);
                 }
             }
         });
