@@ -67,13 +67,13 @@ class CreateAccount extends JPanel {
         actionRow.setOpaque(false);
         JButton okBtn = new JButton("OK");
         JButton cancelBtn = new JButton("Cancel");
-        JButton viewAccountBtn = new JButton("View Account");
+    
         styleButton(okBtn, new Color(25, 140, 100), new Font("SansSerif", Font.BOLD, 13), new Dimension(100, 32));
         styleButton(cancelBtn, new Color(140, 140, 140), new Font("SansSerif", Font.BOLD, 13), new Dimension(90, 30));
-        styleButton(viewAccountBtn, new Color(35, 99, 188), new Font("SansSerif", Font.BOLD, 13), new Dimension(120, 30));
+    
         actionRow.add(okBtn);
         actionRow.add(cancelBtn);
-        actionRow.add(viewAccountBtn);
+    
         
         
 
@@ -110,9 +110,7 @@ class CreateAccount extends JPanel {
             if (listener != null) listener.onCancel();
         });
         
-        viewAccountBtn.addActionListener(e -> {
-            showAccountData();
-        });
+      
         
         // Enter submits
         passwordField.addActionListener(e -> okBtn.doClick());
