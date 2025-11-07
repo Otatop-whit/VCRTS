@@ -22,7 +22,7 @@ public class vehicle_ui {
     private static final Color BUTTON_COLOR_BLUE = new Color(35, 99, 188);
     private static final Color BUTTON_COLOR_GREEN = new Color(25, 140, 100);
     private static final Font TITLE_FONT = new Font("SansSerif", Font.BOLD, 22);
-    private static final Font BUTTON_FONT = new Font("SansSerif", Font.BOLD, 16);
+    private static final Font BUTTON_FONT = new Font("SansSerif", Font.BOLD, 12);
     private static final Font LABEL_FONT = new Font("SansSerif", Font.PLAIN, 14);
     User user = User.getInstance();
     VehicleOwner vehicleOwner = VehicleOwnerServiceImpl.loadOwner(user);
@@ -79,14 +79,18 @@ public class vehicle_ui {
         titlePanel.add(Box.createVerticalStrut(30));
         
        
-        JPanel mainPanel = new JPanel(new GridLayout(2, 2, 15, 15));
+        JPanel mainPanel = new JPanel();
         mainPanel.setBackground(BACKGROUND_COLOR);
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 50, 20, 50));
-
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(80, 50, 100, 50));
     
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setBackground(BACKGROUND_COLOR);
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
+
         JButton account_btn = new JButton("Account");
         styleButton(account_btn, BUTTON_COLOR_BLUE);
-        mainPanel.add(account_btn);
+        buttonPanel.add(account_btn);
+        buttonPanel.add(Box.createHorizontalStrut(20));
         
         account_btn.addActionListener(new ActionListener() {
             @Override
@@ -97,7 +101,8 @@ public class vehicle_ui {
 
         JButton vehicle_btn = new JButton("Vehicle info");
         styleButton(vehicle_btn, BUTTON_COLOR_GREEN);
-        mainPanel.add(vehicle_btn);
+        buttonPanel.add(vehicle_btn);
+        buttonPanel.add(Box.createHorizontalStrut(20));
         
         vehicle_btn.addActionListener(new ActionListener() {
             @Override
@@ -185,9 +190,9 @@ public class vehicle_ui {
         });
 
        
-        JButton ts_btn = new JButton("Time Selection");
+        JButton ts_btn = new JButton("Edit Time ");
         styleButton(ts_btn, BUTTON_COLOR_BLUE);
-        mainPanel.add(ts_btn);
+        buttonPanel.add(ts_btn);
       
         ts_btn.addActionListener(new ActionListener() {
             @Override
@@ -252,35 +257,10 @@ public class vehicle_ui {
             }
         });
 
-        JButton editVehicle_btn = new JButton("Edit Vehicle");
-        styleButton(editVehicle_btn, BUTTON_COLOR_GREEN);
-        mainPanel.add(editVehicle_btn);
-
-        editVehicle_btn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JPanel panel = new JPanel(new GridLayout(0, 2, 5, 5));
-                
-                JTextField licenseField = new JTextField(10);
-                JTextField arrivalField = new JTextField(10);
-                JTextField departureField = new JTextField(10);
-                
-                panel.add(new JLabel("License Plate:"));
-                panel.add(licenseField);
-                panel.add(new JLabel("Arrival Time (YYYY-MM-DD):"));
-                panel.add(arrivalField);
-                panel.add(new JLabel("Departure Time (YYYY-MM-DD):"));
-                panel.add(departureField);
-                
-                int result = JOptionPane.showConfirmDialog(null, panel, "Edit Vehicle", 
-                          JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-                
-                if (result == JOptionPane.OK_OPTION) {
-                    JOptionPane.showMessageDialog(null, "Vehicle information updated!", "Success", JOptionPane.INFORMATION_MESSAGE);
-                    vehicleOwner.setAvailability(licenseField.getText(), arrivalField, departureField);
-                }
-            }
-        });
+        mainPanel.add(buttonPanel, BorderLayout.CENTER);
+        
+            
+       
         
         // Add all panels to window
         window.add(titlePanel, BorderLayout.NORTH);
@@ -295,8 +275,10 @@ public class vehicle_ui {
         button.setBackground(baseColor);
         button.setForeground(Color.WHITE);
         button.setOpaque(true);
-        button.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));
+        button.setBorder(BorderFactory.createEmptyBorder(4, 8, 4, 8));
         button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        button.setPreferredSize(new Dimension(110, 35));
+        button.setMaximumSize(new Dimension(110, 35));
 
         button.addMouseListener(new MouseAdapter() {
             public void mouseEntered(MouseEvent evt) {
