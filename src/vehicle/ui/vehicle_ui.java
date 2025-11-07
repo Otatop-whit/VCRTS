@@ -4,6 +4,7 @@ import javax.swing.*;
 import common.model.User;
 import vehicle.model.VehicleOwner;
 import vehicle.service.VehicleOwnerServiceImpl;
+import vehicle.ui.vehicle_ui.ViewVehicleInfo;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,6 +16,9 @@ import java.time.format.DateTimeFormatter;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Date;
+import java.util.Calendar;
+
 
 public class vehicle_ui {
     private static final Color BACKGROUND_COLOR = new Color(240, 248, 255);
@@ -118,26 +122,45 @@ public class vehicle_ui {
                 }
             }
             
+            //added button for selecting arrival AND departure date
             private void registerVehicle() {
-                JTextField model = new JTextField();
-                JTextField make = new JTextField();
-                JTextField year = new JTextField();
-                JTextField computingPower = new JTextField();
-                JTextField licensePlate = new JTextField();
-                JTextField arrivalDate = new JTextField();
-                JTextField departureDate = new JTextField();
-                JTextField residency = new JTextField();
+                JTextField model = new JTextField(25);
+                JTextField make = new JTextField(25);
+                JTextField year = new JTextField(25);
+                JTextField computingPower = new JTextField(25);
+                JTextField licensePlate = new JTextField(25);
+                JTextField arrivalDate = new JTextField(25);
+                JButton arrival_btn = new JButton("📅");
+
+                JTextField departureDate = new JTextField(25);
+                JButton departure_btn = new JButton("📅");
+
+                JTextField residency = new JTextField(25);
                  
+                //added panels for each date
+                JPanel arrivalDatePanel = new JPanel(new BorderLayout());
+                arrivalDatePanel.add(arrivalDate, BorderLayout.CENTER);
+                arrivalDatePanel.add(arrival_btn, BorderLayout.EAST);
+    
+                JPanel departureDatePanel = new JPanel(new BorderLayout());
+                departureDatePanel.add(departureDate, BorderLayout.CENTER);
+                departureDatePanel.add(departure_btn, BorderLayout.EAST);
+                
+                arrival_btn.addActionListener(e -> showSimpleDateDialog(arrivalDate));
+                departure_btn.addActionListener(e -> showSimpleDateDialog(departureDate));
+
                 Object[] message = {
                     "Model: ", model,
                     "Make: ", make,
                     "Year: ", year,
                     "Computing Power: ", computingPower,
                     "LicensePlate: ", licensePlate,
-                    "Arrival Date: ", arrivalDate,
-                    "Departure Date: ",departureDate,
+                    "Arrival Date: ", arrivalDatePanel,
+                    "Departure Date: ",departureDatePanel,
                     "Residency: ", residency,
                 };
+
+            
                  
                 int registerOption = JOptionPane.showConfirmDialog(null, message, "Register New Vehicle", JOptionPane.OK_CANCEL_OPTION);
                 if(registerOption == JOptionPane.OK_OPTION){
@@ -297,6 +320,29 @@ public class vehicle_ui {
         return now.format(formatter);
     }
     
+    private void showSimpleDateDialog(JTextField targetField) {
+
+        SpinnerDateModel model = new SpinnerDateModel(new Date(), null, null, Calendar.HOUR_OF_DAY);
+        JSpinner dateSpinner = new JSpinner(model);
+
+        JSpinner.DateEditor editor = new JSpinner.DateEditor(dateSpinner, "yyyy-MM-dd HH:mm");
+        dateSpinner.setEditor(editor);
+  
+        int result = JOptionPane.showConfirmDialog(
+            null, 
+            dateSpinner, 
+            "Select Date and Time", 
+            JOptionPane.OK_CANCEL_OPTION, 
+            JOptionPane.PLAIN_MESSAGE
+    );
+    
+        if (result == JOptionPane.OK_OPTION) {
+        Date selectedDate = (Date) dateSpinner.getValue();
+        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm");
+        targetField.setText(sdf.format(selectedDate));
+        
+    }
+}
     public class ViewVehicleInfo extends JFrame{
         private JTextArea area = new JTextArea();
         ViewVehicleInfo(){
