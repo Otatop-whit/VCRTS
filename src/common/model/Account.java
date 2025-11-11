@@ -4,11 +4,13 @@ public class Account {
 	private String name;
 	private String email;
 	private String password;
+    private String role;
 	
-	public Account(String name, String email, String password) {
+	public Account(String name, String email, String password, String role) {
 		this.name = name;
 		this.email = email;
 		this.password = password;
+        this.role = role;
 		
 	}
 	public String getName() {
@@ -21,15 +23,16 @@ public class Account {
 	
 	public String getPassword() {
 		return password;
-	}	
-	
-	public String toFileString() {
+	}
+    public String getRole() {return role;}
+
+    public String toFileString() {
 		return name + "/" + email +"/" + password;
 	}
 	public static Account fromFileString(String fileString) {
-		String[]parts = fileString.split("/",3);
-		if(parts.length ==3) {
-			return new Account(parts[0],parts[1],parts[2]);
+		String[]parts = fileString.split("/",4);
+		if(parts.length ==4) {
+			return new Account(parts[0],parts[1],parts[2],parts[3]);
 		}
 		return null;
 		

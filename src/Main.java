@@ -1,5 +1,11 @@
 
+import common.service.Client;
 import common.ui.WelcomePage;
+import vccontroller.ui.ControllerPage;
+
+import java.io.IOException;
+import java.net.Socket;
+import java.util.Scanner;
 //import vccontroller.model.JobInfo;
 //import vccontroller.model.JobReq;
 //import vccontroller.service.VcControllerServiceImpl;
@@ -9,18 +15,20 @@ import common.ui.WelcomePage;
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main{
 
-    public static void main(String args[]){
-        new WelcomePage();
-        //new vehicle_ui();
-//
-//        VcControllerServiceImpl vcController = new VcControllerServiceImpl();
-//        JobInfo jobInfo = vcController.jobCalculations(JobReq.Medium);
-//        System.out.println(jobInfo.getJobDuration());
-//        System.out.println(jobInfo.getJobCompletionTime());
+    public static void main(String args[]) throws IOException {
+        //new WelcomePage();
+        new ControllerPage().setVisible(true);
 
+
+//        Scanner scanner = new Scanner(System.in);
+//        System.out.println("What is ur username");
+//        String request = scanner.nextLine();
+//        Socket socket = new Socket("localhost",1234);
+//        Client client = new Client(socket,request);
+//        client.listenForMessage();
+//        client.sendMessage();
+//
     }
 
-  //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-  // to see how IntelliJ IDEA suggests fixing it.
 
 }

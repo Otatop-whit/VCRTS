@@ -2,6 +2,7 @@ package common.ui;
 
 import common.model.AccountCache;
 import common.model.User;
+import vccontroller.ui.ControllerPage;
 
 import javax.swing.*;
 import java.awt.*;
@@ -283,7 +284,12 @@ public class WelcomePage {
             );
 
             frame.dispose();
-            new UserPage(); 
+            if(accountCache.getAccount(email).getRole().equals("client") ){
+
+                new UserPage();
+            }else{
+                //new ControllerPage();
+            }
         } else {
             loginMsg.setForeground(new Color(170, 30, 30));
             loginMsg.setText("Invalid email or password.");
@@ -303,7 +309,12 @@ public class WelcomePage {
             );
 
             frame.dispose();
+        if(accountCache.getAccount(email).getRole().equals("client") ){
+
             new UserPage();
+        }else{
+            new ControllerPage();
+        }
     }
 
     // Styling helper 

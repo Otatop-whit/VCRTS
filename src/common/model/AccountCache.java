@@ -12,7 +12,7 @@ public class AccountCache {
         String name = "test";
         String email = "test@vcrts.com";
         String pass = "test";
-        Account account = new Account(name,email,pass);
+        Account account = new Account(name,email,pass,"controller");
         accountsCache.put(email.toLowerCase(),account);
     }
 

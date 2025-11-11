@@ -94,7 +94,7 @@ class CreateAccount extends JPanel {
             if (password.length() < 6) { setError("Password must be at least 6 characters."); return; }
             
             AccountService accountService = new AccountService();
-            boolean success = accountService.createNewAccount(name, email, password);
+            boolean success = accountService.createNewAccount(name, email, password,"client");
             
             if (success) {
                 setSuccess("Account created successfully!");

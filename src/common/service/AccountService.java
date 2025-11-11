@@ -8,9 +8,9 @@ public class AccountService {
         this.accountRepo = new AccountData();
     }
     
-    public boolean createNewAccount(String name, String email, String password) {
+    public boolean createNewAccount(String name, String email, String password, String role) {
         
-        Account account = new Account(name, email, password);
+        Account account = new Account(name, email, password,role);
         return accountRepo.saveAccount(account);
     }
     

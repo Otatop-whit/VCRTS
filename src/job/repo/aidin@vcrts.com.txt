@@ -1,0 +1,25 @@
+
+Data entry 5:
+Timestamp: 2025-11-05 14:46:33
+JobName: Job1 
+Duration: 1
+Completiontime: 1
+Requirements: Low
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Data entry 6:
+Timestamp: 2025-11-05 14:48:31
+JobName: Job2
+Duration: 3
+Completiontime: 4
+Requirements: Medium
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Data entry 7:
+Timestamp: 2025-11-05 14:49:27
+JobName: Job3 
+Duration: 9
+Completiontime: 13
+Requirements: High
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
