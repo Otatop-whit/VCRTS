@@ -68,10 +68,7 @@ public class ControllerPage extends JFrame {
     setContentPane(mainPanel);
         setVisible(true);
    }
-   public static void main (String[] args){
 
-       new ControllerPage().setVisible(true);
-   }
 }
 
         
