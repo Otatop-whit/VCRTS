@@ -1,12 +1,15 @@
 package vccontroller.service;
 
+import common.ui.WelcomePage;
+import vccontroller.model.JobsCache;
+import vccontroller.ui.ControllerPage;
+
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 public class VcControllerServer {
-
     private ServerSocket serverSocket;
     public VcControllerServer(ServerSocket serverSocket) throws IOException {
         this.serverSocket = serverSocket;
@@ -38,9 +41,12 @@ public class VcControllerServer {
         }
     }
     public static void main(String[] args) throws IOException {
+        new WelcomePage();
+        JobsCache jobCache = JobsCache.getInstance();
         ServerSocket socket = new ServerSocket(1234);
         VcControllerServer server = new VcControllerServer(socket);
         server.start();
+
     }
 
 }

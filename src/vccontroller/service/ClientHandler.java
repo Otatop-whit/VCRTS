@@ -1,5 +1,9 @@
 package vccontroller.service;
 
+import common.model.Account;
+import job.model.JobOwner;
+import vccontroller.model.JobsCache;
+
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -10,6 +14,7 @@ public class ClientHandler implements Runnable{
         private BufferedReader bufferedReader;
         private BufferedWriter bufferedWriter;
         private String clientRequest;
+        private JobsCache jobCache = JobsCache.getInstance();
 
     public  ClientHandler(Socket socket){
         try{
@@ -36,8 +41,10 @@ public class ClientHandler implements Runnable{
         while (socket.isConnected()){
             try{
                 messageFromClient = bufferedReader.readLine();
+                JobOwner job = convertToJobObj(messageFromClient);
                 System.out.println(messageFromClient);
-                broadcastMessage(messageFromClient);
+                jobCache.addJob(job);
+                //broadcastMessage(messageFromClient);
             } catch (IOException e) {
                 System.out.println(e);
                 closeEverything(socket,bufferedReader,bufferedWriter);
@@ -82,6 +89,17 @@ public class ClientHandler implements Runnable{
 
             System.out.println(e);
         }
+    }
+    public JobOwner convertToJobObj(String stringJob){
+        String[]parts = stringJob.split("/",4);
+        if(parts.length ==4) {
+            int jobId =Integer.parseInt(parts[0]);
+            int jobDuration =Integer.parseInt(parts[2]);
+            int jobCompletionTime =Integer.parseInt(parts[3]);
+            return new JobOwner(jobId,parts[1],jobDuration,jobCompletionTime);
+        }
+        return null;
+
     }
 
 }

@@ -16,18 +16,19 @@ import java.util.Scanner;
 public class Main{
 
     public static void main(String args[]) throws IOException {
-        //new WelcomePage();
-        new ControllerPage().setVisible(true);
+        new WelcomePage();
+        //new ControllerPage().setVisible(true);
 
 
-//        Scanner scanner = new Scanner(System.in);
-//        System.out.println("What is ur username");
-//        String request = scanner.nextLine();
-//        Socket socket = new Socket("localhost",1234);
-//        Client client = new Client(socket,request);
-//        client.listenForMessage();
-//        client.sendMessage();
-//
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("What is ur username");
+        String request = scanner.nextLine();
+        Socket socket = new Socket("localhost",1234);
+        Client client = new Client(socket,request);
+        client.listenForMessage();
+        client.sendMessage();
+
+        //new ControllerPage().setVisible(true);
     }
 
 
