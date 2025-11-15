@@ -6,6 +6,7 @@ import vccontroller.ui.ControllerPage;
 
 import javax.swing.*;
 import java.awt.*;
+
 //import common.service.AccountService;
 
 public class WelcomePage {
@@ -76,7 +77,23 @@ public class WelcomePage {
         buttonPanel.add(loginBtn, gbc);
         buttonPanel.add(createBtn, gbc);
 
-        // Smaller login box
+        // === Controller Button 
+        JButton controllerBtn = new JButton("Controller  →");
+        controllerBtn.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        controllerBtn.setFocusPainted(false);
+        controllerBtn.setContentAreaFilled(false);
+        controllerBtn.setBorder(BorderFactory.createEmptyBorder(6, 12, 6, 12));
+        controllerBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        controllerBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        // Logic to open ControllerPage UI
+        controllerBtn.addActionListener(e -> {
+            frame.dispose();
+            new ControllerPage();
+        });
+
+
+        //  login box
         buildLoginPanel();
 
         createPanel = new CreateAccount(new CreateAccount.Listener() {
@@ -130,6 +147,7 @@ public class WelcomePage {
         root.add(buttonPanel);
         root.add(Box.createVerticalStrut(12));
         root.add(loginPanel);
+        root.add(controllerBtn);
         root.add(createPanel); 
         root.add(Box.createVerticalStrut(20));
 
