@@ -1,74 +1,630 @@
 package vccontroller.ui;
+
 import common.model.User;
 import common.ui.WelcomePage;
-import job.ui.JobOwnerPage;
-import vccontroller.model.JobsCache;
-import vehicle.ui.vehicle_ui;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+/*
+  Controller dashboard UI.
 
+  Reads job info from backend file:
+   src/vccontroller/repo/JobData.txt
+   Timestamp: ...
+   Job Name: ...
+   Duration: ...
+   Job Completion Time: ...
+   Job Deadline: ...
+   Requirements: ...
+ */
 public class ControllerPage extends JFrame {
-    User user = User.getInstance();
-    JobsCache jobsCache = JobsCache.getInstance();
 
-    public ControllerPage()  {
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(1200,800);
+    private final User user = User.getInstance();
+
+    private JPanel contentPanel;   // CardLayout 
+    private CardLayout cardLayout;
+    private JPanel jobsListPanel;  // Holds header + job rows on Home
+
+    public ControllerPage() {
+        initUI();
+    }
+
+    private void initUI() {
+        setTitle("Controller Dashboard");
+        setSize(900, 600); // frame size
         setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        JPanel root = new JPanel(new BorderLayout());
+        root.setBackground(new Color(15, 23, 42));
 
-        // Create boxes
-        for (int i = 0; i < jobsCache.length(); i++) {
-            JPanel box = new JPanel();
-            box.setPreferredSize(new Dimension(300, 80));  // width, height
-            box.setMaximumSize(new Dimension(250, 180)); // makes all boxes fill width
-            box.setBackground(new Color(160 , 211, 255));
-            box.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+        cardLayout = new CardLayout();
+        contentPanel = new JPanel(cardLayout);
+        contentPanel.setBackground(new Color(15, 23, 42));
 
-            JLabel title = new JLabel("Box " + i + 1);
-            title.setFont(new Font("Arial", Font.BOLD, 16));
+        JPanel homePanel = buildHomePanel();
+        JPanel notificationsPanel = createPlaceholderPanel("Notifications");
 
-            JLabel jobName = new JLabel(jobsCache.getJob(i).getJobOwnerName());
-            JLabel jobDuration = new JLabel(String.valueOf(jobsCache.getJob(i).getDuration()));
-            JLabel jobCompletionTime = new JLabel(String.valueOf(jobsCache.getJob(i).getCompletionTime()));
+        contentPanel.add(homePanel, "HOME");
+        contentPanel.add(notificationsPanel, "NOTIFICATIONS");
 
-            JButton Accept = new JButton("Accept");
-            JButton Reject = new JButton("Reject");
-            Accept.setFont(new Font("Arial",Font.BOLD,16));
-            Reject.setFont(new Font("Arial",Font.BOLD,16));
-            Accept.setOpaque(true);
-            Accept.setContentAreaFilled(true);
-            Reject.setOpaque(true);
-            Reject.setContentAreaFilled(true);
-            Reject.setBackground(new Color(255,53,43));
-            Accept.setBackground(new Color(8,191,51));
-            Accept.setBorderPainted(false);
-            Reject.setBorderPainted(false);
-            Accept.setFocusPainted(false);
-            Reject.setFocusPainted(false);
-            box.add(title, BorderLayout.NORTH);
-            box.add(jobName, BorderLayout.CENTER);
-            box.add(jobDuration, BorderLayout.CENTER);
-            box.add(jobCompletionTime, BorderLayout.CENTER);
-            box.add(Accept,BorderLayout.SOUTH);
-            box.add(Reject,BorderLayout.SOUTH);
-            // Label inside the box
+        JPanel sidebar = buildSidebar();
 
-            // Add margin between boxes
-            mainPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-            mainPanel.add(box);
+        root.add(sidebar, BorderLayout.WEST);
+        root.add(contentPanel, BorderLayout.CENTER);
+
+        setContentPane(root);
+        setVisible(true);
+    }
+    // Sidebar with divider
+   
+    private JPanel buildSidebar() {
+        JPanel sidebar = new JPanel();
+        sidebar.setLayout(new BoxLayout(sidebar, BoxLayout.Y_AXIS));
+        sidebar.setBackground(new Color(15, 23, 42));
+
+        // Divider + padding: 1px line on the right, padding inside
+        sidebar.setBorder(
+                BorderFactory.createCompoundBorder(
+                        BorderFactory.createMatteBorder(0, 0, 0, 1, new Color(30, 41, 59)), // divider
+                        new EmptyBorder(20, 16, 20, 16) // inner padding
+                )
+        );
+
+        sidebar.setPreferredSize(new Dimension(200, 0));
+
+        JLabel appLabel = new JLabel("Controller");
+        appLabel.setForeground(Color.WHITE);
+        appLabel.setFont(new Font("SansSerif", Font.BOLD, 18));
+        appLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        sidebar.add(appLabel);
+
+        sidebar.add(Box.createVerticalStrut(24));
+
+        JButton homeBtn = createNavButton("Home");
+        JButton notifBtn = createNavButton("Notifications");
+
+        homeBtn.addActionListener(e -> cardLayout.show(contentPanel, "HOME"));
+        notifBtn.addActionListener(e -> cardLayout.show(contentPanel, "NOTIFICATIONS"));
+
+        sidebar.add(homeBtn);
+        sidebar.add(Box.createVerticalStrut(8));
+        sidebar.add(notifBtn);
+
+        sidebar.add(Box.createVerticalGlue());
+
+        JButton logoutBtn = createNavButton("Log Out");
+        logoutBtn.addActionListener(e -> {
+            dispose();
+            new WelcomePage();
+        });
+        logoutBtn.setAlignmentX(Component.LEFT_ALIGNMENT);
+        sidebar.add(logoutBtn);
+
+        return sidebar;
+    }
+
+    private JButton createNavButton(String text) {
+        JButton btn = new JButton(text);
+        btn.setAlignmentX(Component.LEFT_ALIGNMENT);
+        btn.setMaximumSize(new Dimension(180, 36));
+        btn.setBackground(new Color(15, 23, 42));
+        btn.setForeground(Color.LIGHT_GRAY);
+        btn.setBorder(BorderFactory.createEmptyBorder(8, 12, 8, 12));
+        btn.setFocusPainted(false);
+        btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        btn.setHorizontalAlignment(SwingConstants.LEFT);
+
+        btn.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent e) {
+                btn.setForeground(Color.WHITE);
+            }
+
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent e) {
+                btn.setForeground(Color.LIGHT_GRAY);
+            }
+        });
+
+        return btn;
+    }
+    
+    // Home panel with header and job list
+    
+    private JPanel buildHomePanel() {
+        JPanel home = new JPanel(new BorderLayout());
+        home.setBackground(new Color(15, 23, 42));
+
+        JPanel header = new JPanel(new BorderLayout());
+        header.setBackground(new Color(15, 23, 42));
+        header.setBorder(new EmptyBorder(16, 20, 8, 20));
+
+        JPanel titleBox = new JPanel();
+        titleBox.setLayout(new BoxLayout(titleBox, BoxLayout.Y_AXIS));
+        titleBox.setBackground(new Color(15, 23, 42));
+
+        JLabel title = new JLabel("Job Requests");
+        title.setForeground(Color.WHITE);
+        title.setFont(new Font("SansSerif", Font.BOLD, 22));
+
+        JLabel subtitle = new JLabel("Monitor and manage incoming jobs in real time");
+        subtitle.setForeground(new Color(148, 163, 184));
+        subtitle.setFont(new Font("SansSerif", Font.PLAIN, 13));
+
+        titleBox.add(title);
+        titleBox.add(Box.createVerticalStrut(4));
+        titleBox.add(subtitle);
+
+        header.add(titleBox, BorderLayout.WEST);
+
+        JPanel userBox = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+        userBox.setBackground(new Color(15, 23, 42));
+
+        String emailText = (user != null && user.getEmail() != null) ? user.getEmail() : "controller@vcrts.com";
+        JLabel userLabel = new JLabel(emailText);
+        userLabel.setForeground(new Color(148, 163, 184));
+        userLabel.setFont(new Font("SansSerif", Font.PLAIN, 12));
+
+        JLabel avatar = new JLabel();
+        avatar.setPreferredSize(new Dimension(32, 32));
+        avatar.setOpaque(true);
+        avatar.setBackground(new Color(30, 64, 175));
+        avatar.setBorder(BorderFactory.createLineBorder(new Color(15, 23, 42), 2));
+
+        String initials = "C";
+        if (emailText != null && !emailText.isEmpty()) {
+            initials = String.valueOf(Character.toUpperCase(emailText.charAt(0)));
+        }
+        avatar.setText(initials);
+        avatar.setHorizontalAlignment(SwingConstants.CENTER);
+        avatar.setForeground(Color.WHITE);
+        avatar.setFont(new Font("SansSerif", Font.BOLD, 12));
+
+        userBox.add(userLabel);
+        userBox.add(avatar);
+
+        header.add(userBox, BorderLayout.EAST);
+        home.add(header, BorderLayout.NORTH);
+
+        // List area (header row + jobs)
+        jobsListPanel = new JPanel();
+        jobsListPanel.setBackground(new Color(15, 23, 42));
+        jobsListPanel.setBorder(new EmptyBorder(10, 20, 20, 20));
+        jobsListPanel.setLayout(new GridBagLayout()); // top alignment
+
+        loadJobsFromBackendFile(); // backend hook
+
+        JScrollPane scrollPane = new JScrollPane(jobsListPanel);
+        scrollPane.setBorder(null);
+        scrollPane.getViewport().setBackground(new Color(15, 23, 42));
+        scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
+        home.add(scrollPane, BorderLayout.CENTER);
+
+        return home;
+    }
+
+    
+    // Reads job records from src/vccontroller/repo/JobData.txt and creates one row per record.
+     
+    private void loadJobsFromBackendFile() {
+        jobsListPanel.removeAll();
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.anchor = GridBagConstraints.NORTHWEST;
+
+        gbc.gridy = 0;
+        gbc.weighty = 0;
+        jobsListPanel.add(createHeaderRow(), gbc);
+
+        String filePath = "src/vccontroller/repo/JobData.txt";
+        int jobIndex = 1;
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            String timestamp = null;
+            String jobName = null;
+            String duration = null;
+            String completionTime = null;
+            String deadline = null;
+            String requirements = null;
+
+            int rowY = 1;  
+
+            while ((line = reader.readLine()) != null) {
+                line = line.trim();
+
+                if (line.startsWith("Timestamp:")) {
+                    timestamp = line.substring("Timestamp:".length()).trim();
+                } else if (line.startsWith("Job Name:")) {
+                    jobName = line.substring("Job Name:".length()).trim();
+                } else if (line.startsWith("Duration:")) {
+                    duration = line.substring("Duration:".length()).trim();
+                } else if (line.startsWith("Job Completion Time:")) {
+                    completionTime = line.substring("Job Completion Time:".length()).trim();
+                } else if (line.startsWith("Job Deadline:")) {
+                    deadline = line.substring("Job Deadline:".length()).trim();
+                } else if (line.startsWith("Requirements:")) {
+                    requirements = line.substring("Requirements:".length()).trim();
+                } else if (line.startsWith("~~~~")) {
+                    // End of one record → build a row
+                    String jobId = "#J-" + String.format("%04d", jobIndex++);
+
+                    JPanel row = createJobRow(
+                            jobId,
+                            jobName != null ? jobName : "Job " + (jobIndex - 1),
+                            deadline != null ? deadline : "-",
+                            requirements != null ? requirements : "-",
+                            duration != null ? duration : "-",
+                            completionTime != null ? completionTime : "-",
+                            "Pending"   // initial status
+                    );
+
+                    gbc.gridy = rowY++;
+                    gbc.weighty = 0;
+                    jobsListPanel.add(row, gbc);
+
+                    // reset for next record
+                    timestamp = jobName = duration = completionTime = deadline = requirements = null;
+                }
+            }
+
+            if (jobIndex == 1) {
+                gbc.gridy = 1;
+                gbc.weighty = 0;
+                JLabel empty = new JLabel("No job requests found.");
+                empty.setForeground(new Color(148, 163, 184));
+                empty.setFont(new Font("SansSerif", Font.PLAIN, 13));
+                jobsListPanel.add(empty, gbc);
+            }
+
+            // Filler so everything sticks to the top
+            gbc.gridy++;
+            gbc.weighty = 1.0;
+            JPanel filler = new JPanel();
+            filler.setOpaque(false);
+            jobsListPanel.add(filler, gbc);
+
+        } catch (IOException ex) {
+            GridBagConstraints errGbc = new GridBagConstraints();
+            errGbc.gridx = 0;
+            errGbc.gridy = 1;
+            errGbc.weightx = 1.0;
+            errGbc.weighty = 0;
+            errGbc.fill = GridBagConstraints.HORIZONTAL;
+            errGbc.anchor = GridBagConstraints.NORTHWEST;
+
+            JLabel error = new JLabel("Error loading jobs: " + ex.getMessage());
+            error.setForeground(new Color(248, 113, 113)); // red-ish
+            error.setFont(new Font("SansSerif", Font.PLAIN, 13));
+            jobsListPanel.add(error, errGbc);
         }
 
+        jobsListPanel.revalidate();
+        jobsListPanel.repaint();
+    }
 
+    
+    // Header row fo column labels
+    
+    private JPanel createHeaderRow() {
+        // 6 columns: Job ID, Job Name, Requirements, Deadline, Status, Actions
+        JPanel header = new JPanel(new GridLayout(1, 6));
+        header.setBackground(new Color(15, 23, 42));
+        header.setBorder(new EmptyBorder(0, 12, 4, 12)); 
 
-    setContentPane(mainPanel);
-        setVisible(true);
-   }
+        header.add(createHeaderLabel("Job ID", SwingConstants.LEFT));
+        header.add(createHeaderLabel("Job Name", SwingConstants.LEFT));
+        header.add(createHeaderLabel("Requirements", SwingConstants.LEFT));
+        header.add(createHeaderLabel("Deadline", SwingConstants.LEFT));
+        header.add(createHeaderLabel("Status", SwingConstants.CENTER));
+        header.add(createHeaderLabel("Actions", SwingConstants.CENTER));
 
+        return header;
+    }
+
+    private JLabel createHeaderLabel(String text, int align) {
+        JLabel label = new JLabel(text);
+        label.setForeground(new Color(148, 163, 184));
+        label.setFont(new Font("SansSerif", Font.BOLD, 12));
+        label.setHorizontalAlignment(align);
+        return label;
+    }
+
+    
+    // Single job row 
+    
+    private JPanel createJobRow(String jobId,
+                                String jobName,
+                                String jobDeadline,
+                                String requirements,
+                                String duration,
+                                String completionTime,
+                                String status) {
+
+        // One row → 6 columns
+        JPanel row = new JPanel(new GridLayout(1, 6));
+        row.setBackground(new Color(30, 41, 59));
+        row.setBorder(new EmptyBorder(10, 12, 10, 12));
+        row.setMaximumSize(new Dimension(Integer.MAX_VALUE, 56));
+        row.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        // Column 1: Job ID
+        JPanel col1 = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        col1.setOpaque(false);
+        JLabel idLabel = new JLabel(jobId);
+        idLabel.setForeground(Color.WHITE);
+        idLabel.setFont(new Font("SansSerif", Font.BOLD, 13));
+        col1.add(idLabel);
+
+        // Column 2: Job Name
+        JPanel col2 = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        col2.setOpaque(false);
+        JLabel nameLabel = new JLabel(jobName);
+        nameLabel.setForeground(new Color(148, 163, 184));
+        nameLabel.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        col2.add(nameLabel);
+
+        // Column 3: Requirements
+        JPanel col3 = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        col3.setOpaque(false);
+        JLabel reqLabel = new JLabel(requirements);
+        reqLabel.setForeground(new Color(148, 163, 184));
+        reqLabel.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        col3.add(reqLabel);
+
+        // Column 4: Deadline
+        JPanel col4 = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        col4.setOpaque(false);
+        JLabel deadlineLabel = new JLabel(jobDeadline);
+        deadlineLabel.setForeground(new Color(100, 116, 139));
+        deadlineLabel.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        col4.add(deadlineLabel);
+
+        // Column 5: Status pill (centered)
+        JPanel col5 = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        col5.setOpaque(false);
+
+        JLabel statusLabel = new JLabel(status);
+        statusLabel.setOpaque(true);
+        statusLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        statusLabel.setFont(new Font("SansSerif", Font.BOLD, 11));
+        statusLabel.setBorder(new EmptyBorder(4, 10, 4, 10));
+        statusLabel.setPreferredSize(new Dimension(90, 24)); 
+        applyStatusStyle(statusLabel, status);
+
+        col5.add(statusLabel);
+
+        // Column 6: Actions 
+        JPanel col6 = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        col6.setOpaque(false);
+
+        JButton detailsBtn = new JButton("View");
+        detailsBtn.setFocusPainted(false);
+        detailsBtn.setFont(new Font("SansSerif", Font.PLAIN, 11));
+        detailsBtn.setBackground(new Color(15, 23, 42));
+        detailsBtn.setForeground(new Color(148, 163, 184));
+        detailsBtn.setBorder(BorderFactory.createEmptyBorder(4, 8, 4, 8));
+        detailsBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        detailsBtn.addActionListener(e -> showJobDetailsDialog(
+                jobId,
+                jobName,
+                jobDeadline,
+                requirements,
+                duration,
+                completionTime,
+                statusLabel
+        ));
+
+        col6.add(detailsBtn);
+
+        // Add columns to row
+        row.add(col1);
+        row.add(col2);
+        row.add(col3);
+        row.add(col4);
+        row.add(col5);
+        row.add(col6);
+
+        return row;
+    }
+
+    private void applyStatusStyle(JLabel statusLabel, String status) {
+        String s = status.toLowerCase();
+        if (s.contains("complete")) {
+            statusLabel.setBackground(new Color(22, 163, 74));
+            statusLabel.setForeground(Color.WHITE);
+        } else if (s.contains("pending")) {
+            statusLabel.setBackground(new Color(234, 179, 8));
+            statusLabel.setForeground(Color.BLACK);
+        } else if (s.contains("decline")) {
+            statusLabel.setBackground(new Color(220, 38, 38));
+            statusLabel.setForeground(Color.WHITE);
+        } else if (s.contains("accept")) {
+            statusLabel.setBackground(new Color(59, 130, 246));
+            statusLabel.setForeground(Color.WHITE);
+        } else {
+            statusLabel.setBackground(new Color(51, 65, 85));
+            statusLabel.setForeground(Color.WHITE);
+        }
+    }
+
+    
+    // Job Details Dialog (View popup)
+    private void showJobDetailsDialog(String jobId,
+                                      String jobName,
+                                      String jobDeadline,
+                                      String requirements,
+                                      String duration,
+                                      String completionTime,
+                                      JLabel statusLabelToUpdate) {
+
+        JDialog dialog = new JDialog(this, "Job Details", true);
+        dialog.setLayout(new BorderLayout());
+        dialog.getContentPane().setBackground(new Color(15, 23, 42));
+
+        JPanel content = new JPanel();
+        content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
+        content.setBorder(new EmptyBorder(16, 20, 16, 20));
+        content.setBackground(new Color(15, 23, 42));
+
+        content.add(createDetailLabel("Job ID: ", jobId));
+        content.add(Box.createVerticalStrut(6));
+        content.add(createDetailLabel("Job name: ", jobName));
+        content.add(Box.createVerticalStrut(6));
+        content.add(createDetailLabel("Job deadline: ", jobDeadline));
+        content.add(Box.createVerticalStrut(6));
+        content.add(createDetailLabel("Requirements: ", requirements));
+        content.add(Box.createVerticalStrut(6));
+        content.add(createDetailLabel("Duration: ", duration));
+        content.add(Box.createVerticalStrut(6));
+        content.add(createDetailLabel("Job completion time: ", completionTime));
+
+        dialog.add(content, BorderLayout.CENTER);
+
+        //Buttons row 
+        JPanel buttons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        buttons.setBackground(new Color(15, 23, 42));
+        buttons.setBorder(new EmptyBorder(0, 0, 12, 12));
+
+        Color acceptBase = new Color(59, 130, 246);     // blue
+        Color acceptHover = new Color(37, 99, 235);
+        Color declineBase = new Color(220, 38, 38);     // red
+        Color declineHover = new Color(185, 28, 28);
+        Color closeBase = Color.WHITE;                          // white
+        Color closeHover = new Color(229, 231, 235);    // light gray
+        Color closeText = new Color(30, 41, 59);        // dark text
+
+        JButton acceptBtn = new JButton("Accept");
+        JButton declineBtn = new JButton("Decline");
+        JButton closeBtn = new JButton("Close");
+
+        // Accept button style
+        acceptBtn.setFocusPainted(false);
+        acceptBtn.setOpaque(true);
+        acceptBtn.setContentAreaFilled(true);
+        acceptBtn.setBackground(acceptBase);
+        acceptBtn.setForeground(Color.WHITE);
+        acceptBtn.setBorder(BorderFactory.createEmptyBorder(6, 14, 6, 14));
+        acceptBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        acceptBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent e) {
+                acceptBtn.setBackground(acceptHover);
+            }
+
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent e) {
+                acceptBtn.setBackground(acceptBase);
+            }
+        });
+
+        // Decline button style
+        declineBtn.setFocusPainted(false);
+        declineBtn.setOpaque(true);
+        declineBtn.setContentAreaFilled(true);
+        declineBtn.setBackground(declineBase);
+        declineBtn.setForeground(Color.WHITE);
+        declineBtn.setBorder(BorderFactory.createEmptyBorder(6, 14, 6, 14));
+        declineBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        declineBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent e) {
+                declineBtn.setBackground(declineHover);
+            }
+
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent e) {
+                declineBtn.setBackground(declineBase);
+            }
+        });
+
+        // Close button style
+        closeBtn.setFocusPainted(false);
+        closeBtn.setOpaque(true);
+        closeBtn.setContentAreaFilled(true);
+        closeBtn.setBackground(closeBase);
+        closeBtn.setForeground(closeText);
+        closeBtn.setBorder(BorderFactory.createLineBorder(new Color(148, 163, 184)));
+        closeBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        closeBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent e) {
+                closeBtn.setBackground(closeHover);
+            }
+
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent e) {
+                closeBtn.setBackground(closeBase);
+            }
+        });
+
+        // Accept logic - UI only for now
+        acceptBtn.addActionListener(e -> {
+            statusLabelToUpdate.setText("Accepted");
+            applyStatusStyle(statusLabelToUpdate, "Accepted");
+            dialog.dispose();
+        });
+
+        // Decline logic – UI only for now
+        declineBtn.addActionListener(e -> {
+            statusLabelToUpdate.setText("Declined");
+            applyStatusStyle(statusLabelToUpdate, "Declined");
+            dialog.dispose();
+        });
+
+        closeBtn.addActionListener(e -> dialog.dispose());
+
+        buttons.add(acceptBtn);
+        buttons.add(declineBtn);
+        buttons.add(closeBtn);
+
+        dialog.add(buttons, BorderLayout.SOUTH);
+
+        dialog.pack();
+        dialog.setLocationRelativeTo(this);
+        dialog.setVisible(true);
+    }
+
+    private JPanel createDetailLabel(String label, String value) {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBackground(new Color(15, 23, 42));
+
+        JLabel key = new JLabel(label);
+        key.setForeground(new Color(148, 163, 184));
+        key.setFont(new Font("SansSerif", Font.BOLD, 12));
+
+        JLabel val = new JLabel(value != null ? value : "-");
+        val.setForeground(Color.WHITE);
+        val.setFont(new Font("SansSerif", Font.PLAIN, 12));
+
+        panel.add(key, BorderLayout.WEST);
+        panel.add(val, BorderLayout.CENTER);
+
+        return panel;
+    }
+
+    private JPanel createPlaceholderPanel(String title) {
+        JPanel panel = new JPanel(new GridBagLayout());
+        panel.setBackground(new Color(15, 23, 42));
+
+        JLabel label = new JLabel(title + " (coming soon)");
+        label.setForeground(new Color(148, 163, 184));
+        label.setFont(new Font("SansSerif", Font.PLAIN, 18));
+
+        panel.add(label);
+        return panel;
+    }
 }
-
-        

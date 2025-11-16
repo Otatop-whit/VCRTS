@@ -1,5 +1,2 @@
-Otatop/realOtatop@gmail.com/Test2025/client
-shiv/shivpreet123@gmail.com/shivpreet/client
-aidin/aidin@vcrts.com/testtest/client
-test/test@vcrts.com/test/controller
-TestAccount/testAccount@gmail.com/testAccount/controller
+user/user@vcrts.com/testtest
+test/test@vcrts.com/test
