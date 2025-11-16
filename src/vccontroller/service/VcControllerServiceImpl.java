@@ -4,6 +4,7 @@ import vccontroller.model.JobInfo;
 import vccontroller.model.JobReq;
 
 import java.io.*;
+import java.nio.Buffer;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
@@ -148,6 +149,20 @@ public class VcControllerServiceImpl {
 //            } catch (IOException e) {
 //                throw new RuntimeException(e);
 //            }
+            if (jobOwner.getCompletionTime() == 0) {
+                int currentTotal = 0;
+                try (BufferedReader reader = new BufferedReader(new FileReader("src/vccontroller/repo/Data.txt"))) {
+                    String line = reader.readLine();
+                    if (line != null && !line.isEmpty()) {
+                        currentTotal = Integer.parseInt(line.trim());
+                    } 
+                    
+                } catch (IOException ignore) {
+
+                }
+                jobOwner.setCompletionTime(currentTotal + jobOwner.getDuration());
+            }
+
 
             String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
             queue.add(jobOwner);
@@ -161,7 +176,6 @@ public class VcControllerServiceImpl {
                 writer.write("\nDuration: " + jobOwner.getDuration());
                 writer.write("\nJob Completion Time: " + jobOwner.getCompletionTime());
                 writer.write("\nJob Deadline: " + jobOwner.getJobDeadline() );
-                writer.write("\nRequirements: " + jobOwner.getRequirements());
 
                 writer.write("\n");
                 writer.write("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
