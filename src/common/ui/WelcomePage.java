@@ -89,7 +89,7 @@ public class WelcomePage {
         // Logic to open ControllerPage UI
         controllerBtn.addActionListener(e -> {
             frame.dispose();
-            new ControllerPage();
+            new ControllerPage().setVisible(true);;
         });
 
 

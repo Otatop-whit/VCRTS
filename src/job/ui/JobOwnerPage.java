@@ -145,15 +145,15 @@ public class JobOwnerPage extends JFrame {
 
         private JTextField jobName = new JTextField();
         private JTextField deadline = new JTextField();
-        private JComboBox<String> reqs = new JComboBox<>(new String[] {"Low", "Medium", "High"});
+        private JTextField durationHours = new JTextField();
 
-        private void checkField(JButton estimateJob) {
-            boolean filled = !jobName.getText().isEmpty() && !deadline.getText().isEmpty() && reqs.getSelectedIndex()!=-1;
-            estimateJob.setEnabled(filled);
+        private void checkField(JButton submitJob) {
+            boolean filled = !jobName.getText().isEmpty() && !deadline.getText().isEmpty() && !durationHours.getText().isEmpty();
+            submitJob.setEnabled(filled);
             if (filled) {
-                estimateJob.setBackground(buttoncolorgreen);
+                submitJob.setBackground(buttoncolorgreen);
             } else {
-                estimateJob.setBackground(Color.gray);
+                submitJob.setBackground(Color.gray);
             }
         }
 
@@ -200,63 +200,69 @@ public class JobOwnerPage extends JFrame {
         jobLabel.setFont(labelfont);
         JLabel deadlineLabel = new JLabel("Job Deadline:");
         deadlineLabel.setFont(labelfont);
-        JLabel reqsLabel = new JLabel("Job Requirement Level:");
+        JLabel reqsLabel = new JLabel("Job Duration (hours)");
         reqsLabel.setFont(labelfont);
-
-        reqs.setSelectedIndex(-1);
 
         form.add(jobLabel);
         form.add(jobName);
         form.add(deadlineLabel);
         form.add(deadline);
         form.add(reqsLabel);
-        form.add(reqs);
+        form.add(durationHours);
 
         JPanel buttonsRow = new JPanel(new GridBagLayout());
         buttonsRow.setOpaque(false);
-        JButton estimateJob = new JButton("Calculate Estimated Completion Time");
-        styleButton(estimateJob, buttoncolorgreen, buttonfont, buttonsize);
-        buttonsRow.add(estimateJob);
-        estimateJob.setPreferredSize(new Dimension(380, 50));
-        estimateJob.setBackground(Color.gray);
-        estimateJob.setEnabled(false);
+        JButton submitJob = new JButton("Submit Job");
+        styleButton(submitJob, buttoncolorgreen, buttonfont, buttonsize);
+        buttonsRow.add(submitJob);
+        submitJob.setPreferredSize(new Dimension(380, 50));
+        submitJob.setBackground(Color.gray);
+        submitJob.setEnabled(false);
 
         //When all fields are filled, button will turn green and become clickable
 
         DocumentListener listener = new DocumentListener() {
 
             public void insertUpdate(DocumentEvent event) {
-                checkField(estimateJob);
+                checkField(submitJob);
             }
 
             public void removeUpdate(DocumentEvent event) {
-                checkField(estimateJob);
+                checkField(submitJob);
             }
 
             public void changedUpdate(DocumentEvent event) {
-                checkField(estimateJob);
+                checkField(submitJob);
             }
 
         };
 
         jobName.getDocument().addDocumentListener(listener);
         deadline.getDocument().addDocumentListener(listener);
+        durationHours.getDocument().addDocumentListener(listener);
 
-        reqs.addItemListener(new ItemListener() {
-
-            public void itemStateChanged(ItemEvent event) {
-                checkField(estimateJob);
-            }
-            
-        });
-
-        estimateJob.addActionListener(new ActionListener() {
+        submitJob.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
                 String enteredName = jobName.getText();
                 String enteredDeadline = deadline.getText();
-                String enteredReqs = (String) reqs.getSelectedItem();
-                EstimateJobFrame estimatePage = new EstimateJobFrame(enteredName, enteredDeadline, enteredReqs);
-                estimatePage.setVisible(true);
+                int enteredDuration = Integer.parseInt(durationHours.getText().trim());
+
+                JobOwner job = new JobOwner();
+                job.setJobOwnerName(enteredName);
+                job.setJobDeadline(enteredDeadline);
+                job.setDuration(enteredDuration);
+                job.setCompletionTime(0);
+
+                //new JobOwnerServiceImpl().addJobOwner(job);
+                new VcControllerServiceImpl().submitJob(job);
+
+                JOptionPane.showMessageDialog(SubmitJobFrame.this, "Job Successfully Submitted!");
+
+                jobName.setText("");
+                deadline.setText("");
+                durationHours.setText("");
+                submitJob.setEnabled(false);
+                submitJob.setBackground(Color.gray);
             }
         });
 
@@ -271,7 +277,7 @@ public class JobOwnerPage extends JFrame {
     }
 
     //Estimate Job Completion Time and Submit Job
-    static class EstimateJobFrame extends JFrame {
+    /* static class EstimateJobFrame extends JFrame {
 
         private final String enteredName; 
         private final String enteredDeadline; 
@@ -355,7 +361,7 @@ public class JobOwnerPage extends JFrame {
 
         }
 
-    }
+    } */
 
     //View Jobs
     static class ViewJobFrame extends JFrame {
