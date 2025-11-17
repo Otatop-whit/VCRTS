@@ -15,7 +15,7 @@ public class AccountCache {
         Account account = new Account(name,email,pass,"controller");
         accountsCache.put(email.toLowerCase(),account);
     }
-
+    
     public static AccountCache getInstance(){
         if (instance == null){
             instance = new AccountCache();
@@ -35,12 +35,15 @@ public class AccountCache {
         return accountsCache.size();
     }
 
-
     public Collection<Account> getAllValues(){
         return  accountsCache.values();
     }
     public boolean emailExists(String email){
         return accountsCache.containsKey(email.toLowerCase());
     }
+   
+    public Map<String, Account> getAccountsMap() {
+    return new HashMap<>(accountsCache); 
+}
 
 }

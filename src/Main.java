@@ -1,4 +1,5 @@
 
+import common.service.AccountData;
 import common.service.Client;
 import common.ui.WelcomePage;
 import vccontroller.ui.ControllerPage;
@@ -16,6 +17,7 @@ import java.util.Scanner;
 public class Main{
 
     public static void main(String args[]) throws IOException {
+        AccountData accountData = new AccountData();
         new WelcomePage();
         //new ControllerPage().setVisible(true);
 

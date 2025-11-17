@@ -17,6 +17,10 @@ import java.util.*;
 	    
 	    public void loadAccountsFromFile() {
 	        try {
+				File file = new File(FILE_NAME);
+            if (!file.exists() || file.length() == 0) {
+                return;
+            }
 	            FileReader reader = new FileReader(FILE_NAME);
 	            BufferedReader buffer = new BufferedReader(reader);
 	            String line = buffer.readLine();
@@ -34,7 +38,7 @@ import java.util.*;
 	            buffer.close();
 	            
 	        } catch (IOException e) {
-	            System.err.println("Error loading accounts: " + e.getMessage());
+	             e.printStackTrace();
 	        }
 	    }
 	    
@@ -47,7 +51,7 @@ import java.util.*;
 //	                writer.println(account.toFileString());
 //	            }
 	        } catch (IOException e) {
-	            System.err.println("Error saving accounts: " + e.getMessage());
+	             e.printStackTrace();
 	        }
 	    }
 	    
@@ -55,10 +59,10 @@ import java.util.*;
 	        File file = new File(FILE_NAME);
 	        if (!file.exists()) {
 	            try {
+					file.getParentFile().mkdirs();
 	                file.createNewFile();
-	                System.out.println("Created new account file: " + FILE_NAME);
 	            } catch (IOException e) {
-	                System.err.println("Failed to create account file: " + e.getMessage());
+	                   e.printStackTrace();
 	            }
 	            return false;
 	        }
