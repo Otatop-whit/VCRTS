@@ -48,9 +48,11 @@ public class ControllerPage extends JFrame {
 
         JPanel homePanel = buildHomePanel();
         JPanel notificationsPanel = createPlaceholderPanel("Notifications");
+        JPanel viewAccountsPanel = createViewAccountsPanel();
 
         contentPanel.add(homePanel, "HOME");
         contentPanel.add(notificationsPanel, "NOTIFICATIONS");
+        contentPanel.add(viewAccountsPanel, "View Accounts");
 
         JPanel sidebar = buildSidebar();
 
@@ -85,15 +87,20 @@ public class ControllerPage extends JFrame {
 
         sidebar.add(Box.createVerticalStrut(24));
 
+        //added view accounts button
         JButton homeBtn = createNavButton("Home");
         JButton notifBtn = createNavButton("Notifications");
+        JButton viewAccButton = createNavButton("View Accounts");
 
         homeBtn.addActionListener(e -> cardLayout.show(contentPanel, "HOME"));
         notifBtn.addActionListener(e -> cardLayout.show(contentPanel, "NOTIFICATIONS"));
+        viewAccButton.addActionListener(e -> cardLayout.show(contentPanel, "View Accounts"));
 
         sidebar.add(homeBtn);
         sidebar.add(Box.createVerticalStrut(8));
         sidebar.add(notifBtn);
+        sidebar.add(Box.createVerticalStrut(8));
+        sidebar.add(viewAccButton);
 
         sidebar.add(Box.createVerticalGlue());
 
@@ -169,7 +176,7 @@ public class ControllerPage extends JFrame {
         JLabel userLabel = new JLabel(emailText);
         userLabel.setForeground(new Color(148, 163, 184));
         userLabel.setFont(new Font("SansSerif", Font.PLAIN, 12));
-
+ 
         JLabel avatar = new JLabel();
         avatar.setPreferredSize(new Dimension(32, 32));
         avatar.setOpaque(true);
@@ -621,6 +628,18 @@ public class ControllerPage extends JFrame {
         panel.setBackground(new Color(15, 23, 42));
 
         JLabel label = new JLabel(title + " (coming soon)");
+        label.setForeground(new Color(148, 163, 184));
+        label.setFont(new Font("SansSerif", Font.PLAIN, 18));
+
+        panel.add(label);
+        return panel;
+    }
+
+    private JPanel createViewAccountsPanel() {
+        JPanel panel = new JPanel(new GridBagLayout());
+        panel.setBackground(new Color(15, 23, 42));
+
+        JLabel label = new JLabel("View Accounts (coming soon)");
         label.setForeground(new Color(148, 163, 184));
         label.setFont(new Font("SansSerif", Font.PLAIN, 18));
 
