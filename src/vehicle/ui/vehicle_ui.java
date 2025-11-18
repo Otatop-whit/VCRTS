@@ -3,6 +3,7 @@ import javax.swing.*;
 
 import common.model.User;
 import vehicle.model.VehicleOwner;
+import vehicle.service.VehicleClient;
 import vehicle.service.VehicleOwnerServiceImpl;
 import vehicle.ui.vehicle_ui.ViewVehicleInfo;
 
@@ -32,7 +33,8 @@ public class vehicle_ui {
     VehicleOwner vehicleOwner = VehicleOwnerServiceImpl.loadOwner(user);
     
     public vehicle_ui(){
-        vehicleOwner = VehicleOwnerServiceImpl.loadVehicles(vehicleOwner);
+        //Loads Files to Vehicle Owner
+        //vehicleOwner = VehicleOwnerServiceImpl.loadVehicles(vehicleOwner);
 
         JFrame window = new JFrame("VCRTS — Vehicle Owner Portal");
         window.setSize(720, 480);
@@ -204,6 +206,7 @@ public class vehicle_ui {
                     String timestamp = getCurrentTimestamp();
                     System.out.println("[" + timestamp + "] Vehicle registered: " + licensePlate.getText());
                     vehicleOwner.createVehicle(licensePlate, model, make, year, computingPower, arrivalDate, departureDate, residency);
+                    //Send request to Server
                     vehicleOwner.storeVehicle();
                     JOptionPane.showMessageDialog(null, 
                         "Vehicle registered successfully!\nTimestamp: " + timestamp, 
