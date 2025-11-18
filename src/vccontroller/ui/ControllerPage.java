@@ -242,7 +242,7 @@ public class ControllerPage extends JFrame {
             String duration = null;
             String completionTime = null;
             String deadline = null;
-            String requirements = null;
+            
 
             int rowY = 1;  
 
@@ -259,9 +259,7 @@ public class ControllerPage extends JFrame {
                     completionTime = line.substring("Job Completion Time:".length()).trim();
                 } else if (line.startsWith("Job Deadline:")) {
                     deadline = line.substring("Job Deadline:".length()).trim();
-                } else if (line.startsWith("Requirements:")) {
-                    requirements = line.substring("Requirements:".length()).trim();
-                } else if (line.startsWith("~~~~")) {
+                }  else if (line.startsWith("~~~~")) {
                     // End of one record → build a row
                     String jobId = "#J-" + String.format("%04d", jobIndex++);
 
@@ -269,7 +267,8 @@ public class ControllerPage extends JFrame {
                             jobId,
                             jobName != null ? jobName : "Job " + (jobIndex - 1),
                             deadline != null ? deadline : "-",
-                            requirements != null ? requirements : "-",
+                            
+                            "N/A",  // requirements not in backend file
                             duration != null ? duration : "-",
                             completionTime != null ? completionTime : "-",
                             "Pending"   // initial status
@@ -280,7 +279,7 @@ public class ControllerPage extends JFrame {
                     jobsListPanel.add(row, gbc);
 
                     // reset for next record
-                    timestamp = jobName = duration = completionTime = deadline = requirements = null;
+                    timestamp = jobName = duration = completionTime = deadline  = null;
                 }
             }
 
@@ -323,14 +322,14 @@ public class ControllerPage extends JFrame {
     // Header row fo column labels
     
     private JPanel createHeaderRow() {
-        // 6 columns: Job ID, Job Name, Requirements, Deadline, Status, Actions
+        // 6 columns: Job ID, Job Name, Duration, Deadline, Status, Actions
         JPanel header = new JPanel(new GridLayout(1, 6));
         header.setBackground(new Color(15, 23, 42));
         header.setBorder(new EmptyBorder(0, 12, 4, 12)); 
 
         header.add(createHeaderLabel("Job ID", SwingConstants.LEFT));
         header.add(createHeaderLabel("Job Name", SwingConstants.LEFT));
-        header.add(createHeaderLabel("Requirements", SwingConstants.LEFT));
+        header.add(createHeaderLabel("Duration", SwingConstants.LEFT));
         header.add(createHeaderLabel("Deadline", SwingConstants.LEFT));
         header.add(createHeaderLabel("Status", SwingConstants.CENTER));
         header.add(createHeaderLabel("Actions", SwingConstants.CENTER));
@@ -352,7 +351,7 @@ public class ControllerPage extends JFrame {
     private JPanel createJobRow(String jobId,
                                 String jobName,
                                 String jobDeadline,
-                                String requirements,
+                                String Duration,
                                 String duration,
                                 String completionTime,
                                 String status) {
@@ -380,10 +379,10 @@ public class ControllerPage extends JFrame {
         nameLabel.setFont(new Font("SansSerif", Font.PLAIN, 12));
         col2.add(nameLabel);
 
-        // Column 3: Requirements
+        // Column 3: Duration
         JPanel col3 = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         col3.setOpaque(false);
-        JLabel reqLabel = new JLabel(requirements);
+        JLabel reqLabel = new JLabel(duration);
         reqLabel.setForeground(new Color(148, 163, 184));
         reqLabel.setFont(new Font("SansSerif", Font.PLAIN, 12));
         col3.add(reqLabel);
@@ -426,7 +425,6 @@ public class ControllerPage extends JFrame {
                 jobId,
                 jobName,
                 jobDeadline,
-                requirements,
                 duration,
                 completionTime,
                 statusLabel
@@ -470,7 +468,6 @@ public class ControllerPage extends JFrame {
     private void showJobDetailsDialog(String jobId,
                                       String jobName,
                                       String jobDeadline,
-                                      String requirements,
                                       String duration,
                                       String completionTime,
                                       JLabel statusLabelToUpdate) {
@@ -489,8 +486,6 @@ public class ControllerPage extends JFrame {
         content.add(createDetailLabel("Job name: ", jobName));
         content.add(Box.createVerticalStrut(6));
         content.add(createDetailLabel("Job deadline: ", jobDeadline));
-        content.add(Box.createVerticalStrut(6));
-        content.add(createDetailLabel("Requirements: ", requirements));
         content.add(Box.createVerticalStrut(6));
         content.add(createDetailLabel("Duration: ", duration));
         content.add(Box.createVerticalStrut(6));
