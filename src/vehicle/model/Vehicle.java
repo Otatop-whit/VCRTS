@@ -7,6 +7,7 @@ import java.util.Objects;
 
 public class Vehicle {
     //Required Vehicle Information
+    private int vehicleId;
     private String vehicleOwnerEmail;
     private String licensePlate;
     private String vehicleModel;
@@ -173,6 +174,15 @@ public class Vehicle {
         }
     }
 
+    public String toString(){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String vehicleString = ""+ vehicleId + "/" + vehicleOwnerEmail + "/" + licensePlate + "/"
+        + vehicleModel + "/" + vehicleMake + "/" + vehicleYear.toString() + "/" + computingPower + "/"
+        + arrivalDate + "/" + departureDate + "/" + residency + "/" + timestamp.format(formatter) + "/"
+        + lastModified.format(formatter);
+        return vehicleString;
+    }
+    
     @Override
     public boolean equals(Object o){
         if (o == null || getClass() != o.getClass()) return false;
