@@ -15,6 +15,7 @@ public class ClientHandler implements Runnable{
         private BufferedWriter bufferedWriter;
         private String clientRequest;
         private JobsCache jobCache = JobsCache.getInstance();
+        private VcControllerServiceImpl vcController = new VcControllerServiceImpl();
 
     public  ClientHandler(Socket socket){
         try{
@@ -101,5 +102,38 @@ public class ClientHandler implements Runnable{
         return null;
 
     }
+    public void acceptJob(int idx){
+        String message = "Accepted";
+        for (ClientHandler clientHandler: clientHandlers){
+            try{
+                clientHandler.bufferedWriter.write(message);
+                clientHandler.bufferedWriter.newLine();
+                clientHandler.bufferedWriter.flush();
+                System.out.println(message);
+            }catch (IOException e){
 
+                System.out.println(e);
+                closeEverything(socket,bufferedReader,bufferedWriter);
+            }
+        }
+        vcController.submitJob(jobCache.getJob(idx));
+    }
+    public void rejectJob(int idx){
+
+        String message = "Rejected";
+        for (ClientHandler clientHandler: clientHandlers){
+            try{
+                clientHandler.bufferedWriter.write(message);
+                clientHandler.bufferedWriter.newLine();
+                clientHandler.bufferedWriter.flush();
+                System.out.println(message);
+            }catch (IOException e){
+
+                System.out.println(e);
+                closeEverything(socket,bufferedReader,bufferedWriter);
+            }
+        }
+        jobCache.removeJob(idx);
+
+    }
 }
