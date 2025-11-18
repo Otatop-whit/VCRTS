@@ -9,6 +9,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 public class ClientHandler implements Runnable{
+        VcControllerServiceImpl vccontroller = new VcControllerServiceImpl();
         public static ArrayList<ClientHandler> clientHandlers = new ArrayList<>();
         private Socket socket;
         private BufferedReader bufferedReader;
@@ -106,7 +107,7 @@ public class ClientHandler implements Runnable{
                 closeEverything(socket, bufferedReader, bufferedWriter);
             }
         } // End of For
-        vcController.submitJob(jobCache.getJob(idx));
+        vccontroller.submitJob(jobCache.getJob(idx));
     }
 
     public void rejectJob(int idx){
@@ -124,7 +125,7 @@ public class ClientHandler implements Runnable{
         }
         jobCache.removeJob(idx);
     }
-    
+
     //Splits up the client message for the client request method to work
     public String[] splitMessage(String message){
         String[] taskRequest = new String[2];
