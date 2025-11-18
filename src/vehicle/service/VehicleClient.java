@@ -24,9 +24,10 @@ public class VehicleClient {
             //Sets up the message to be send to Server
             PrintWriter request = new PrintWriter(socket.getOutputStream(), true);
             //Initilalizes the server's response to the client's message.
-            BufferedReader response = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
+            
             request.println(msg);
+            while (socket.isConnected()) {}
+            BufferedReader response = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             String reply = response.readLine();
             System.out.println("Server has " + reply + " your request.");
 
