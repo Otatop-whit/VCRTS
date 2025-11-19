@@ -2,6 +2,7 @@ package vccontroller.ui;
 
 import common.model.User;
 import common.ui.WelcomePage;
+import vccontroller.model.JobsCache;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -23,6 +24,8 @@ import java.io.IOException;
  */
 public class ControllerPage extends JFrame {
 
+    private static ControllerPage INSTANCE;
+
     private final User user = User.getInstance();
 
     private JPanel contentPanel;   // CardLayout 
@@ -31,6 +34,7 @@ public class ControllerPage extends JFrame {
 
     public ControllerPage() {
         initUI();
+        INSTANCE = this;
     }
 
     private void initUI() {
@@ -232,9 +236,31 @@ public class ControllerPage extends JFrame {
         gbc.weighty = 0;
         jobsListPanel.add(createHeaderRow(), gbc);
 
-        String filePath = "src/vccontroller/repo/JobData.txt";
         int jobIndex = 1;
+        int rowY = 1;
 
+        JobsCache cache = JobsCache.getInstance();
+        for (int i = 0; i < cache.length(); i++) {
+            job.model.JobOwner job = cache.getJob(i);
+            if (job != null) {
+                String jobId = "#J-" + String.format("%04d", jobIndex++);
+                JPanel row = createJobRow(
+                        jobId,
+                        job.getJobOwnerName() != null ? job.getJobOwnerName() : "Job " + (jobIndex - 1),
+                        job.getJobDeadline() != null ? job.getJobDeadline() : "-",
+                        "-",
+                        String.valueOf(job.getDuration()) + " hours",
+                        job.getCompletionTime() > 0 ? String.valueOf(job.getCompletionTime()) : "-",
+                        "Pending"
+                );
+
+                gbc.gridy = rowY++;
+                gbc.weighty = 0;
+                jobsListPanel.add(row, gbc);
+            }
+        }
+
+        String filePath = "src/vccontroller/repo/JobData.txt";
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
             String timestamp = null;
@@ -244,7 +270,6 @@ public class ControllerPage extends JFrame {
             String deadline = null;
             String requirements = null;
 
-            int rowY = 1;  
 
             while ((line = reader.readLine()) != null) {
                 line = line.trim();
@@ -272,7 +297,7 @@ public class ControllerPage extends JFrame {
                             requirements != null ? requirements : "-",
                             duration != null ? duration : "-",
                             completionTime != null ? completionTime : "-",
-                            "Pending"   // initial status
+                            "Accepted"   // initial status
                     );
 
                     gbc.gridy = rowY++;
@@ -580,15 +605,37 @@ public class ControllerPage extends JFrame {
 
         // Accept logic - UI only for now
         acceptBtn.addActionListener(e -> {
+            JobsCache cache = JobsCache.getInstance();
+            int jobIdx = -1;
+            for (int i = 0; i < cache.length(); i++) {
+                if (cache.getJob(i).getJobOwnerName().equals(jobName)) {
+                jobIdx = i;
+                break;
+            }
+        }
+
+            vccontroller.service.ClientHandler.acceptJob(jobIdx);
             statusLabelToUpdate.setText("Accepted");
             applyStatusStyle(statusLabelToUpdate, "Accepted");
+            ControllerPage.refreshIfOpen();
             dialog.dispose();
         });
 
+
         // Decline logic – UI only for now
         declineBtn.addActionListener(e -> {
+            JobsCache cache = JobsCache.getInstance();
+            int jobIdx = -1;
+            for (int i = 0; i < cache.length(); i++) {
+                if (cache.getJob(i).getJobOwnerName().equals(jobName)) {
+                    jobIdx = i;
+                    break;
+                }
+            }
+            vccontroller.service.ClientHandler.rejectJob(jobIdx);
             statusLabelToUpdate.setText("Declined");
             applyStatusStyle(statusLabelToUpdate, "Declined");
+            ControllerPage.refreshIfOpen();
             dialog.dispose();
         });
 
@@ -633,6 +680,11 @@ public class ControllerPage extends JFrame {
 
         panel.add(label);
         return panel;
+    }
+    public static void refreshIfOpen() {
+        if (INSTANCE != null) {
+            INSTANCE.loadJobsFromBackendFile();
+        }
     }
 
     private JPanel createViewAccountsPanel() {

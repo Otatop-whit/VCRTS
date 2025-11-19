@@ -3,10 +3,14 @@ package vccontroller.service;
 import common.model.Account;
 import job.model.JobOwner;
 import vccontroller.model.JobsCache;
+import vccontroller.ui.ControllerPage;
 
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.time.LocalDateTime;
+import javax.print.attribute.standard.JobSheets;
+import java.time.format.DateTimeFormatter;
 
 public class ClientHandler implements Runnable{
         VcControllerServiceImpl vccontroller = new VcControllerServiceImpl();
@@ -14,47 +18,40 @@ public class ClientHandler implements Runnable{
         private Socket socket;
         private BufferedReader bufferedReader;
         private BufferedWriter bufferedWriter;
-        private String clientRequest;
         private JobsCache jobCache = JobsCache.getInstance();
 
     public  ClientHandler(Socket socket){
-        try{
-
+        try {
             this.socket = socket;
             this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            this.clientRequest = bufferedReader.readLine();
             clientHandlers.add(this);
-            broadcastMessage("Hello "+ clientRequest);
-
-        }catch (IOException e){
-
-            System.out.println(e);
-            closeEverything(socket,bufferedReader,bufferedWriter);
+        } catch (IOException e) {
         }
-
     }
 
     @Override
     public void run() {
-        String messageFromClient;
-
-        while (socket.isConnected()){
-            try{
-                messageFromClient = bufferedReader.readLine();
-
-                //JobOwner job = convertToJobObj(messageFromClient);
-                //System.out.println(messageFromClient);
-                //jobCache.addJob(job);
-                //broadcastMessage(messageFromClient);
-            } catch (IOException e) {
-                System.out.println(e);
-                closeEverything(socket,bufferedReader,bufferedWriter);
-                break;
+        try {
+            String messageFromClient = bufferedReader.readLine();
+            JobOwner job = convertToJobObj(messageFromClient);
+            if (job != null) {
+                jobCache.addJob(job);
+                javax.swing.SwingUtilities.invokeLater(() -> {
+                    ControllerPage.refreshIfOpen();
+                });
             }
+
+            while (socket.isConnected() && !socket.isClosed()) {
+                bufferedReader.readLine();
+            }
+        } catch (IOException e) {
+        } finally {
+            closeEverything(socket, bufferedReader, bufferedWriter);
         }
-    }
-    //Prints out the message
+    }        
+    
+
     public void broadcastMessage(String message){
         for (ClientHandler clientHandler: clientHandlers){
             try{
@@ -94,36 +91,53 @@ public class ClientHandler implements Runnable{
         }
     }
 
-    public void acceptJob(int idx){
+    public static void acceptJob(int idx){
         String message = "Accepted";
-        for(ClientHandler clientHandler: clientHandlers){
-            try{
+        JobsCache jobCache = JobsCache.getInstance();
+        VcControllerServiceImpl vcController = new VcControllerServiceImpl();
+        ArrayList<ClientHandler> handlersToClose = new ArrayList<>(clientHandlers);
+        for(ClientHandler clientHandler: handlersToClose){
+            try {
                 clientHandler.bufferedWriter.write(message);
                 clientHandler.bufferedWriter.newLine();
                 clientHandler.bufferedWriter.flush();
-                System.out.println(message);
-            }catch(IOException e){
-                System.err.println(e);
-                closeEverything(socket, bufferedReader, bufferedWriter);
+            } catch (IOException e) {
             }
-        } // End of For
-        vccontroller.submitJob(jobCache.getJob(idx));
-    }
+        } 
 
-    public void rejectJob(int idx){
-        String message = "Rejected";
-        for(ClientHandler clientHandler : clientHandlers){
-            try{
-                clientHandler.bufferedWriter.write(message);
-                clientHandler.bufferedWriter.newLine();
-                clientHandler.bufferedWriter.flush();
-                System.out.println(message);
-            }catch(IOException e){
-                System.err.println(e);
-                closeEverything(socket, bufferedReader, bufferedWriter);
+        for(ClientHandler handler: handlersToClose) {
+            handler.closeEverything(handler.socket, handler.bufferedReader, handler.bufferedWriter);
+        }
+
+        if (idx >= 0 && idx < jobCache.length()) {
+            JobOwner job = jobCache.getJob(idx);
+            if (job != null) {
+                vcController.submitJob(job);
+                jobCache.removeJob(idx);
             }
         }
-        jobCache.removeJob(idx);
+    }
+
+    public static void rejectJob(int idx){
+        String message = "Rejected";
+        JobsCache jobCache = JobsCache.getInstance();
+        ArrayList<ClientHandler> handlersToClose = new ArrayList<>(clientHandlers);
+        for(ClientHandler clientHandler : handlersToClose){
+            try {
+                clientHandler.bufferedWriter.write(message);
+                clientHandler.bufferedWriter.newLine();
+                clientHandler.bufferedWriter.flush();
+            } catch (IOException e) {
+            }
+        }
+
+        for(ClientHandler handler: handlersToClose){
+            handler.closeEverything(handler.socket, handler.bufferedReader, handler.bufferedWriter);
+        }
+
+        if (idx >= 0 && idx < jobCache.length()) {
+            jobCache.removeJob(idx);
+        }
     }
 
     //Splits up the client message for the client request method to work
@@ -159,17 +173,36 @@ public class ClientHandler implements Runnable{
         }
     }
     public JobOwner convertToJobObj(String stringJob){
-        String[]parts = stringJob.split("/",4);
-        if(parts.length ==4) {
-            int jobId =Integer.parseInt(parts[0]);
-            int jobDuration =Integer.parseInt(parts[2]);
-            int jobCompletionTime =Integer.parseInt(parts[3]);
-            return new JobOwner(jobId,parts[1],jobDuration,jobCompletionTime);
+        if (stringJob == null || stringJob.trim().isEmpty()) {
+            return null;
         }
-        return null;
 
+        String[] parts = stringJob.split("\\|", 4);
+        if (parts.length == 4 && parts[0].equals("JOB")) {
+                String jobName = parts[1].trim();
+                int jobDuration = Integer.parseInt(parts[2].trim());
+                String jobDeadline = parts[3].trim();
+
+                JobOwner job = new JobOwner();
+                job.setJobOwnerName(jobName);
+                job.setDuration(jobDuration);
+                job.setJobDeadline(jobDeadline);
+                job.setCompletionTime(0);
+                return job;
+            } 
+        
+
+        parts = stringJob.split("/", 4);
+        if (parts.length == 4) {
+                int jobId = Integer.parseInt(parts[0]);
+                int jobDuration = Integer.parseInt(parts[2]);
+                int jobCompletionTime = Integer.parseInt(parts[3]);
+                return new JobOwner(jobId, parts[1], jobDuration, jobCompletionTime);
+            }
+        return null;
     }
     
+
     //Saves vehicle information to the vehicle repo
     public static void saveVehicle(String vehicleInfo){
         try{
@@ -181,6 +214,5 @@ public class ClientHandler implements Runnable{
             System.err.println("Failed to write to file:" + e.getMessage());
         }
     }
-    
-    
+
 }
