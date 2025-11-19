@@ -32,32 +32,40 @@ public class ClientHandler implements Runnable{
 
     @Override
     public void run() {
-        String messageFromClient = clientRequest;
+        try {
+            String messageFromClient = bufferedReader.readLine();
 
-        while (socket.isConnected()){
-            try{
-                if(messageFromClient != null && !messageFromClient.isEmpty()){
-                    String[] instructions = splitMessage(messageFromClient);
-                     String response = (String) executeRequest(instructions[0], instructions[1]);
-                    System.out.println(response);
+            while (socket.isConnected() && !socket.isClosed()){
+                try{
+                    if(messageFromClient != null && !messageFromClient.isEmpty()){
+                        if(messageFromClient.startsWith("JOB|")) {
+                            JobOwner job = convertToJobObj(messageFromClient);
+                            if (job != null) {
+                                jobCache.addJob(job);
+                                System.out.println("Job successfully added to cache.");
+                                javax.swing.SwingUtilities.invokeLater(() -> {
+                                    ControllerPage.refreshIfOpen();
+                                });
+                            }
+                        } else {
+                            String[] instructions = splitMessage(messageFromClient);
+                            String response = (String) executeRequest(instructions[0], instructions[1]);
+                            System.out.println(response);
+                        }
+                    }
+                    messageFromClient = bufferedReader.readLine();
+                } catch (IOException e) {
+                    System.out.println(e);
+                    closeEverything(socket,bufferedReader,bufferedWriter);
+                    break;
                 }
-                messageFromClient = bufferedReader.readLine();
-                
-                
-                //JobOwner job = convertToJobObj(messageFromClient);
-                //System.out.println(messageFromClient);
-                //jobCache.addJob(job);
-                //broadcastMessage(messageFromClient);
-            } catch (IOException e) {
-                System.out.println(e);
-                closeEverything(socket,bufferedReader,bufferedWriter);
-                break;
             }
         } catch (IOException e) {
+            System.out.println(e);
         } finally {
             closeEverything(socket, bufferedReader, bufferedWriter);
         }
-    }        
+    }          
     
 
     public void broadcastMessage(String message){
@@ -173,9 +181,15 @@ public class ClientHandler implements Runnable{
                 return "Vehicle has been saved to File.";
             case "J_Convert":
                 JobOwner job = convertToJobObj(info);
-                System.out.println("Job successfully added to cache.");
-                jobCache.addJob(job);
-                return "Job has been added to cache.";
+                if (job != null) {
+                    jobCache.addJob(job);
+                    System.out.println("Job successfully added to cache.");
+                    javax.swing.SwingUtilities.invokeLater(() -> {
+                        ControllerPage.refreshIfOpen();
+                    });
+                    return "Job has been added to cache.";
+                }
+                return "Failed to convert job.";
             default:
                 return "Unknown task: " + instruction;
         }
