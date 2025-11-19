@@ -185,7 +185,7 @@ public class Vehicle {
 
     public String toString(){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        String vehicleString = ""+ vehicleId + "/" + vehicleOwnerEmail + "/" + licensePlate + "/"
+        String vehicleString = " "+ vehicleOwnerEmail + "/" + vehicleId + "/" + licensePlate + "/"
         + vehicleModel + "/" + vehicleMake + "/" + vehicleYear.toString() + "/" + computingPower + "/"
         + arrivalDate + "/" + departureDate + "/" + residency + "/" + timestamp.format(formatter) + "/"
         + lastModified.format(formatter);

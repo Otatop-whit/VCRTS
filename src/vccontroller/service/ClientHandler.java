@@ -32,18 +32,26 @@ public class ClientHandler implements Runnable{
 
     @Override
     public void run() {
-        try {
-            String messageFromClient = bufferedReader.readLine();
-            JobOwner job = convertToJobObj(messageFromClient);
-            if (job != null) {
-                jobCache.addJob(job);
-                javax.swing.SwingUtilities.invokeLater(() -> {
-                    ControllerPage.refreshIfOpen();
-                });
-            }
+        String messageFromClient = clientRequest;
 
-            while (socket.isConnected() && !socket.isClosed()) {
-                bufferedReader.readLine();
+        while (socket.isConnected()){
+            try{
+                if(messageFromClient != null && !messageFromClient.isEmpty()){
+                    String[] instructions = splitMessage(messageFromClient);
+                     String response = (String) executeRequest(instructions[0], instructions[1]);
+                    System.out.println(response);
+                }
+                messageFromClient = bufferedReader.readLine();
+                
+                
+                //JobOwner job = convertToJobObj(messageFromClient);
+                //System.out.println(messageFromClient);
+                //jobCache.addJob(job);
+                //broadcastMessage(messageFromClient);
+            } catch (IOException e) {
+                System.out.println(e);
+                closeEverything(socket,bufferedReader,bufferedWriter);
+                break;
             }
         } catch (IOException e) {
         } finally {

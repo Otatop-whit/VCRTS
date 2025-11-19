@@ -19,6 +19,10 @@ public class User {
     private void setEmail(String email){
         this.email =email;
     }
+    public void logout(){
+        this.username = null;
+        this.email = null;
+    }
     public String getUsername() { return username; }
     public String getEmail() { return email; }
 }

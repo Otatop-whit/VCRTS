@@ -27,8 +27,9 @@ public class vehicle_ui {
     private static final Color BUTTON_COLOR_BLUE = new Color(35, 99, 188);
     private static final Color BUTTON_COLOR_GREEN = new Color(25, 140, 100);
     private static final Font TITLE_FONT = new Font("SansSerif", Font.BOLD, 22);
-    private static final Font BUTTON_FONT = new Font("SansSerif", Font.BOLD, 12);
+    private static final Font BUTTON_FONT = new Font("SansSerif", Font.BOLD, 18);
     private static final Font LABEL_FONT = new Font("SansSerif", Font.PLAIN, 14);
+    private static final Dimension BUTTON_SIZE = new Dimension(220, 56); // 新增
     User user = User.getInstance();
     VehicleOwner vehicleOwner = VehicleOwnerServiceImpl.loadOwner(user);
     
@@ -87,23 +88,12 @@ public class vehicle_ui {
        
         JPanel mainPanel = new JPanel();
         mainPanel.setBackground(BACKGROUND_COLOR);
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(80, 50, 100, 50));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(60, 50, 80, 50));
     
         JPanel buttonPanel = new JPanel();
         buttonPanel.setBackground(BACKGROUND_COLOR);
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
 
-        JButton account_btn = new JButton("Account");
-        styleButton(account_btn, BUTTON_COLOR_BLUE);
-        buttonPanel.add(account_btn);
-        buttonPanel.add(Box.createHorizontalStrut(20));
-        
-        account_btn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(null, "Owner ID: ", "Your info", JOptionPane.INFORMATION_MESSAGE);
-            }
-        });
 
         JButton vehicle_btn = new JButton("Vehicle info");
         styleButton(vehicle_btn, BUTTON_COLOR_GREEN);
@@ -223,14 +213,27 @@ public class vehicle_ui {
         ts_btn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JTextField ArrivalTime = new JTextField(10);
-                JTextField DepartureTime = new JTextField(10);
+                JTextField ArrivalTime = new JTextField(25);
+                JButton arrival_btn = new JButton("📅");
+                JTextField DepartureTime = new JTextField(25);
+                JButton departure_btn = new JButton("📅");
                 JTextField licensePlate = new JTextField();
+
+                JPanel arrivalDatePanel = new JPanel(new BorderLayout());
+                arrivalDatePanel.add(ArrivalTime, BorderLayout.CENTER);
+                arrivalDatePanel.add(arrival_btn, BorderLayout.EAST);
+
+                JPanel departureDatePanel = new JPanel(new BorderLayout());
+                departureDatePanel.add(DepartureTime, BorderLayout.CENTER);
+                departureDatePanel.add(departure_btn, BorderLayout.EAST);
+
+                arrival_btn.addActionListener(evt -> showSimpleDateDialog(ArrivalTime));
+                departure_btn.addActionListener(evt -> showSimpleDateDialog(DepartureTime));
                  
                 Object[] message = {
                     "LicensePlate: ", licensePlate,
-                    "ArrivalTime(YYYY-MM-DD): ", ArrivalTime,
-                    "DepartureTime(YYYY-MM-DD): ", DepartureTime,
+                    "ArrivalTime(YYYY-MM-DD): ", arrivalDatePanel,
+                    "DepartureTime(YYYY-MM-DD): ", departureDatePanel,
                 };
             
                 int option = JOptionPane.showConfirmDialog(null, message, 
@@ -301,10 +304,10 @@ public class vehicle_ui {
         button.setBackground(baseColor);
         button.setForeground(Color.WHITE);
         button.setOpaque(true);
-        button.setBorder(BorderFactory.createEmptyBorder(4, 8, 4, 8));
+        button.setBorder(BorderFactory.createEmptyBorder(10, 18, 10, 18));
         button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        button.setPreferredSize(new Dimension(110, 35));
-        button.setMaximumSize(new Dimension(110, 35));
+        button.setPreferredSize(BUTTON_SIZE);
+        button.setMaximumSize(BUTTON_SIZE);
 
         button.addMouseListener(new MouseAdapter() {
             public void mouseEntered(MouseEvent evt) {
