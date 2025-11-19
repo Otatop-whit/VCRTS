@@ -749,20 +749,32 @@ public class ControllerPage extends JFrame {
             if (vehicle != null) {
                 System.out.println(vehicle.getMake());
                 String vehicleId = "#V-" + String.format("%04d", vehicleIndex++);
+                String email = vehicle.getVehicleOwnerEmail();
+                String license = vehicle.getLicensePlate();
+                String make = vehicle.getMake();
+                String model = vehicle.getModel();
+                String year = vehicle.getYear().toString();
+                String computePower = vehicle.getComputingPower();
+                String arrDate = vehicle.getArriveDate().toString();
+                String depDate = vehicle.getDepartDate().toString();
+                String resident = vehicle.getResidency();
+                String createdAt = vehicle.getTimestamp().toString();
+                String updateAt = vehicle.getLastModified().toString();
+                
 
                 JPanel row = createVehicleRow(
                         vehicleId,
-                        vehicle.getModel(),
-                        vehicle.getMake(),
-                        String.valueOf(vehicle.getYear()),
-                        vehicle.getComputingPower(),
-                        vehicle.getLicensePlate(),
-                        String.valueOf(vehicle.getArriveDate()),
-                        String.valueOf(vehicle.getDepartDate()),
-                        vehicle.getResidency(),
-                        user.getEmail(),
-                        String.valueOf(LocalDateTime.now()),
-                        String.valueOf(LocalDateTime.now())
+                        email,
+                        model,
+                        make,
+                        year,
+                        computePower,
+                        arrDate,
+                        depDate,
+                        resident,
+                        license,
+                        createdAt,
+                        updateAt
                 );
 
                 gbc.gridy = rowY++;
