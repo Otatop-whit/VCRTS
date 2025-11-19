@@ -37,12 +37,18 @@ public class ClientHandler implements Runnable{
 
     @Override
     public void run() {
-        String messageFromClient;
+        String messageFromClient = clientRequest;
 
         while (socket.isConnected()){
             try{
+                if(messageFromClient != null && !messageFromClient.isEmpty()){
+                    String[] instructions = splitMessage(messageFromClient);
+                     String response = (String) executeRequest(instructions[0], instructions[1]);
+                    System.out.println(response);
+                }
                 messageFromClient = bufferedReader.readLine();
-
+                
+                
                 //JobOwner job = convertToJobObj(messageFromClient);
                 //System.out.println(messageFromClient);
                 //jobCache.addJob(job);
