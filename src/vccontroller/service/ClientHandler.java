@@ -6,6 +6,7 @@ import vccontroller.model.JobsCache;
 import vccontroller.model.VehicleCache;
 import vccontroller.ui.ControllerPage;
 import vehicle.model.Vehicle;
+import vehicle.model.VehicleOwner;
 
 import java.io.*;
 import java.net.Socket;
@@ -148,7 +149,31 @@ public class ClientHandler implements Runnable{
             }
         }
     }
+    public static void acceptVehicle(int idx){
+        String message = "Accepted";
+        VehicleCache vehicleCache = VehicleCache.getInstance();
+        ArrayList<ClientHandler> handlersToClose = new ArrayList<>(clientHandlers);
+        for(ClientHandler clientHandler : handlersToClose){
+            try{
+                clientHandler.bufferedWriter.write(message);
+                clientHandler.bufferedWriter.newLine();
+                clientHandler.bufferedWriter.flush();
+            }catch(IOException e){
 
+            }
+        }
+        for(ClientHandler handler: handlersToClose){
+            handler.closeEverything(handler.socket, handler.bufferedReader, handler.bufferedWriter);
+        }
+
+        if(idx >= 0 && idx < vehicleCache.length()){
+            Vehicle vehicle = vehicleCache.getVehicle(idx);
+            if(vehicle != null){
+                String vehInfo = vehicle.toString();
+                saveVehicle(vehInfo);
+            }
+        }
+    }
     public static void rejectJob(int idx){
         String message = "Rejected";
         JobsCache jobCache = JobsCache.getInstance();
