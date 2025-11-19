@@ -1,25 +1,8 @@
 
-Timestamp: 2025-11-15 12:05:09
-Job Name: test
-Duration: 7
-Job Completion Time: 7
-Job Deadline: 2-2-2025
-Requirements: High
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Timestamp: 2025-11-15 16:58:15
-Job Name: SJU
-Duration: 2
-Job Completion Time: 9
-Job Deadline: 9-9-2025
-Requirements: Low
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Timestamp: 2025-11-19 08:24:15
-Job Name: Job1
-Duration: 2
-Job Completion Time: 23
-Job Deadline: Nov 21
+Timestamp: 2025-11-19 14:16:36
+Job Name: job1
+Duration: 1
+Job Completion Time: 24
+Job Deadline: 10/01/2026
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
