@@ -598,6 +598,7 @@ public class ControllerPage extends JFrame {
 
         dialog.pack();
         dialog.setLocationRelativeTo(this);
+        
         dialog.setVisible(true);
     }
 
@@ -665,14 +666,14 @@ public class ControllerPage extends JFrame {
     }
     /*
      Reads vehicle records from src/vccontroller/repo/VehicleData.txt and creates one row per record.
-        Model: <value>
-        Make: <value>
-        Year: <value>
-        Computing Power: <value>
-        LicensePlate: <value>
-        Arrival Date: <value>
-       Departure Date: <value>
-       Residency: <value>
+        Model: 
+        Make: 
+        Year: 
+        Computing Power: 
+        LicensePlate: 
+        Arrival Date: 
+       Departure Date: 
+       Residency: 
      */
     private void loadVehiclesFromBackendFile() {
         vehiclesListPanel.removeAll();
@@ -706,23 +707,23 @@ public class ControllerPage extends JFrame {
     
                 // Expect at least: email / id / plate / model / make / year / power / arrival / departure / residency
                 if (parts.length < 10) {
-                    // Not enough data, skip or log
                     continue;
                 }
     
-                String ownerEmail      = parts[0].trim();   // not shown in table for now
-                String rawId           = parts[1].trim();   // internal id, optional
-                String licensePlate    = parts[2].trim();
-                String model           = parts[3].trim();
-                String make            = parts[4].trim();
-                String year            = parts[5].trim();
-                String computingPower  = parts[6].trim();
-                String arrivalDate     = parts[7].trim();
-                String departureDate   = parts[8].trim();
-                String residency       = parts[9].trim();
-                // parts[10], parts[11] = timestamps 
+                String ownerEmail     = parts[0].trim();
+                String rawId          = parts[1].trim();   // internal id, not used in UI right now
+                String licensePlate   = parts[2].trim();
+                String model          = parts[3].trim();
+                String make           = parts[4].trim();
+                String year           = parts[5].trim();
+                String computingPower = parts[6].trim();
+                String arrivalDate    = parts[7].trim();
+                String departureDate  = parts[8].trim();
+                String residency      = parts[9].trim();
+                String createdAt      = (parts.length > 10) ? parts[10].trim() : "-";
+                String updatedAt      = (parts.length > 11) ? parts[11].trim() : "-";
     
-                // Friendly UI ID for the controller
+                //  UI ID for the controller
                 String vehicleId = "#V-" + String.format("%04d", vehicleIndex++);
     
                 JPanel row = createVehicleRow(
@@ -734,7 +735,10 @@ public class ControllerPage extends JFrame {
                         licensePlate,
                         arrivalDate,
                         departureDate,
-                        residency
+                        residency,
+                        ownerEmail,
+                        createdAt,
+                        updatedAt
                 );
     
                 gbc.gridy = rowY++;
@@ -752,7 +756,7 @@ public class ControllerPage extends JFrame {
                 vehiclesListPanel.add(empty, gbc);
             }
     
-            // Filler 
+            // Filler so everything sticks to the top
             gbc.gridy++;
             gbc.weighty = 1.0;
             JPanel filler = new JPanel();
@@ -778,191 +782,295 @@ public class ControllerPage extends JFrame {
         vehiclesListPanel.repaint();
     }
     
+    
 
-    private JPanel createVehicleHeaderRow() {
-        JPanel header = new JPanel(new GridLayout(1, 6));
-        header.setBackground(new Color(15, 23, 42));
-        header.setBorder(new EmptyBorder(0, 12, 4, 12));
-
-        header.add(createHeaderLabel("Vehicle ID", SwingConstants.LEFT));
-        header.add(createHeaderLabel("Model", SwingConstants.LEFT));
-        header.add(createHeaderLabel("Make", SwingConstants.LEFT));
-        header.add(createHeaderLabel("Year", SwingConstants.LEFT));
-        header.add(createHeaderLabel("License Plate", SwingConstants.LEFT));
-        header.add(createHeaderLabel("Actions", SwingConstants.CENTER));
-
-        return header;
+        private JPanel createVehicleHeaderRow() {
+            // 7 columns: Vehicle ID, Model, Make, Year, License Plate, Status, Actions
+            JPanel header = new JPanel(new GridLayout(1, 7));
+            header.setBackground(new Color(15, 23, 42));
+            header.setBorder(new EmptyBorder(0, 12, 4, 12));
+        
+            header.add(createHeaderLabel("Vehicle ID", SwingConstants.LEFT));
+            header.add(createHeaderLabel("Model", SwingConstants.LEFT));
+            header.add(createHeaderLabel("Make", SwingConstants.LEFT));
+            header.add(createHeaderLabel("Year", SwingConstants.LEFT));
+            header.add(createHeaderLabel("License Plate", SwingConstants.LEFT));
+            header.add(createHeaderLabel("Status", SwingConstants.CENTER));
+            header.add(createHeaderLabel("Actions", SwingConstants.CENTER));
+        
+            return header;
     }
 
-    private JPanel createVehicleRow(String vehicleId,
-                                    String model,
-                                    String make,
-                                    String year,
-                                    String computingPower,
-                                    String licensePlate,
-                                    String arrivalDate,
-                                    String departureDate,
-                                    String residency) {
+                private JPanel createVehicleRow(String vehicleId,
+                String model,
+                String make,
+                String year,
+                String computingPower,
+                String licensePlate,
+                String arrivalDate,
+                String departureDate,
+                String residency,
+                String ownerEmail,
+                String createdAt,
+                String updatedAt) {
 
-        JPanel row = new JPanel(new GridLayout(1, 6));
-        row.setBackground(new Color(30, 41, 59));
-        row.setBorder(new EmptyBorder(10, 12, 10, 12));
-        row.setMaximumSize(new Dimension(Integer.MAX_VALUE, 56));
-        row.setAlignmentX(Component.LEFT_ALIGNMENT);
+            // 7 columns: ID, Model, Make, Year, Plate, Status, Actions
+            JPanel row = new JPanel(new GridLayout(1, 7));
+            row.setBackground(new Color(30, 41, 59));
+            row.setBorder(new EmptyBorder(10, 12, 10, 12));
+            row.setMaximumSize(new Dimension(Integer.MAX_VALUE, 56));
+            row.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        // Column 1: Vehicle ID
-        JPanel col1 = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        col1.setOpaque(false);
-        JLabel idLabel = new JLabel(vehicleId);
-        idLabel.setForeground(Color.WHITE);
-        idLabel.setFont(new Font("SansSerif", Font.BOLD, 13));
-        col1.add(idLabel);
+            // Column 1: Vehicle ID
+            JPanel col1 = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+            col1.setOpaque(false);
+            JLabel idLabel = new JLabel(vehicleId);
+            idLabel.setForeground(Color.WHITE);
+            idLabel.setFont(new Font("SansSerif", Font.BOLD, 13));
+            col1.add(idLabel);
 
-        // Column 2: Model
-        JPanel col2 = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        col2.setOpaque(false);
-        JLabel modelLabel = new JLabel(model);
-        modelLabel.setForeground(new Color(148, 163, 184));
-        modelLabel.setFont(new Font("SansSerif", Font.PLAIN, 12));
-        col2.add(modelLabel);
+            // Column 2: Model
+            JPanel col2 = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+            col2.setOpaque(false);
+            JLabel modelLabel = new JLabel(model);
+            modelLabel.setForeground(new Color(148, 163, 184));
+            modelLabel.setFont(new Font("SansSerif", Font.PLAIN, 12));
+            col2.add(modelLabel);
 
-        // Column 3: Make
-        JPanel col3 = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        col3.setOpaque(false);
-        JLabel makeLabel = new JLabel(make);
-        makeLabel.setForeground(new Color(148, 163, 184));
-        makeLabel.setFont(new Font("SansSerif", Font.PLAIN, 12));
-        col3.add(makeLabel);
+            // Column 3: Make
+            JPanel col3 = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+            col3.setOpaque(false);
+            JLabel makeLabel = new JLabel(make);
+            makeLabel.setForeground(new Color(148, 163, 184));
+            makeLabel.setFont(new Font("SansSerif", Font.PLAIN, 12));
+            col3.add(makeLabel);
 
-        // Column 4: Year
-        JPanel col4 = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        col4.setOpaque(false);
-        JLabel yearLabel = new JLabel(year);
-        yearLabel.setForeground(new Color(148, 163, 184));
-        yearLabel.setFont(new Font("SansSerif", Font.PLAIN, 12));
-        col4.add(yearLabel);
+            // Column 4: Year
+            JPanel col4 = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+            col4.setOpaque(false);
+            JLabel yearLabel = new JLabel(year);
+            yearLabel.setForeground(new Color(148, 163, 184));
+            yearLabel.setFont(new Font("SansSerif", Font.PLAIN, 12));
+            col4.add(yearLabel);
 
-        // Column 5: License Plate
-        JPanel col5 = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        col5.setOpaque(false);
-        JLabel plateLabel = new JLabel(licensePlate);
-        plateLabel.setForeground(new Color(148, 163, 184));
-        plateLabel.setFont(new Font("SansSerif", Font.PLAIN, 12));
-        col5.add(plateLabel);
+            // Column 5: License Plate
+            JPanel col5 = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+            col5.setOpaque(false);
+            JLabel plateLabel = new JLabel(licensePlate);
+            plateLabel.setForeground(new Color(148, 163, 184));
+            plateLabel.setFont(new Font("SansSerif", Font.PLAIN, 12));
+            col5.add(plateLabel);
 
-        // Column 6: Actions (View)
-        JPanel col6 = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
-        col6.setOpaque(false);
+            // Column 6: Status pill (like jobs)
+            JPanel col6 = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
+            col6.setOpaque(false);
 
-        JButton detailsBtn = new JButton("View");
-        detailsBtn.setFocusPainted(false);
-        detailsBtn.setFont(new Font("SansSerif", Font.PLAIN, 11));
-        detailsBtn.setBackground(new Color(15, 23, 42));
-        detailsBtn.setForeground(new Color(148, 163, 184));
-        detailsBtn.setBorder(BorderFactory.createEmptyBorder(4, 8, 4, 8));
-        detailsBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            JLabel statusLabel = new JLabel("Pending");
+            statusLabel.setOpaque(true);
+            statusLabel.setHorizontalAlignment(SwingConstants.CENTER);
+            statusLabel.setFont(new Font("SansSerif", Font.BOLD, 11));
+            statusLabel.setBorder(new EmptyBorder(4, 10, 4, 10));
+            statusLabel.setPreferredSize(new Dimension(90, 24));
+            applyStatusStyle(statusLabel, "Pending"); // reuse same styling as jobs
 
-        detailsBtn.addActionListener(e -> showVehicleDetailsDialog(
-                vehicleId,
-                model,
-                make,
-                year,
-                computingPower,
-                licensePlate,
-                arrivalDate,
-                departureDate,
-                residency
-        ));
+            col6.add(statusLabel);
 
-        col6.add(detailsBtn);
+            // Column 7: Actions (View)
+            JPanel col7 = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
+            col7.setOpaque(false);
 
-        row.add(col1);
-        row.add(col2);
-        row.add(col3);
-        row.add(col4);
-        row.add(col5);
-        row.add(col6);
+            JButton detailsBtn = new JButton("View");
+            detailsBtn.setFocusPainted(false);
+            detailsBtn.setFont(new Font("SansSerif", Font.PLAIN, 11));
+            detailsBtn.setBackground(new Color(15, 23, 42));
+            detailsBtn.setForeground(new Color(148, 163, 184));
+            detailsBtn.setBorder(BorderFactory.createEmptyBorder(4, 8, 4, 8));
+            detailsBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-        return row;
-    }
+            detailsBtn.addActionListener(e -> showVehicleDetailsDialog(
+            vehicleId,
+            model,
+            make,
+            year,
+            computingPower,
+            licensePlate,
+            arrivalDate,
+            departureDate,
+            residency,
+            ownerEmail,
+            createdAt,
+            updatedAt,
+            statusLabel
+            ));
 
-    private void showVehicleDetailsDialog(String vehicleId,
-                                          String model,
-                                          String make,
-                                          String year,
-                                          String computingPower,
-                                          String licensePlate,
-                                          String arrivalDate,
-                                          String departureDate,
-                                          String residency) {
+            col7.add(detailsBtn);
 
-        JDialog dialog = new JDialog(this, "Vehicle Details", true);
-        dialog.setLayout(new BorderLayout());
-        dialog.getContentPane().setBackground(new Color(15, 23, 42));
+            // Add all columns to the row
+            row.add(col1);
+            row.add(col2);
+            row.add(col3);
+            row.add(col4);
+            row.add(col5);
+            row.add(col6);
+            row.add(col7);
 
-        JPanel content = new JPanel();
-        content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
-        content.setBorder(new EmptyBorder(16, 20, 16, 20));
-        content.setBackground(new Color(15, 23, 42));
-
-        content.add(createDetailLabel("Vehicle ID: ", vehicleId));
-        content.add(Box.createVerticalStrut(6));
-        content.add(createDetailLabel("Model: ", model));
-        content.add(Box.createVerticalStrut(6));
-        content.add(createDetailLabel("Make: ", make));
-        content.add(Box.createVerticalStrut(6));
-        content.add(createDetailLabel("Year: ", year));
-        content.add(Box.createVerticalStrut(6));
-        content.add(createDetailLabel("Computing Power: ", computingPower));
-        content.add(Box.createVerticalStrut(6));
-        content.add(createDetailLabel("License Plate: ", licensePlate));
-        content.add(Box.createVerticalStrut(6));
-        content.add(createDetailLabel("Arrival Date: ", arrivalDate));
-        content.add(Box.createVerticalStrut(6));
-        content.add(createDetailLabel("Departure Date: ", departureDate));
-        content.add(Box.createVerticalStrut(6));
-        content.add(createDetailLabel("Residency: ", residency));
-
-        dialog.add(content, BorderLayout.CENTER);
-
-        JPanel buttons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        buttons.setBackground(new Color(15, 23, 42));
-        buttons.setBorder(new EmptyBorder(0, 0, 12, 12));
-
-        Color closeBase = Color.WHITE;
-        Color closeHover = new Color(229, 231, 235);
-        Color closeText = new Color(30, 41, 59);
-
-        JButton closeBtn = new JButton("Close");
-        closeBtn.setFocusPainted(false);
-        closeBtn.setOpaque(true);
-        closeBtn.setContentAreaFilled(true);
-        closeBtn.setBackground(closeBase);
-        closeBtn.setForeground(closeText);
-        closeBtn.setBorder(BorderFactory.createEmptyBorder(6, 14, 6, 14));
-        closeBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-
-        closeBtn.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-            public void mouseEntered(java.awt.event.MouseEvent e) {
-                closeBtn.setBackground(closeHover);
+            return row;
             }
+            private void showVehicleDetailsDialog(String vehicleId,
+                                                String model,
+                                                String make,
+                                                String year,
+                                                String computingPower,
+                                                String licensePlate,
+                                                String arrivalDate,
+                                                String departureDate,
+                                                String residency,
+                                                String ownerEmail,
+                                                String createdAt,
+                                                String updatedAt,
+                                                JLabel statusLabelToUpdate) {
 
-            @Override
-            public void mouseExited(java.awt.event.MouseEvent e) {
-                closeBtn.setBackground(closeBase);
-            }
-        });
+    JDialog dialog = new JDialog(this, "Vehicle Details", true);
+    dialog.setLayout(new BorderLayout());
+    dialog.getContentPane().setBackground(new Color(15, 23, 42));
 
-        closeBtn.addActionListener(e -> dialog.dispose());
+    JPanel content = new JPanel();
+    content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
+    content.setBorder(new EmptyBorder(16, 20, 16, 20));
+    content.setBackground(new Color(15, 23, 42));
 
-        buttons.add(closeBtn);
-        dialog.add(buttons, BorderLayout.SOUTH);
+    content.add(createDetailLabel("Vehicle ID: ", vehicleId));
+    content.add(Box.createVerticalStrut(6));
+    content.add(createDetailLabel("Owner Email: ", ownerEmail));
+    content.add(Box.createVerticalStrut(6));
+    content.add(createDetailLabel("Model: ", model));
+    content.add(Box.createVerticalStrut(6));
+    content.add(createDetailLabel("Make: ", make));
+    content.add(Box.createVerticalStrut(6));
+    content.add(createDetailLabel("Year: ", year));
+    content.add(Box.createVerticalStrut(6));
+    content.add(createDetailLabel("Computing Power: ", computingPower));
+    content.add(Box.createVerticalStrut(6));
+    content.add(createDetailLabel("License Plate: ", licensePlate));
+    content.add(Box.createVerticalStrut(6));
+    content.add(createDetailLabel("Arrival Date: ", arrivalDate));
+    content.add(Box.createVerticalStrut(6));
+    content.add(createDetailLabel("Departure Date: ", departureDate));
+    content.add(Box.createVerticalStrut(6));
+    content.add(createDetailLabel("Residency: ", residency));
+    content.add(Box.createVerticalStrut(6));
+    content.add(createDetailLabel("Created At: ", createdAt));
+    content.add(Box.createVerticalStrut(6));
+    content.add(createDetailLabel("Updated At: ", updatedAt));
 
-        dialog.pack();
-        dialog.setLocationRelativeTo(this);
-        dialog.setVisible(true);
-    }
+    dialog.add(content, BorderLayout.CENTER);
+
+    // Buttons row (Accept / Decline / Close) like jobs
+    JPanel buttons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+    buttons.setBackground(new Color(15, 23, 42));
+    buttons.setBorder(new EmptyBorder(0, 0, 12, 12));
+
+    Color acceptBase  = new Color(59, 130, 246); // blue
+    Color acceptHover = new Color(37, 99, 235);
+    Color declineBase = new Color(220, 38, 38);  // red
+    Color declineHover= new Color(185, 28, 28);
+    Color closeBase   = Color.WHITE;             // white
+    Color closeHover  = new Color(229, 231, 235);
+    Color closeText   = new Color(30, 41, 59);   // dark text
+
+    JButton acceptBtn = new JButton("Accept");
+    JButton declineBtn = new JButton("Decline");
+    JButton closeBtn = new JButton("Close");
+
+    // Accept button style
+    acceptBtn.setFocusPainted(false);
+    acceptBtn.setOpaque(true);
+    acceptBtn.setContentAreaFilled(true);
+    acceptBtn.setBackground(acceptBase);
+    acceptBtn.setForeground(Color.WHITE);
+    acceptBtn.setBorder(BorderFactory.createEmptyBorder(6, 14, 6, 14));
+    acceptBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+    acceptBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+        @Override
+        public void mouseEntered(java.awt.event.MouseEvent e) {
+            acceptBtn.setBackground(acceptHover);
+        }
+
+        @Override
+        public void mouseExited(java.awt.event.MouseEvent e) {
+            acceptBtn.setBackground(acceptBase);
+        }
+    });
+
+    // Decline button style
+    declineBtn.setFocusPainted(false);
+    declineBtn.setOpaque(true);
+    declineBtn.setContentAreaFilled(true);
+    declineBtn.setBackground(declineBase);
+    declineBtn.setForeground(Color.WHITE);
+    declineBtn.setBorder(BorderFactory.createEmptyBorder(6, 14, 6, 14));
+    declineBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+    declineBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+        @Override
+        public void mouseEntered(java.awt.event.MouseEvent e) {
+            declineBtn.setBackground(declineHover);
+        }
+
+        @Override
+        public void mouseExited(java.awt.event.MouseEvent e) {
+            declineBtn.setBackground(declineBase);
+        }
+    });
+
+    // Close button style
+    closeBtn.setFocusPainted(false);
+    closeBtn.setOpaque(true);
+    closeBtn.setContentAreaFilled(true);
+    closeBtn.setBackground(closeBase);
+    closeBtn.setForeground(closeText);
+    closeBtn.setBorder(BorderFactory.createEmptyBorder(6, 14, 6, 14));
+    closeBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+    closeBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+        @Override
+        public void mouseEntered(java.awt.event.MouseEvent e) {
+            closeBtn.setBackground(closeHover);
+        }
+
+        @Override
+        public void mouseExited(java.awt.event.MouseEvent e) {
+            closeBtn.setBackground(closeBase);
+        }
+    });
+
+    // Button actions — update status pill in the table
+    acceptBtn.addActionListener(e -> {
+        statusLabelToUpdate.setText("Accepted");
+        applyStatusStyle(statusLabelToUpdate, "Accepted");
+        dialog.dispose();
+    });
+
+    declineBtn.addActionListener(e -> {
+        statusLabelToUpdate.setText("Declined");
+        applyStatusStyle(statusLabelToUpdate, "Declined");
+        dialog.dispose();
+    });
+
+    closeBtn.addActionListener(e -> dialog.dispose());
+
+    buttons.add(acceptBtn);
+    buttons.add(Box.createHorizontalStrut(8));
+    buttons.add(declineBtn);
+    buttons.add(Box.createHorizontalStrut(8));
+    buttons.add(closeBtn);
+
+    dialog.add(buttons, BorderLayout.SOUTH);
+
+    dialog.pack();
+    dialog.setLocationRelativeTo(this);
+    dialog.setVisible(true);
+}
+
+
 
     private JPanel createPlaceholderPanel(String title) {
         JPanel panel = new JPanel(new GridBagLayout());
@@ -1109,7 +1217,7 @@ public class ControllerPage extends JFrame {
         emailLabel.setFont(new Font("SansSerif", Font.PLAIN, 12));
         col3.add(emailLabel);
 
-        // Column 4: Role (pill style)
+        // Column 4: Role pill style
         JPanel col4 = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
         col4.setOpaque(false);
 
