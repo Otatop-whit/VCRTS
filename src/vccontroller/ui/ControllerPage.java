@@ -746,20 +746,31 @@ public class ControllerPage extends JFrame {
         VehicleCache cache = VehicleCache.getInstance();
         for (int i = 0; i < cache.length(); i++) {
             Vehicle vehicle = cache.getVehicle(i);
+            String email = null;
+            String license = null;
+            String make = null;
+            String model = null;
+            String year = null;
+            String computePower = null;
+            String arrDate = null;
+            String depDate = null;
+            String resident = null;
+            String createdAt = null;
+            String updateAt = null;
             if (vehicle != null) {
                 System.out.println(vehicle.getMake());
                 String vehicleId = "#V-" + String.format("%04d", vehicleIndex++);
-                String email = vehicle.getVehicleOwnerEmail();
-                String license = vehicle.getLicensePlate();
-                String make = vehicle.getMake();
-                String model = vehicle.getModel();
-                String year = vehicle.getYear().toString();
-                String computePower = vehicle.getComputingPower();
-                String arrDate = vehicle.getArriveDate().toString();
-                String depDate = vehicle.getDepartDate().toString();
-                String resident = vehicle.getResidency();
-                String createdAt = vehicle.getTimestamp().toString();
-                String updateAt = vehicle.getLastModified().toString();
+                email = user.getEmail();
+                license = vehicle.getLicensePlate();
+                make = vehicle.getMake();
+                model = vehicle.getModel();
+                year = vehicle.getYear().toString();
+                computePower = vehicle.getComputingPower();
+                arrDate = vehicle.getArriveDate().toString();
+                depDate = vehicle.getDepartDate().toString();
+                resident = vehicle.getResidency();
+                createdAt = vehicle.getTimestamp().toString();
+                updateAt = vehicle.getLastModified().toString();
                 
 
                 JPanel row = createVehicleRow(
