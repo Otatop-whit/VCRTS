@@ -7,6 +7,7 @@ import job.service.JobOwnerServiceImpl;
 import vccontroller.model.JobInfo;
 import vccontroller.model.JobReq;
 import vccontroller.service.VcControllerServiceImpl;
+import common.service.JobNetworkClient;
 
 import javax.swing.*;
 import java.awt.*;
@@ -247,16 +248,29 @@ public class JobOwnerPage extends JFrame {
                 String enteredDeadline = deadline.getText();
                 int enteredDuration = Integer.parseInt(durationHours.getText().trim());
 
-                JobOwner job = new JobOwner();
-                job.setJobOwnerName(enteredName);
-                job.setJobDeadline(enteredDeadline);
-                job.setDuration(enteredDuration);
-                job.setCompletionTime(0);
+                String line = String.join("|", "JOB", enteredName, String.valueOf(enteredDuration), enteredDeadline);
 
-                //new JobOwnerServiceImpl().addJobOwner(job);
-                new VcControllerServiceImpl().submitJob(job);
-
-                JOptionPane.showMessageDialog(SubmitJobFrame.this, "Job Successfully Submitted!");
+                JDialog statusDialog = new JDialog(SubmitJobFrame.this, "Job Status", false);
+                JLabel statusLabel = new JLabel("Waiting for approval...please don't close this message");
+                statusLabel.setFont(labelfont);
+                statusLabel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+                statusDialog.add(statusLabel);
+                statusDialog.pack();
+                statusDialog.setLocationRelativeTo(SubmitJobFrame.this);
+                statusDialog.setVisible(true);
+                
+                JobNetworkClient client = new JobNetworkClient("localhost", 1234);
+                client.setStatusCallback(status -> {
+                    javax.swing.SwingUtilities.invokeLater(() -> {
+                        if (status.equals("Accepted")) {
+                            statusLabel.setText("Your job has been accepted!");
+                        } else if (status.equals("Rejected")) {
+                            statusLabel.setText("Sorry, this job has been rejected.");
+                        }
+                        statusDialog.pack();
+                    });
+                });
+                client.sendJobLine(line);
 
                 jobName.setText("");
                 deadline.setText("");

@@ -44,7 +44,9 @@ public class VcControllerServer {
         AccountData accountData = new AccountData();
         new WelcomePage();
         JobsCache jobCache = JobsCache.getInstance();
-        ServerSocket socket = new ServerSocket(1234);
+        ServerSocket socket = new ServerSocket();
+        socket.setReuseAddress(true);
+        socket.bind(new java.net.InetSocketAddress(1234));
         VcControllerServer server = new VcControllerServer(socket);
         server.start();
 
