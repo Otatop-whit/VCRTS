@@ -3,7 +3,6 @@ package vccontroller.service;
 import common.service.AccountData;
 import common.ui.WelcomePage;
 import vccontroller.model.JobsCache;
-import vccontroller.ui.ControllerPage;
 
 import java.io.DataInputStream;
 import java.io.IOException;
