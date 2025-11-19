@@ -676,78 +676,74 @@ public class ControllerPage extends JFrame {
      */
     private void loadVehiclesFromBackendFile() {
         vehiclesListPanel.removeAll();
-
+    
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.anchor = GridBagConstraints.NORTHWEST;
-
-        // header
+    
+        // Header row
         gbc.gridy = 0;
         gbc.weighty = 0;
         vehiclesListPanel.add(createVehicleHeaderRow(), gbc);
-
+    
         String filePath = "src/vccontroller/repo/VehicleData.txt";
         int vehicleIndex = 1;
-
+        int rowY = 1;
+    
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
-            String model = null;
-            String make = null;
-            String year = null;
-            String computingPower = null;
-            String licensePlate = null;
-            String arrivalDate = null;
-            String departureDate = null;
-            String residency = null;
-
-            int rowY = 1;
-
+    
             while ((line = reader.readLine()) != null) {
                 line = line.trim();
-
-                if (line.startsWith("Model:")) {
-                    model = line.substring("Model:".length()).trim();
-                } else if (line.startsWith("Make:")) {
-                    make = line.substring("Make:".length()).trim();
-                } else if (line.startsWith("Year:")) {
-                    year = line.substring("Year:".length()).trim();
-                } else if (line.startsWith("Computing Power:")) {
-                    computingPower = line.substring("Computing Power:".length()).trim();
-                } else if (line.startsWith("LicensePlate:")) {
-                    licensePlate = line.substring("LicensePlate:".length()).trim();
-                } else if (line.startsWith("Arrival Date:")) {
-                    arrivalDate = line.substring("Arrival Date:".length()).trim();
-                } else if (line.startsWith("Departure Date:")) {
-                    departureDate = line.substring("Departure Date:".length()).trim();
-                } else if (line.startsWith("Residency:")) {
-                    residency = line.substring("Residency:".length()).trim();
-                } else if (line.startsWith("~~~~")) {
-                    String vehicleId = "#V-" + String.format("%04d", vehicleIndex++);
-
-                    JPanel row = createVehicleRow(
-                            vehicleId,
-                            model != null ? model : "-",
-                            make != null ? make : "-",
-                            year != null ? year : "-",
-                            computingPower != null ? computingPower : "-",
-                            licensePlate != null ? licensePlate : "-",
-                            arrivalDate != null ? arrivalDate : "-",
-                            departureDate != null ? departureDate : "-",
-                            residency != null ? residency : "-"
-                    );
-
-                    gbc.gridy = rowY++;
-                    gbc.weighty = 0;
-                    vehiclesListPanel.add(row, gbc);
-
-                    // reset for next record
-                    model = make = year = computingPower = licensePlate = arrivalDate = departureDate = residency = null;
+                if (line.isEmpty()) {
+                    continue; // skip blanks
                 }
+    
+                // Split by "/"
+                String[] parts = line.split("/");
+    
+                // Expect at least: email / id / plate / model / make / year / power / arrival / departure / residency
+                if (parts.length < 10) {
+                    // Not enough data, skip or log
+                    continue;
+                }
+    
+                String ownerEmail      = parts[0].trim();   // not shown in table for now
+                String rawId           = parts[1].trim();   // internal id, optional
+                String licensePlate    = parts[2].trim();
+                String model           = parts[3].trim();
+                String make            = parts[4].trim();
+                String year            = parts[5].trim();
+                String computingPower  = parts[6].trim();
+                String arrivalDate     = parts[7].trim();
+                String departureDate   = parts[8].trim();
+                String residency       = parts[9].trim();
+                // parts[10], parts[11] = timestamps 
+    
+                // Friendly UI ID for the controller
+                String vehicleId = "#V-" + String.format("%04d", vehicleIndex++);
+    
+                JPanel row = createVehicleRow(
+                        vehicleId,
+                        model,
+                        make,
+                        year,
+                        computingPower,
+                        licensePlate,
+                        arrivalDate,
+                        departureDate,
+                        residency
+                );
+    
+                gbc.gridy = rowY++;
+                gbc.weighty = 0;
+                vehiclesListPanel.add(row, gbc);
             }
-
+    
             if (vehicleIndex == 1) {
+                // no vehicles added
                 gbc.gridy = 1;
                 gbc.weighty = 0;
                 JLabel empty = new JLabel("No vehicle records found.");
@@ -755,14 +751,14 @@ public class ControllerPage extends JFrame {
                 empty.setFont(new Font("SansSerif", Font.PLAIN, 13));
                 vehiclesListPanel.add(empty, gbc);
             }
-
-            // Filler so everything sticks to the top
+    
+            // Filler 
             gbc.gridy++;
             gbc.weighty = 1.0;
             JPanel filler = new JPanel();
             filler.setOpaque(false);
             vehiclesListPanel.add(filler, gbc);
-
+    
         } catch (IOException ex) {
             GridBagConstraints errGbc = new GridBagConstraints();
             errGbc.gridx = 0;
@@ -771,16 +767,17 @@ public class ControllerPage extends JFrame {
             errGbc.weighty = 0;
             errGbc.fill = GridBagConstraints.HORIZONTAL;
             errGbc.anchor = GridBagConstraints.NORTHWEST;
-
+    
             JLabel error = new JLabel("Error loading vehicles: " + ex.getMessage());
             error.setForeground(new Color(248, 113, 113));
             error.setFont(new Font("SansSerif", Font.PLAIN, 13));
             vehiclesListPanel.add(error, errGbc);
         }
-
+    
         vehiclesListPanel.revalidate();
         vehiclesListPanel.repaint();
     }
+    
 
     private JPanel createVehicleHeaderRow() {
         JPanel header = new JPanel(new GridLayout(1, 6));
