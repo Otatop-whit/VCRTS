@@ -88,6 +88,9 @@ public class WelcomePage {
 
         // Logic to open ControllerPage UI
         controllerBtn.addActionListener(e -> {
+            User.getInstance().logout();
+            
+            User.getInstance().login("test@vcrts.com", "Controller");
             frame.dispose();
             new ControllerPage().setVisible(true);;
         });
@@ -319,6 +322,7 @@ public class WelcomePage {
 
             String email = "test@vcrts.com";
             User.getInstance().login(email, accountCache.getAccount(email).getName());
+
             JOptionPane.showMessageDialog(
                     frame,
                     "✅ Login successful! Welcome to VCRTS.",
