@@ -1,6 +1,8 @@
 package vccontroller.ui;
 
+import common.model.Account;
 import common.model.User;
+import common.service.AccountData;
 import common.ui.WelcomePage;
 
 import javax.swing.*;
@@ -9,6 +11,7 @@ import java.awt.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.List;
 /*
   Controller dashboard UI.
 
@@ -635,15 +638,174 @@ public class ControllerPage extends JFrame {
         return panel;
     }
 
-    private JPanel createViewAccountsPanel() {
-        JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBackground(new Color(15, 23, 42));
+   
+private JPanel createViewAccountsPanel() {
+    JPanel panel = new JPanel(new BorderLayout());
+    panel.setBackground(new Color(15, 23, 42));
+    panel.setBorder(new EmptyBorder(16, 20, 16, 20));
 
-        JLabel label = new JLabel("View Accounts (coming soon)");
-        label.setForeground(new Color(148, 163, 184));
-        label.setFont(new Font("SansSerif", Font.PLAIN, 18));
+    // Header
+    JPanel header = new JPanel(new BorderLayout());
+    header.setBackground(new Color(15, 23, 42));
 
-        panel.add(label);
-        return panel;
+    JLabel title = new JLabel("User Accounts");
+    title.setForeground(Color.WHITE);
+    title.setFont(new Font("SansSerif", Font.BOLD, 22));
+
+    JPanel titleBox = new JPanel();
+    titleBox.setLayout(new BoxLayout(titleBox, BoxLayout.Y_AXIS));
+    titleBox.setBackground(new Color(15, 23, 42));
+    titleBox.add(title);
+    titleBox.add(Box.createVerticalStrut(4));
+
+    header.add(titleBox, BorderLayout.WEST);
+    panel.add(header, BorderLayout.NORTH);
+
+    // Accounts list
+    JPanel accountsListPanel = new JPanel();
+    accountsListPanel.setBackground(new Color(15, 23, 42));
+    accountsListPanel.setBorder(new EmptyBorder(10, 20, 20, 20));
+    accountsListPanel.setLayout(new GridBagLayout());
+
+    loadAccountsAsTable(accountsListPanel);
+
+    JScrollPane scrollPane = new JScrollPane(accountsListPanel);
+    scrollPane.setBorder(null);
+    scrollPane.getViewport().setBackground(new Color(15, 23, 42));
+
+    panel.add(scrollPane, BorderLayout.CENTER);
+
+    return panel;
+}
+
+private void loadAccountsAsTable(JPanel panel) {
+    panel.removeAll();
+
+    GridBagConstraints gbc = new GridBagConstraints();
+    gbc.gridx = 0;
+    gbc.weightx = 1.0;
+    gbc.fill = GridBagConstraints.HORIZONTAL;
+    gbc.anchor = GridBagConstraints.NORTHWEST;
+
+    // Add header row
+    gbc.gridy = 0;
+    gbc.weighty = 0;
+    panel.add(createAccountHeaderRow(), gbc);
+
+    //load accounts from AccountData.txt
+    AccountData accountData = new AccountData();
+    List<Account> accounts = accountData.getAllAccounts();
+
+    int rowY = 1;
+
+//no accounts found case
+    if (accounts.isEmpty()) {
+        gbc.gridy = 1;
+        JLabel empty = new JLabel("No accounts found.");
+        empty.setForeground(new Color(148, 163, 184));
+        empty.setFont(new Font("SansSerif", Font.PLAIN, 13));
+        panel.add(empty, gbc);
+    } else {
+        for (int i = 0; i < accounts.size(); i++) {
+            Account account = accounts.get(i);
+            JPanel row = createAccountRow(
+                "#" + String.format("%04d", i + 1),
+                account.getName(),
+                account.getEmail(),
+                account.getRole()
+            );
+            // Add row to panel
+            gbc.gridy = rowY++;
+            gbc.weighty = 0;
+            panel.add(row, gbc);
+        }
     }
+
+    // Filler
+    gbc.gridy++;
+    gbc.weighty = 1.0;
+    JPanel filler = new JPanel();
+    filler.setOpaque(false);
+    panel.add(filler, gbc);
+
+    panel.revalidate();
+    panel.repaint();
+}
+
+private JPanel createAccountHeaderRow() {
+    // 4 columns: Account ID, Name, Email, Role
+    JPanel header = new JPanel(new GridLayout(1, 4));
+    header.setBackground(new Color(15, 23, 42));
+    header.setBorder(new EmptyBorder(0, 12, 4, 12));
+
+    header.add(createHeaderLabel("Account ID", SwingConstants.LEFT));
+    header.add(createHeaderLabel("Name", SwingConstants.LEFT));
+    header.add(createHeaderLabel("Email", SwingConstants.LEFT));
+    header.add(createHeaderLabel("Role", SwingConstants.CENTER));
+
+    return header;
+}
+
+private JPanel createAccountRow(String accountId, String name, String email, String role) {
+    // One row → 4 columns
+    JPanel row = new JPanel(new GridLayout(1, 4));
+    row.setBackground(new Color(30, 41, 59));
+    row.setBorder(new EmptyBorder(10, 12, 10, 12));
+    row.setMaximumSize(new Dimension(Integer.MAX_VALUE, 56));
+
+    // Column 1: Account ID
+    JPanel col1 = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+    col1.setOpaque(false);
+    JLabel idLabel = new JLabel(accountId);
+    idLabel.setForeground(Color.WHITE);
+    idLabel.setFont(new Font("SansSerif", Font.BOLD, 13));
+    col1.add(idLabel);
+
+    // Column 2: Name
+    JPanel col2 = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+    col2.setOpaque(false);
+    JLabel nameLabel = new JLabel(name);
+    nameLabel.setForeground(new Color(148, 163, 184));
+    nameLabel.setFont(new Font("SansSerif", Font.PLAIN, 12));
+    col2.add(nameLabel);
+
+    // Column 3: Email
+    JPanel col3 = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+    col3.setOpaque(false);
+    JLabel emailLabel = new JLabel(email);
+    emailLabel.setForeground(new Color(148, 163, 184));
+    emailLabel.setFont(new Font("SansSerif", Font.PLAIN, 12));
+    col3.add(emailLabel);
+
+    // Column 4: Role with colored pill
+    JPanel col4 = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
+    col4.setOpaque(false);
+    JLabel roleLabel = new JLabel(role);
+    roleLabel.setOpaque(true);
+    roleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+    roleLabel.setFont(new Font("SansSerif", Font.BOLD, 11));
+    roleLabel.setBorder(new EmptyBorder(4, 10, 4, 10));
+    roleLabel.setPreferredSize(new Dimension(90, 24));
+    applyRoleStyle(roleLabel, role);
+    col4.add(roleLabel);
+
+    // Add columns to row
+    row.add(col1);
+    row.add(col2);
+    row.add(col3);
+    row.add(col4);
+
+    return row;
+}
+
+private void applyRoleStyle(JLabel roleLabel, String role) {
+    String roleLower = role.toLowerCase();
+    if (roleLower.contains("controller")) {
+        roleLabel.setBackground(new Color(220, 38, 38)); // red
+        roleLabel.setForeground(Color.WHITE);
+    } else if (roleLower.contains("client")) {
+        roleLabel.setBackground(new Color(59, 130, 246)); // blue
+        roleLabel.setForeground(Color.WHITE);
+    } 
+}
 }

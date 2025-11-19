@@ -1,2 +1,2 @@
-xiao/xiao@123.com/123456/client
 test/test@vcrts.com/test/controller
+xiao/xiao@123.com/123456/client
