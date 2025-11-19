@@ -26,10 +26,9 @@ public class VehicleClient {
             //Initilalizes the server's response to the client's message.
             
             request.println(msg);
-            while (socket.isConnected()) {}
             BufferedReader response = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             String reply = response.readLine();
-            System.out.println("Server has " + reply + " your request.");
+            System.out.println("Server has your request: " + reply);
 
         }catch(IOException e){
             e.printStackTrace();
