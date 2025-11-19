@@ -195,7 +195,27 @@ public class ClientHandler implements Runnable{
             jobCache.removeJob(idx);
         }
     }
+    public static void rejectVehicle(int idx){
+        String message = "Rejected";
+        VehicleCache vehicleCache = VehicleCache.getInstance();
+        ArrayList<ClientHandler> handlersToClose = new ArrayList<>(clientHandlers);
+        for(ClientHandler clientHandler : handlersToClose){
+            try {
+                clientHandler.bufferedWriter.write(message);
+                clientHandler.bufferedWriter.newLine();
+                clientHandler.bufferedWriter.flush();
+            } catch (IOException e) {
+            }
+        }
 
+        for(ClientHandler handler: handlersToClose){
+            handler.closeEverything(handler.socket, handler.bufferedReader, handler.bufferedWriter);
+        }
+
+        if (idx >= 0 && idx < vehicleCache.length()) {
+            vehicleCache.removeVehicle(idx);
+        }
+    }
     //Splits up the client message for the client request method to work
     public String[] splitMessage(String message){
         String[] taskRequest = new String[2];
