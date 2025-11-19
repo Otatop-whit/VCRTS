@@ -25,7 +25,7 @@ public class VehicleCache {
         vehicleCache.add(vehicle);
 
     }
-    public void removeJob(int index){
+    public void removeVehicle(int index){
         vehicleCache.remove(index);
     }
     public int length(){
