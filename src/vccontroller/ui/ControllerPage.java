@@ -5,6 +5,8 @@ import common.model.User;
 import common.service.AccountData;
 import common.ui.WelcomePage;
 import vccontroller.model.JobsCache;
+import vccontroller.model.VehicleCache;
+import vehicle.model.Vehicle;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -12,6 +14,9 @@ import java.awt.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 /*
   Controller dashboard UI.
@@ -735,10 +740,39 @@ public class ControllerPage extends JFrame {
         gbc.weighty = 0;
         vehiclesListPanel.add(createVehicleHeaderRow(), gbc);
     
-        String filePath = "src/vccontroller/repo/VehicleData.txt";
         int vehicleIndex = 1;
         int rowY = 1;
-    
+
+        VehicleCache cache = VehicleCache.getInstance();
+        for (int i = 0; i < cache.length(); i++) {
+            Vehicle vehicle = cache.getVehicle(i);
+            if (vehicle != null) {
+                System.out.println(vehicle.getMake());
+                String vehicleId = "#V-" + String.format("%04d", vehicleIndex++);
+
+                JPanel row = createVehicleRow(
+                        vehicleId,
+                        vehicle.getModel(),
+                        vehicle.getMake(),
+                        String.valueOf(vehicle.getYear()),
+                        vehicle.getComputingPower(),
+                        vehicle.getLicensePlate(),
+                        String.valueOf(vehicle.getArriveDate()),
+                        String.valueOf(vehicle.getDepartDate()),
+                        vehicle.getResidency(),
+                        user.getEmail(),
+                        String.valueOf(LocalDateTime.now()),
+                        String.valueOf(LocalDateTime.now())
+                );
+
+                gbc.gridy = rowY++;
+                gbc.weighty = 0;
+                vehiclesListPanel.add(row, gbc);
+            }
+        }
+
+
+        String filePath = "src/vccontroller/repo/VehicleData.txt";
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
     

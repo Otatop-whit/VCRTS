@@ -3,10 +3,14 @@ package vccontroller.service;
 import common.model.Account;
 import job.model.JobOwner;
 import vccontroller.model.JobsCache;
+import vccontroller.model.VehicleCache;
 import vccontroller.ui.ControllerPage;
+import vehicle.model.Vehicle;
 
 import java.io.*;
 import java.net.Socket;
+import java.time.LocalDate;
+import java.time.Year;
 import java.util.ArrayList;
 import java.time.LocalDateTime;
 import javax.print.attribute.standard.JobSheets;
@@ -19,6 +23,7 @@ public class ClientHandler implements Runnable{
         private BufferedReader bufferedReader;
         private BufferedWriter bufferedWriter;
         private JobsCache jobCache = JobsCache.getInstance();
+        private VehicleCache vehicleCache = VehicleCache.getInstance();
 
     public  ClientHandler(Socket socket){
         try {
@@ -33,16 +38,26 @@ public class ClientHandler implements Runnable{
     @Override
     public void run() {
         try {
-            String messageFromClient = bufferedReader.readLine();
+            String messageFromClient = bufferedReader.readLine().trim();
 
             while (socket.isConnected() && !socket.isClosed()){
                 try{
                     if(messageFromClient != null && !messageFromClient.isEmpty()){
+                        System.out.println(messageFromClient);
                         if(messageFromClient.startsWith("JOB|")) {
                             JobOwner job = convertToJobObj(messageFromClient);
                             if (job != null) {
                                 jobCache.addJob(job);
                                 System.out.println("Job successfully added to cache.");
+                                javax.swing.SwingUtilities.invokeLater(() -> {
+                                    ControllerPage.refreshIfOpen();
+                                });
+                            }
+                        } else if (messageFromClient.startsWith("VEHICLE|")) {
+                            Vehicle vehicle = convertTovehicleObj(messageFromClient);
+                            if (vehicle != null) {
+                                vehicleCache.addVehicle(vehicle);
+                                System.out.println("Vehicle successfully added to cache.");
                                 javax.swing.SwingUtilities.invokeLater(() -> {
                                     ControllerPage.refreshIfOpen();
                                 });
@@ -191,7 +206,7 @@ public class ClientHandler implements Runnable{
                 }
                 return "Failed to convert job.";
             default:
-                return "Unknown task: " + instruction;
+                return "Unk nown task: " + instruction;
         }
     }
     public JobOwner convertToJobObj(String stringJob){
@@ -223,7 +238,36 @@ public class ClientHandler implements Runnable{
             }
         return null;
     }
-    
+
+    public Vehicle convertTovehicleObj(String stringVehicle){
+        if (stringVehicle == null || stringVehicle.trim().isEmpty()) {
+            return null;
+        }
+
+        String[] parts = stringVehicle.split("\\|", 9);
+        if (parts.length == 9 && parts[0].equals("VEHICLE")) {
+            String vehicleModel = parts[1].trim();
+            String vehicleMake = parts[2].trim();
+            Year vehicleYear = Year.parse(parts[3].trim());
+            String vehicleLicensePlate = parts[4].trim();
+            String computingPower = parts[5].trim();
+            String arrivateDate = parts[6].trim();
+            String depatureDate = parts[7].trim();
+            String residency = parts[8].trim();
+            Vehicle vehicle = new Vehicle.VehicleBuilder().setVehicleModel(vehicleModel).setVehicleMake(vehicleMake).setVehicleYear(vehicleYear).setLicensePlate(vehicleLicensePlate).setComputingPower(computingPower).setArrivalDate(arrivateDate).setDepatureDate(depatureDate).setResidency(residency).build();
+            return vehicle;
+        }
+
+//
+//        parts = stringVehicle.split("/", 4);
+////        if (parts.length == 4) {
+////            int jobId = Integer.parseInt(parts[0]);
+////            int jobDuration = Integer.parseInt(parts[2]);
+////            int jobCompletionTime = Integer.parseInt(parts[3]);
+////            return new Vehicle(jobId, parts[1], jobDuration, jobCompletionTime);
+////        }
+        return null;
+    }
 
     //Saves vehicle information to the vehicle repo
     public static void saveVehicle(String vehicleInfo){

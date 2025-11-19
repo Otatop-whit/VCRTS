@@ -31,6 +31,7 @@ public class JobOwnerPage extends JFrame {
     private static final Font buttonfont = new Font("SansSerif", Font.BOLD, 18);
     private static final Font labelfont = new Font("SansSerif", Font.PLAIN, 16);
     private static final Dimension buttonsize = new Dimension(220, 56);
+
     //Job Owner Dashboard Intro Window
     public JobOwnerPage()
     {

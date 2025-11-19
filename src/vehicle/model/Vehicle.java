@@ -151,11 +151,14 @@ public class Vehicle {
             return this;
         }
         public VehicleBuilder setArrivalDate(String arrivalDate){
-            this.arrivalDate = LocalDate.parse(arrivalDate);
+            String date = arrivalDate.split(" ")[0];
+            this.arrivalDate = LocalDate.parse(date);
             return this;
         }
         public VehicleBuilder setDepatureDate(String departureDate){
-            this.departureDate = LocalDate.parse(departureDate);
+
+            String date = departureDate.split(" ")[0];
+            this.departureDate = LocalDate.parse(date);
             return this;
         }
         public VehicleBuilder setResidency(String residency){

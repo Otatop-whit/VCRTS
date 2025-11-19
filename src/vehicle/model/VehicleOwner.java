@@ -92,7 +92,7 @@ public class VehicleOwner {
     public void storeVehicle(){
         userInventory.addVehicle(this.vehicle.getLicensePlate(), this.vehicle);
         System.out.println("Sending Request");
-        VehicleClient.clientRequest("V_StF/" + vehicle.toString());
+        //VehicleClient.clientRequest("V_StF/" + vehicle.toString());
     }
 
     //Removes the vehicle constructed from personal Vehicle Inventory

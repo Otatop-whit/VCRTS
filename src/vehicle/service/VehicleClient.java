@@ -1,44 +1,48 @@
 package vehicle.service;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 
-/*
- * Manage the interaction between client and server
- * Should send request to VController
- * Should receive reply from VController
- */
 public class VehicleClient {
-    //Allows for the VehicleOwner to send info to Server
-    public static void clientRequest(String msg){
-        String host = "localhost";
-        int serverPort = 1234;
-        Socket socket = null;
+    private final String host;
+    private final int port;
+    private StatusCallback callback;
 
-        try{
-            //Initializes the Connection
-            socket = new Socket(host, serverPort);
-            //Sets up the message to be send to Server
-            PrintWriter request = new PrintWriter(socket.getOutputStream(), true);
-            //Initilalizes the server's response to the client's message.
+    public interface StatusCallback {
+        void onStatusReceived(String status);
+    }
+
+    public VehicleClient(String host, int port) {
+        this.host = host;
+        this.port = port;
+    }
+
+    public void setStatusCallback(StatusCallback callback) {
+        this.callback = callback;
+    }
+
+    public void sendJobLine(String line) {
+        try {
+            Socket socket = new Socket(host, port);
+            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             
-            request.println(msg);
-            BufferedReader response = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            String reply = response.readLine();
-            System.out.println("Server has your request: " + reply);
-
-        }catch(IOException e){
-            e.printStackTrace();
-        }finally{
-            try{
-                if(socket != null) socket.close();
-                System.out.println("Connection closed.");
-            }catch(IOException e){
-                e.printStackTrace();
-            }
+            out.write(line);
+            out.newLine();
+            out.flush();
+            
+            Thread listenerThread = new Thread(() -> {
+                try {
+                    String response;
+                    while ((response = in.readLine()) != null) {
+                        callback.onStatusReceived(response);
+                    }
+                } catch (IOException e) {
+                }
+            });
+            listenerThread.setDaemon(true);
+            listenerThread.start();
+        } catch (IOException e) {
         }
     }
 }

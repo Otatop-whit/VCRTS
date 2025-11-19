@@ -1,39 +1,36 @@
 package vccontroller.model;
 
+import job.model.JobOwner;
 import vehicle.model.Vehicle;
+
 import java.util.ArrayList;
-import java.util.List;
 
 public class VehicleCache {
     private static VehicleCache instance;
-    private List<Vehicle> vehicles;
+    private ArrayList<Vehicle> vehicleCache = new ArrayList<>();
+    private VehicleCache(){
 
-    private VehicleCache() {
-        vehicles = new ArrayList<>();
     }
 
-    public static synchronized VehicleCache getInstance() {
-        if (instance == null) {
+    public static VehicleCache getInstance(){
+        if(instance == null){
             instance = new VehicleCache();
         }
         return instance;
     }
+    public Vehicle getVehicle(int index){
+        return vehicleCache.get(index);
+    }
+    public void addVehicle(Vehicle vehicle){
+        vehicleCache.add(vehicle);
 
-    public synchronized void addVehicle(Vehicle vehicle) {
-        vehicles.add(vehicle);
+    }
+    public void removeJob(int index){
+        vehicleCache.remove(index);
+    }
+    public int length(){
+        return vehicleCache.size();
     }
 
-    public synchronized void removeVehicle(Vehicle vehicle) {
-        vehicles.remove(vehicle);
-    }
-
-    public synchronized List<Vehicle> getVehicles() {
-        return new ArrayList<>(vehicles);
-    }
-
-    public synchronized int size() {
-        return vehicles.size();
-    }
-    
 
 }

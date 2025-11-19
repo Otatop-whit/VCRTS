@@ -2,6 +2,9 @@ package vehicle.ui;
 import javax.swing.*;
 
 import common.model.User;
+import common.service.JobNetworkClient;
+import job.ui.JobOwnerPage;
+import vehicle.model.Vehicle;
 import vehicle.model.VehicleOwner;
 import vehicle.service.VehicleClient;
 import vehicle.service.VehicleOwnerServiceImpl;
@@ -192,12 +195,49 @@ public class vehicle_ui {
                             JOptionPane.ERROR_MESSAGE);
                         return;
                     }
-                     
+
+
+//                    String enteredName = jobName.getText();
+//                    String enteredDeadline = deadline.getText();
+//                    int enteredDuration = Integer.parseInt(durationHours.getText().trim());
+
+                    //String line = String.join("|", "JOB", enteredName, String.valueOf(enteredDuration), enteredDeadline);
+                    String line = String.join("|","VEHICLE",model.getText(),make.getText(),year.getText(),licensePlate.getText(),computingPower.getText(),arrivalDate.getText(),departureDate.getText(),residency.getText());
+
+                    //Vehicle vehicle = vehicleOwner.createVehicle(licensePlate, model, make, year, computingPower, arrivalDate, departureDate, residency);
+
+                    JDialog statusDialog = new JDialog(window, "Vehicle Status", false);
+                    JLabel statusLabel = new JLabel("Waiting for approval...please don't close this message");
+                    statusLabel.setFont(LABEL_FONT);
+                    statusLabel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+                    statusDialog.add(statusLabel);
+                    statusDialog.pack();
+                    statusDialog.setLocationRelativeTo(window);
+                    statusDialog.setVisible(true);
+
+                    VehicleClient client = new VehicleClient("localhost", 1234);
+                    client.setStatusCallback(status -> {
+                        javax.swing.SwingUtilities.invokeLater(() -> {
+                            if (status.equals("Accepted")) {
+                                statusLabel.setText("Your Vehicle has been accepted!");
+                            } else if (status.equals("Rejected")) {
+                                statusLabel.setText("Sorry, this Vehicle has been rejected.");
+                            }
+                            statusDialog.pack();
+                        });
+                    });
+                    client.sendJobLine(line);
+
+
+
+
+
+
+
                     String timestamp = getCurrentTimestamp();
                     System.out.println("[" + timestamp + "] Vehicle registered: " + licensePlate.getText());
-                    vehicleOwner.createVehicle(licensePlate, model, make, year, computingPower, arrivalDate, departureDate, residency);
                     //Send request to Server
-                    vehicleOwner.storeVehicle();
+                    //vehicleOwner.storeVehicle();
                     JOptionPane.showMessageDialog(null, 
                         "Vehicle registered successfully!\nTimestamp: " + timestamp, 
                         "Success", JOptionPane.INFORMATION_MESSAGE);
