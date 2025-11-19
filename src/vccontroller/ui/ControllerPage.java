@@ -764,15 +764,15 @@ public class ControllerPage extends JFrame {
 
                 JPanel row = createVehicleRow(
                         vehicleId,
-                        email,
                         model,
                         make,
                         year,
                         computePower,
+                        license,
                         arrDate,
                         depDate,
                         resident,
-                        license,
+                        email,
                         createdAt,
                         updateAt
                 );
@@ -1093,7 +1093,21 @@ public class ControllerPage extends JFrame {
             acceptBtn.setBackground(acceptBase);
         }
     });
-
+    acceptBtn.addActionListener(e -> {
+        VehicleCache cache = VehicleCache.getInstance();
+        int vehicleIdx = -1;
+        for(int i = 0; i < cache.length(); i++){
+                if (cache.getVehicle(i).getLicensePlate().equals(licensePlate)) {
+                vehicleIdx = i;
+                break;
+                }
+            }
+        vccontroller.service.ClientHandler.acceptVehicle(vehicleIdx);
+            statusLabelToUpdate.setText("Accepted");
+            applyStatusStyle(statusLabelToUpdate, "Accepted");
+            ControllerPage.refreshIfOpen();
+            dialog.dispose();
+    });
     // Decline button style
     declineBtn.setFocusPainted(false);
     declineBtn.setOpaque(true);
@@ -1135,12 +1149,13 @@ public class ControllerPage extends JFrame {
     });
 
     // Button actions — update status pill in the table
+    /* 
     acceptBtn.addActionListener(e -> {
         statusLabelToUpdate.setText("Accepted");
         applyStatusStyle(statusLabelToUpdate, "Accepted");
         dialog.dispose();
     });
-
+    */
     declineBtn.addActionListener(e -> {
         statusLabelToUpdate.setText("Declined");
         applyStatusStyle(statusLabelToUpdate, "Declined");
@@ -1178,6 +1193,7 @@ public class ControllerPage extends JFrame {
     public static void refreshIfOpen() {
         if (INSTANCE != null) {
             INSTANCE.loadJobsFromBackendFile();
+            INSTANCE.loadVehiclesFromBackendFile();
         }
     }
 
