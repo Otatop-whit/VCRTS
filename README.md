@@ -48,6 +48,7 @@ All access requires login authentication.
 - 🚗 **Vehicle Pool Management**
 - 🧾 **Job Submission + Monitoring**
 - 🔄 **FIFO Scheduling Algorithm**
+- ⏱️ **Estimated Job Completion Time calculated by Controller**
 - 📊 **Real-time Status Tracking**
 - 🔍 **Validation & Error Handling**
 - 💽 **MySQL Persistent Storage**
