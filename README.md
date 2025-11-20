@@ -1,7 +1,6 @@
 # 🚘 VCRTS – Vehicular Cloud Real-Time System  
 [![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white)]()
 [![MySQL](https://img.shields.io/badge/MySQL-005C84?style=for-the-badge&logo=mysql&logoColor=white)]()
-[![Platform](https://img.shields.io/badge/Desktop%20App-Java%20Swing-blue?style=for-the-badge)]()
 
 ### *A cloud-enhanced computing platform leveraging unused vehicular processing power to execute distributed tasks in real-time.*
 
