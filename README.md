@@ -16,10 +16,10 @@ Built as a Software Engineering capstone project simulating future smart-city co
 
 ## 👥 Team Members
 - **Aidin Dzaferovic**
-- **Christopher Singh**
 - **Brandon Whitley**
-- **Xiaoyao Wu**
+- **Christopher Singh**
 - **Shivpreet Singh**
+- **Xiaoyao Wu**
 
 ---
 
