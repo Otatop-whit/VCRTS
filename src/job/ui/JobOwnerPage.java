@@ -146,11 +146,14 @@ public class JobOwnerPage extends JFrame {
     static class SubmitJobFrame extends JFrame {
 
         private JTextField jobName = new JTextField();
-        private JTextField deadline = new JTextField();
-        private JTextField durationHours = new JTextField();
+        private JSpinner deadline;
+        private JComboBox<Integer> durationHours;
 
         private void checkField(JButton submitJob) {
-            boolean filled = !jobName.getText().isEmpty() && !deadline.getText().isEmpty() && !durationHours.getText().isEmpty();
+            boolean nameFilled = !jobName.getText().trim().isEmpty();
+            boolean deadlineFilled = (deadline != null && deadline.getValue() != null);
+            boolean durationFilled = (durationHours != null && durationHours.getSelectedItem() != null);
+            boolean filled = nameFilled && deadlineFilled && durationFilled;
             submitJob.setEnabled(filled);
             if (filled) {
                 submitJob.setBackground(buttoncolorgreen);
@@ -163,6 +166,25 @@ public class JobOwnerPage extends JFrame {
             setTitle("Create New Job");
             setSize(720, 480);
             setLocationRelativeTo(null);
+
+            // Initialize deadline spinner (yyyy-MM-dd)
+            SpinnerDateModel dateModel = new SpinnerDateModel(
+                    new java.util.Date(),
+                    null,
+                    null,
+                    java.util.Calendar.DAY_OF_MONTH
+            );
+            deadline = new JSpinner(dateModel);
+            JSpinner.DateEditor editor = new JSpinner.DateEditor(deadline, "yyyy-MM-dd");
+            deadline.setEditor(editor);
+
+            // Initialize duration dropdown (1–99 hours)
+            Integer[] hoursOptions = new Integer[99];
+            for (int i = 0; i < 99; i++) {
+                hoursOptions[i] = i + 1;
+            }
+            durationHours = new JComboBox<>(hoursOptions);
+            durationHours.setSelectedIndex(-1);
 
          // === Back Arrow in Menu Bar 
         JButton backBtn = new JButton("⟵");
@@ -240,14 +262,16 @@ public class JobOwnerPage extends JFrame {
         };
 
         jobName.getDocument().addDocumentListener(listener);
-        deadline.getDocument().addDocumentListener(listener);
-        durationHours.getDocument().addDocumentListener(listener);
+        deadline.addChangeListener(e -> checkField(submitJob));
+        durationHours.addActionListener(e -> checkField(submitJob));
 
         submitJob.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
-                String enteredName = jobName.getText();
-                String enteredDeadline = deadline.getText();
-                int enteredDuration = Integer.parseInt(durationHours.getText().trim());
+                String enteredName = jobName.getText().trim();
+                java.util.Date deadlineDate = (java.util.Date) deadline.getValue();
+                String enteredDeadline = new java.text.SimpleDateFormat("yyyy-MM-dd").format(deadlineDate);
+                Integer selectedHours = (Integer) durationHours.getSelectedItem();
+                int enteredDuration = selectedHours != null ? selectedHours : 0;
 
                 String line = String.join("|", "JOB", enteredName, String.valueOf(enteredDuration), enteredDeadline);
 
@@ -274,8 +298,8 @@ public class JobOwnerPage extends JFrame {
                 client.sendJobLine(line);
 
                 jobName.setText("");
-                deadline.setText("");
-                durationHours.setText("");
+                deadline.setValue(new java.util.Date());
+                durationHours.setSelectedIndex(-1);
                 submitJob.setEnabled(false);
                 submitJob.setBackground(Color.gray);
             }
@@ -290,7 +314,6 @@ public class JobOwnerPage extends JFrame {
         }
 
     }
-
     //Estimate Job Completion Time and Submit Job
     /* static class EstimateJobFrame extends JFrame {
 
