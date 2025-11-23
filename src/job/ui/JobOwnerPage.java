@@ -81,25 +81,15 @@ public class JobOwnerPage extends JFrame {
         JButton submitJob = new JButton("Submit New Job");
         styleButton(submitJob,buttoncolor, buttonfont, buttonsize);
 
-        JButton viewJob = new JButton("View Jobs History");
-        styleButton(viewJob,buttoncolorgreen, buttonfont, buttonsize);
-
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(12, 12, 12, 12);
         
         buttonPanel.add(submitJob, gbc);
-        buttonPanel.add(viewJob, gbc);
         //
 
         submitJob.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
                 new SubmitJobFrame().setVisible(true);
-            }
-        });
-
-        viewJob.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent event) {
-                new ViewJobFrame().setVisible(true);
             }
         });
 
