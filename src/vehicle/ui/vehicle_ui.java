@@ -224,9 +224,9 @@ public class vehicle_ui {
                     client.setStatusCallback(status -> {
                         javax.swing.SwingUtilities.invokeLater(() -> {
                             if (status.equals("Accepted")) {
-                                statusLabel.setText("Vehicle accepted!");
+                                statusLabel.setText("Your vehicle has been accepted!");
                             } else if (status.equals("Rejected")) {
-                                statusLabel.setText("Vehicle rejected.");
+                                statusLabel.setText("Sorry, this vehicle has been rejected.");
                             } else {
                                 statusLabel.setText("Status: " + status);
                             }
