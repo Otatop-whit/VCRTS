@@ -193,7 +193,7 @@ public class vehicle_ui {
 //                    int enteredDuration = Integer.parseInt(durationHours.getText().trim());
 
                     //String line = String.join("|", "JOB", enteredName, String.valueOf(enteredDuration), enteredDeadline);
-                    String line = String.join("|","VEHICLE",model.getText(),make.getText(),year.getText(),licensePlate.getText(),computingPower.getText(),arrivalDate.getText(),departureDate.getText(),residency.getText());
+                    String line = String.join("|","VEHICLE",model.getText(),make.getText(),year.getText(),licensePlate.getText(),computingPower.getText(),arrivalDate.getText(),departureDate.getText(),residency.getText(),vehicleOwner.getEmail());
 
                     //Vehicle vehicle = vehicleOwner.createVehicle(licensePlate, model, make, year, computingPower, arrivalDate, departureDate, residency);
 
