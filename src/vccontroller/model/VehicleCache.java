@@ -1,6 +1,5 @@
 package vccontroller.model;
 
-import job.model.JobOwner;
 import vehicle.model.Vehicle;
 
 import java.util.ArrayList;
