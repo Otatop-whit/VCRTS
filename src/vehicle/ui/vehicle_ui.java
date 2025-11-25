@@ -8,7 +8,6 @@ import vehicle.model.Vehicle;
 import vehicle.model.VehicleOwner;
 import vehicle.service.VehicleClient;
 import vehicle.service.VehicleOwnerServiceImpl;
-import vehicle.ui.vehicle_ui.ViewVehicleInfo;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -97,26 +96,18 @@ public class vehicle_ui {
         buttonPanel.setBackground(BACKGROUND_COLOR);
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
 
-
-        JButton vehicle_btn = new JButton("Vehicle info");
+        JButton vehicle_btn = new JButton("Register vehicle");
         styleButton(vehicle_btn, BUTTON_COLOR_GREEN);
         buttonPanel.add(vehicle_btn);
         buttonPanel.add(Box.createHorizontalStrut(20));
         
         vehicle_btn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String[] options = {"Register vehicle", "View vehicle info"};
-                int selectedOption = JOptionPane.showOptionDialog(null, "Choose an option", "Vehicle Management", 
-                        JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
-            
-                if(selectedOption == 0) {
-                    registerVehicle();
-                } else if(selectedOption == 1) {
-                    new ViewVehicleInfo().setVisible(true);
-                }
-            }
-            
+        @Override
+        public void actionPerformed(ActionEvent e) {
+                registerVehicle();
+        }
+ 
+
             //added button for selecting arrival AND departure date
             private void registerVehicle() {
                 JTextField model = new JTextField(25);
@@ -243,7 +234,7 @@ public class vehicle_ui {
                         "Success", JOptionPane.INFORMATION_MESSAGE);
                 }
             }
-        });
+               });
 
        
         JButton ts_btn = new JButton("Edit Time ");
@@ -389,24 +380,6 @@ public class vehicle_ui {
         
     }
 }
-    public class ViewVehicleInfo extends JFrame{
-        private JTextArea area = new JTextArea();
-        ViewVehicleInfo(){
-            setTitle("Vehicle Information");
-            setSize(650, 500);
-            setLocationRelativeTo(null);
-            add(new JScrollPane(area));
-            loadFile(vehicleOwner);
-        }
-
-        private void loadFile(VehicleOwner vehicleOwner){
-            try{
-                byte[] data = Files.readAllBytes(Paths.get(vehicleOwner.getFilename()));
-                area.setText(new String(data));
-                area.setVisible(true);
-            } catch(java.io.IOException e){
-                area.setText("Error! File Not Found.");
-            }
-        }
+    
     }
-}
+
