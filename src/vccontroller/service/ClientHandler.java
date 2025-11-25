@@ -171,6 +171,7 @@ public class ClientHandler implements Runnable{
             if(vehicle != null){
                 String vehInfo = vehicle.toString();
                 saveVehicle(vehInfo);
+                vehicleCache.removeVehicle(idx);
             }
         }
     }
