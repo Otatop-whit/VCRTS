@@ -612,7 +612,6 @@ public class ControllerPage extends JFrame {
                 break;
             }
         }
-
             vccontroller.service.ClientHandler.acceptJob(jobIdx);
             statusLabelToUpdate.setText("Accepted");
             applyStatusStyle(statusLabelToUpdate, "Accepted");
@@ -785,7 +784,7 @@ public class ControllerPage extends JFrame {
                         resident,
                         email,
                         createdAt,
-                        updateAt
+                        updateAt, "Pending"
                 );
 
                 gbc.gridy = rowY++;
@@ -841,7 +840,8 @@ public class ControllerPage extends JFrame {
                         residency,
                         ownerEmail,
                         createdAt,
-                        updatedAt
+                        updatedAt, "Accepted"
+                       
                 );
     
                 gbc.gridy = rowY++;
@@ -915,7 +915,8 @@ public class ControllerPage extends JFrame {
                 String residency,
                 String ownerEmail,
                 String createdAt,
-                String updatedAt) {
+                String updatedAt,
+                String Status) {
 
             // 7 columns: ID, Model, Make, Year, Plate, Status, Actions
             JPanel row = new JPanel(new GridLayout(1, 7));
@@ -968,13 +969,13 @@ public class ControllerPage extends JFrame {
             JPanel col6 = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
             col6.setOpaque(false);
 
-            JLabel statusLabel = new JLabel("Pending");
+            JLabel statusLabel = new JLabel(Status);
             statusLabel.setOpaque(true);
             statusLabel.setHorizontalAlignment(SwingConstants.CENTER);
             statusLabel.setFont(new Font("SansSerif", Font.BOLD, 11));
             statusLabel.setBorder(new EmptyBorder(4, 10, 4, 10));
             statusLabel.setPreferredSize(new Dimension(90, 24));
-            applyStatusStyle(statusLabel, "Pending"); // reuse same styling as jobs
+            applyStatusStyle(statusLabel, Status); // reuse same styling as jobs
 
             col6.add(statusLabel);
 
@@ -1154,8 +1155,8 @@ public class ControllerPage extends JFrame {
                 vehicleIdx = i;
                 break;
                 }
-            }
-        vccontroller.service.ClientHandler.acceptVehicle(vehicleIdx);
+         }
+            vccontroller.service.ClientHandler.acceptVehicle(vehicleIdx);
             statusLabelToUpdate.setText("Accepted");
             applyStatusStyle(statusLabelToUpdate, "Accepted");
             ControllerPage.refreshIfOpen();
@@ -1174,6 +1175,7 @@ public class ControllerPage extends JFrame {
         vccontroller.service.ClientHandler.rejectVehicle(vehicleIdx);
         statusLabelToUpdate.setText("Declined");
         applyStatusStyle(statusLabelToUpdate, "Declined");
+        ControllerPage.refreshIfOpen();
         dialog.dispose();
     });
 
