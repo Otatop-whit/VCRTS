@@ -290,8 +290,8 @@ public class ClientHandler implements Runnable{
             return null;
         }
 
-        String[] parts = stringVehicle.split("\\|", 9);
-        if (parts.length == 9 && parts[0].equals("VEHICLE")) {
+        String[] parts = stringVehicle.split("\\|", 10);
+        if (parts.length == 10 && parts[0].equals("VEHICLE")) {
             String vehicleModel = parts[1].trim();
             String vehicleMake = parts[2].trim();
             Year vehicleYear = Year.parse(parts[3].trim());
@@ -300,7 +300,8 @@ public class ClientHandler implements Runnable{
             String arrivateDate = parts[6].trim();
             String depatureDate = parts[7].trim();
             String residency = parts[8].trim();
-            Vehicle vehicle = new Vehicle.VehicleBuilder().setVehicleModel(vehicleModel).setVehicleMake(vehicleMake).setVehicleYear(vehicleYear).setLicensePlate(vehicleLicensePlate).setComputingPower(computingPower).setArrivalDate(arrivateDate).setDepatureDate(depatureDate).setResidency(residency).build();
+            String email = parts[9].trim();
+            Vehicle vehicle = new Vehicle.VehicleBuilder().setVehicleOwnerEmail(email).setVehicleModel(vehicleModel).setVehicleMake(vehicleMake).setVehicleYear(vehicleYear).setLicensePlate(vehicleLicensePlate).setComputingPower(computingPower).setArrivalDate(arrivateDate).setDepatureDate(depatureDate).setResidency(residency).build();
             return vehicle;
         }
 
