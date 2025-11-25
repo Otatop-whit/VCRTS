@@ -112,8 +112,17 @@ public class vehicle_ui {
             private void registerVehicle() {
                 JTextField model = new JTextField(25);
                 JTextField make = new JTextField(25);
-                JTextField year = new JTextField(25);
-                JTextField computingPower = new JTextField(25);
+
+                DefaultComboBoxModel<String> yearModel = new DefaultComboBoxModel<>();
+                int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+                for (int y = 2000; y <= currentYear; y++) {
+                    yearModel.addElement(String.valueOf(y));
+                }
+                JComboBox<String> year = new JComboBox<>(yearModel);
+
+                String[] powerLevels = {"High", "Medium", "Low"};
+                JComboBox<String> computingPower = new JComboBox<>(powerLevels);
+
                 JTextField licensePlate = new JTextField(25);
                 JTextField arrivalDate = new JTextField(25);
                 JButton arrival_btn = new JButton("📅");
@@ -121,7 +130,8 @@ public class vehicle_ui {
                 JTextField departureDate = new JTextField(25);
                 JButton departure_btn = new JButton("📅");
 
-                JTextField residency = new JTextField(25);
+                String[] usStates = "AL,AK,AZ,AR,CA,CO,CT,DE,FL,GA,HI,ID,IL,IN,IA,KS,KY,LA,ME,MD,MA,MI,MN,MS,MO,MT,NE,NV,NH,NJ,NM,NY,NC,ND,OH,OK,OR,PA,RI,SC,SD,TN,TX,UT,VT,VA,WA,WV,WI,WY".split(",");
+                JComboBox<String> residency = new JComboBox<>(usStates);
                  
                 //added panels for each date
                 JPanel arrivalDatePanel = new JPanel(new BorderLayout());
@@ -148,7 +158,8 @@ public class vehicle_ui {
 
             
                  
-                int registerOption = JOptionPane.showConfirmDialog(null, message, "Register New Vehicle", JOptionPane.OK_CANCEL_OPTION);
+                int registerOption = JOptionPane.showConfirmDialog(
+                        window, message, "Register New Vehicle", JOptionPane.OK_CANCEL_OPTION);
                 if(registerOption == JOptionPane.OK_OPTION){
                     if(model.getText().trim().isEmpty()) {
                         JOptionPane.showMessageDialog(null, 
@@ -162,13 +173,13 @@ public class vehicle_ui {
                             JOptionPane.ERROR_MESSAGE);
                         return;
                     }
-                    if(year.getText().trim().isEmpty()) {
+                    if(year.getSelectedItem() == null) {
                         JOptionPane.showMessageDialog(null, 
                             "Year cannot be empty!", "Error", 
                             JOptionPane.ERROR_MESSAGE);
                         return;
                     }
-                    if(computingPower.getText().trim().isEmpty()) {
+                    if(computingPower.getSelectedItem() == null) {
                         JOptionPane.showMessageDialog(null, 
                             "Computing power cannot be empty!", "Error", 
                             JOptionPane.ERROR_MESSAGE);
@@ -180,20 +191,23 @@ public class vehicle_ui {
                             JOptionPane.ERROR_MESSAGE);
                         return;
                     }
-                    if(residency.getText().trim().isEmpty()) {
+                    if(residency.getSelectedItem() == null) {
                         JOptionPane.showMessageDialog(null, 
                             "Residency cannot be empty!", "Error", 
                             JOptionPane.ERROR_MESSAGE);
                         return;
                     }
 
-
-//                    String enteredName = jobName.getText();
-//                    String enteredDeadline = deadline.getText();
-//                    int enteredDuration = Integer.parseInt(durationHours.getText().trim());
-
                     //String line = String.join("|", "JOB", enteredName, String.valueOf(enteredDuration), enteredDeadline);
-                    String line = String.join("|","VEHICLE",model.getText(),make.getText(),year.getText(),licensePlate.getText(),computingPower.getText(),arrivalDate.getText(),departureDate.getText(),residency.getText());
+                    String line = String.join("|","VEHICLE",
+                            model.getText(),
+                            make.getText(),
+                            (String) year.getSelectedItem(),
+                            licensePlate.getText(),
+                            (String) computingPower.getSelectedItem(),
+                            arrivalDate.getText(),
+                            departureDate.getText(),
+                            (String) residency.getSelectedItem());
 
                     //Vehicle vehicle = vehicleOwner.createVehicle(licensePlate, model, make, year, computingPower, arrivalDate, departureDate, residency);
 
@@ -210,30 +224,24 @@ public class vehicle_ui {
                     client.setStatusCallback(status -> {
                         javax.swing.SwingUtilities.invokeLater(() -> {
                             if (status.equals("Accepted")) {
-                                statusLabel.setText("Your Vehicle has been accepted!");
+                                statusLabel.setText("Vehicle accepted!");
                             } else if (status.equals("Rejected")) {
-                                statusLabel.setText("Sorry, this Vehicle has been rejected.");
+                                statusLabel.setText("Vehicle rejected.");
+                            } else {
+                                statusLabel.setText("Status: " + status);
                             }
-                            statusDialog.pack();
                         });
                     });
                     client.sendJobLine(line);
 
-
-
-
-
-
-
                     String timestamp = getCurrentTimestamp();
                     System.out.println("[" + timestamp + "] Vehicle registered: " + licensePlate.getText());
-                    //Send request to Server
-                    //vehicleOwner.storeVehicle();
                     JOptionPane.showMessageDialog(null, 
                         "Vehicle registered successfully!\nTimestamp: " + timestamp, 
                         "Success", JOptionPane.INFORMATION_MESSAGE);
                 }
             }
+
                });
 
        
