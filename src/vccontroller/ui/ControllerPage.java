@@ -759,7 +759,7 @@ public class ControllerPage extends JFrame {
             if (vehicle != null) {
                 System.out.println(vehicle.getMake());
                 String vehicleId = "#V-" + String.format("%04d", vehicleIndex++);
-                email = user.getEmail();
+                email = vehicle.getVehicleOwnerEmail();
                 license = vehicle.getLicensePlate();
                 make = vehicle.getMake();
                 model = vehicle.getModel();
