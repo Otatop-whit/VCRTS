@@ -2,9 +2,12 @@ package vehicle.ui;
 import javax.swing.*;
 
 import common.model.User;
+import common.service.JobNetworkClient;
+import job.ui.JobOwnerPage;
+import vehicle.model.Vehicle;
 import vehicle.model.VehicleOwner;
+import vehicle.service.VehicleClient;
 import vehicle.service.VehicleOwnerServiceImpl;
-import vehicle.ui.vehicle_ui.ViewVehicleInfo;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -26,13 +29,15 @@ public class vehicle_ui {
     private static final Color BUTTON_COLOR_BLUE = new Color(35, 99, 188);
     private static final Color BUTTON_COLOR_GREEN = new Color(25, 140, 100);
     private static final Font TITLE_FONT = new Font("SansSerif", Font.BOLD, 22);
-    private static final Font BUTTON_FONT = new Font("SansSerif", Font.BOLD, 12);
+    private static final Font BUTTON_FONT = new Font("SansSerif", Font.BOLD, 18);
     private static final Font LABEL_FONT = new Font("SansSerif", Font.PLAIN, 14);
+    private static final Dimension BUTTON_SIZE = new Dimension(220, 56); // 新增
     User user = User.getInstance();
     VehicleOwner vehicleOwner = VehicleOwnerServiceImpl.loadOwner(user);
     
     public vehicle_ui(){
-        vehicleOwner = VehicleOwnerServiceImpl.loadVehicles(vehicleOwner);
+        //Loads Files to Vehicle Owner
+        //vehicleOwner = VehicleOwnerServiceImpl.loadVehicles(vehicleOwner);
 
         JFrame window = new JFrame("VCRTS — Vehicle Owner Portal");
         window.setSize(720, 480);
@@ -85,49 +90,39 @@ public class vehicle_ui {
        
         JPanel mainPanel = new JPanel();
         mainPanel.setBackground(BACKGROUND_COLOR);
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(80, 50, 100, 50));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(60, 50, 80, 50));
     
         JPanel buttonPanel = new JPanel();
         buttonPanel.setBackground(BACKGROUND_COLOR);
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
 
-        JButton account_btn = new JButton("Account");
-        styleButton(account_btn, BUTTON_COLOR_BLUE);
-        buttonPanel.add(account_btn);
-        buttonPanel.add(Box.createHorizontalStrut(20));
-        
-        account_btn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(null, "Owner ID: ", "Your info", JOptionPane.INFORMATION_MESSAGE);
-            }
-        });
-
-        JButton vehicle_btn = new JButton("Vehicle info");
+        JButton vehicle_btn = new JButton("Register vehicle");
         styleButton(vehicle_btn, BUTTON_COLOR_GREEN);
         buttonPanel.add(vehicle_btn);
         buttonPanel.add(Box.createHorizontalStrut(20));
         
         vehicle_btn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String[] options = {"Register vehicle", "View vehicle info"};
-                int selectedOption = JOptionPane.showOptionDialog(null, "Choose an option", "Vehicle Management", 
-                        JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
-            
-                if(selectedOption == 0) {
-                    registerVehicle();
-                } else if(selectedOption == 1) {
-                    new ViewVehicleInfo().setVisible(true);
-                }
-            }
-            
+        @Override
+        public void actionPerformed(ActionEvent e) {
+                registerVehicle();
+        }
+ 
+
             //added button for selecting arrival AND departure date
             private void registerVehicle() {
                 JTextField model = new JTextField(25);
                 JTextField make = new JTextField(25);
-                JTextField year = new JTextField(25);
-                JTextField computingPower = new JTextField(25);
+
+                DefaultComboBoxModel<String> yearModel = new DefaultComboBoxModel<>();
+                int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+                for (int y = 2000; y <= currentYear; y++) {
+                    yearModel.addElement(String.valueOf(y));
+                }
+                JComboBox<String> year = new JComboBox<>(yearModel);
+
+                String[] powerLevels = {"High", "Medium", "Low"};
+                JComboBox<String> computingPower = new JComboBox<>(powerLevels);
+
                 JTextField licensePlate = new JTextField(25);
                 JTextField arrivalDate = new JTextField(25);
                 JButton arrival_btn = new JButton("📅");
@@ -135,7 +130,8 @@ public class vehicle_ui {
                 JTextField departureDate = new JTextField(25);
                 JButton departure_btn = new JButton("📅");
 
-                JTextField residency = new JTextField(25);
+                String[] usStates = "AL,AK,AZ,AR,CA,CO,CT,DE,FL,GA,HI,ID,IL,IN,IA,KS,KY,LA,ME,MD,MA,MI,MN,MS,MO,MT,NE,NV,NH,NJ,NM,NY,NC,ND,OH,OK,OR,PA,RI,SC,SD,TN,TX,UT,VT,VA,WA,WV,WI,WY".split(",");
+                JComboBox<String> residency = new JComboBox<>(usStates);
                  
                 //added panels for each date
                 JPanel arrivalDatePanel = new JPanel(new BorderLayout());
@@ -162,7 +158,8 @@ public class vehicle_ui {
 
             
                  
-                int registerOption = JOptionPane.showConfirmDialog(null, message, "Register New Vehicle", JOptionPane.OK_CANCEL_OPTION);
+                int registerOption = JOptionPane.showConfirmDialog(
+                        window, message, "Register New Vehicle", JOptionPane.OK_CANCEL_OPTION);
                 if(registerOption == JOptionPane.OK_OPTION){
                     if(model.getText().trim().isEmpty()) {
                         JOptionPane.showMessageDialog(null, 
@@ -176,13 +173,13 @@ public class vehicle_ui {
                             JOptionPane.ERROR_MESSAGE);
                         return;
                     }
-                    if(year.getText().trim().isEmpty()) {
+                    if(year.getSelectedItem() == null) {
                         JOptionPane.showMessageDialog(null, 
                             "Year cannot be empty!", "Error", 
                             JOptionPane.ERROR_MESSAGE);
                         return;
                     }
-                    if(computingPower.getText().trim().isEmpty()) {
+                    if(computingPower.getSelectedItem() == null) {
                         JOptionPane.showMessageDialog(null, 
                             "Computing power cannot be empty!", "Error", 
                             JOptionPane.ERROR_MESSAGE);
@@ -194,23 +191,59 @@ public class vehicle_ui {
                             JOptionPane.ERROR_MESSAGE);
                         return;
                     }
-                    if(residency.getText().trim().isEmpty()) {
+                    if(residency.getSelectedItem() == null) {
                         JOptionPane.showMessageDialog(null, 
                             "Residency cannot be empty!", "Error", 
                             JOptionPane.ERROR_MESSAGE);
                         return;
                     }
-                     
+
+                    //String line = String.join("|", "JOB", enteredName, String.valueOf(enteredDuration), enteredDeadline);
+                    String line = String.join("|","VEHICLE",
+                    model.getText(),
+                    make.getText(),
+                    (String) year.getSelectedItem(),
+                    licensePlate.getText(),
+                    (String) computingPower.getSelectedItem(),
+                    arrivalDate.getText(),
+                    departureDate.getText(),
+                    (String) residency.getSelectedItem(),
+                    vehicleOwner.getEmail());
+
+                    //Vehicle vehicle = vehicleOwner.createVehicle(licensePlate, model, make, year, computingPower, arrivalDate, departureDate, residency);
+
+                    JDialog statusDialog = new JDialog(window, "Vehicle Status", false);
+                    JLabel statusLabel = new JLabel("Waiting for approval...please don't close this message");
+                    statusLabel.setFont(LABEL_FONT);
+                    statusLabel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+                    statusDialog.add(statusLabel);
+                    statusDialog.pack();
+                    statusDialog.setLocationRelativeTo(window);
+                    statusDialog.setVisible(true);
+
+                    VehicleClient client = new VehicleClient("localhost", 1234);
+                    client.setStatusCallback(status -> {
+                        javax.swing.SwingUtilities.invokeLater(() -> {
+                            if (status.equals("Accepted")) {
+                                statusLabel.setText("Your vehicle has been accepted!");
+                            } else if (status.equals("Rejected")) {
+                                statusLabel.setText("Sorry, this vehicle has been rejected.");
+                            } else {
+                                statusLabel.setText("Status: " + status);
+                            }
+                        });
+                    });
+                    client.sendJobLine(line);
+
                     String timestamp = getCurrentTimestamp();
                     System.out.println("[" + timestamp + "] Vehicle registered: " + licensePlate.getText());
-                    vehicleOwner.createVehicle(licensePlate, model, make, year, computingPower, arrivalDate, departureDate, residency);
-                    vehicleOwner.storeVehicle();
                     JOptionPane.showMessageDialog(null, 
                         "Vehicle registered successfully!\nTimestamp: " + timestamp, 
                         "Success", JOptionPane.INFORMATION_MESSAGE);
                 }
             }
-        });
+
+               });
 
        
         JButton ts_btn = new JButton("Edit Time ");
@@ -220,14 +253,27 @@ public class vehicle_ui {
         ts_btn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JTextField ArrivalTime = new JTextField(10);
-                JTextField DepartureTime = new JTextField(10);
+                JTextField ArrivalTime = new JTextField(25);
+                JButton arrival_btn = new JButton("📅");
+                JTextField DepartureTime = new JTextField(25);
+                JButton departure_btn = new JButton("📅");
                 JTextField licensePlate = new JTextField();
+
+                JPanel arrivalDatePanel = new JPanel(new BorderLayout());
+                arrivalDatePanel.add(ArrivalTime, BorderLayout.CENTER);
+                arrivalDatePanel.add(arrival_btn, BorderLayout.EAST);
+
+                JPanel departureDatePanel = new JPanel(new BorderLayout());
+                departureDatePanel.add(DepartureTime, BorderLayout.CENTER);
+                departureDatePanel.add(departure_btn, BorderLayout.EAST);
+
+                arrival_btn.addActionListener(evt -> showSimpleDateDialog(ArrivalTime));
+                departure_btn.addActionListener(evt -> showSimpleDateDialog(DepartureTime));
                  
                 Object[] message = {
                     "LicensePlate: ", licensePlate,
-                    "ArrivalTime(YYYY-MM-DD): ", ArrivalTime,
-                    "DepartureTime(YYYY-MM-DD): ", DepartureTime,
+                    "ArrivalTime(YYYY-MM-DD): ", arrivalDatePanel,
+                    "DepartureTime(YYYY-MM-DD): ", departureDatePanel,
                 };
             
                 int option = JOptionPane.showConfirmDialog(null, message, 
@@ -298,10 +344,10 @@ public class vehicle_ui {
         button.setBackground(baseColor);
         button.setForeground(Color.WHITE);
         button.setOpaque(true);
-        button.setBorder(BorderFactory.createEmptyBorder(4, 8, 4, 8));
+        button.setBorder(BorderFactory.createEmptyBorder(10, 18, 10, 18));
         button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        button.setPreferredSize(new Dimension(110, 35));
-        button.setMaximumSize(new Dimension(110, 35));
+        button.setPreferredSize(BUTTON_SIZE);
+        button.setMaximumSize(BUTTON_SIZE);
 
         button.addMouseListener(new MouseAdapter() {
             public void mouseEntered(MouseEvent evt) {
@@ -343,24 +389,6 @@ public class vehicle_ui {
         
     }
 }
-    public class ViewVehicleInfo extends JFrame{
-        private JTextArea area = new JTextArea();
-        ViewVehicleInfo(){
-            setTitle("Vehicle Information");
-            setSize(650, 500);
-            setLocationRelativeTo(null);
-            add(new JScrollPane(area));
-            loadFile(vehicleOwner);
-        }
-
-        private void loadFile(VehicleOwner vehicleOwner){
-            try{
-                byte[] data = Files.readAllBytes(Paths.get(vehicleOwner.getFilename()));
-                area.setText(new String(data));
-                area.setVisible(true);
-            } catch(java.io.IOException e){
-                area.setText("Error! File Not Found.");
-            }
-        }
+    
     }
-}
+

@@ -1,8 +1,8 @@
 package vccontroller.service;
 
+import common.service.AccountData;
 import common.ui.WelcomePage;
 import vccontroller.model.JobsCache;
-import vccontroller.ui.ControllerPage;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -41,9 +41,12 @@ public class VcControllerServer {
         }
     }
     public static void main(String[] args) throws IOException {
+        AccountData accountData = new AccountData();
         new WelcomePage();
         JobsCache jobCache = JobsCache.getInstance();
-        ServerSocket socket = new ServerSocket(1234);
+        ServerSocket socket = new ServerSocket();
+        socket.setReuseAddress(true);
+        socket.bind(new java.net.InetSocketAddress(1234));
         VcControllerServer server = new VcControllerServer(socket);
         server.start();
 

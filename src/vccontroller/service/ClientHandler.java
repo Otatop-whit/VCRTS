@@ -3,56 +3,87 @@ package vccontroller.service;
 import common.model.Account;
 import job.model.JobOwner;
 import vccontroller.model.JobsCache;
+import vccontroller.model.VehicleCache;
+import vccontroller.ui.ControllerPage;
+import vehicle.model.Vehicle;
+import vehicle.model.VehicleOwner;
 
 import java.io.*;
 import java.net.Socket;
+import java.time.LocalDate;
+import java.time.Year;
 import java.util.ArrayList;
+import java.time.LocalDateTime;
+import javax.print.attribute.standard.JobSheets;
+import java.time.format.DateTimeFormatter;
 
 public class ClientHandler implements Runnable{
+        VcControllerServiceImpl vccontroller = new VcControllerServiceImpl();
         public static ArrayList<ClientHandler> clientHandlers = new ArrayList<>();
         private Socket socket;
         private BufferedReader bufferedReader;
         private BufferedWriter bufferedWriter;
-        private String clientRequest;
         private JobsCache jobCache = JobsCache.getInstance();
-        private VcControllerServiceImpl vcController = new VcControllerServiceImpl();
+        private VehicleCache vehicleCache = VehicleCache.getInstance();
 
     public  ClientHandler(Socket socket){
-        try{
-
+        try {
             this.socket = socket;
             this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            this.clientRequest = bufferedReader.readLine();
             clientHandlers.add(this);
-            broadcastMessage("Hello"+ clientRequest);
-
-        }catch (IOException e){
-
-            System.out.println(e);
-            closeEverything(socket,bufferedReader,bufferedWriter);
+        } catch (IOException e) {
         }
-
     }
 
     @Override
     public void run() {
-        String messageFromClient;
+        try {
+            String messageFromClient = bufferedReader.readLine().trim();
 
-        while (socket.isConnected()){
-            try{
-                messageFromClient = bufferedReader.readLine();
-                JobOwner job = convertToJobObj(messageFromClient);
-                System.out.println(messageFromClient);
-                jobCache.addJob(job);
-                //broadcastMessage(messageFromClient);
-            } catch (IOException e) {
-                System.out.println(e);
-                closeEverything(socket,bufferedReader,bufferedWriter);
-                break;
+            while (socket.isConnected() && !socket.isClosed()){
+                try{
+                    if(messageFromClient != null && !messageFromClient.isEmpty()){
+                        System.out.println(messageFromClient);
+                        if(messageFromClient.startsWith("JOB|")) {
+                            JobOwner job = convertToJobObj(messageFromClient);
+                            if (job != null) {
+                                jobCache.addJob(job);
+                                System.out.println("Job successfully added to cache.");
+                                javax.swing.SwingUtilities.invokeLater(() -> {
+                                    ControllerPage.refreshIfOpen();
+                                });
+                            }
+                        } else if (messageFromClient.startsWith("VEHICLE|")) {
+                            Vehicle vehicle = convertTovehicleObj(messageFromClient);
+                            if (vehicle != null) {
+                                vehicleCache.addVehicle(vehicle);
+                                System.out.println("Vehicle successfully added to cache.");
+                                javax.swing.SwingUtilities.invokeLater(() -> {
+                                    ControllerPage.refreshIfOpen();
+                                });
+                            }
+                        } else {
+                            String[] instructions = splitMessage(messageFromClient);
+                            String response = (String) executeRequest(instructions[0], instructions[1]);
+                            System.out.println(response);
+                        }
+                    }
+                    messageFromClient = bufferedReader.readLine();
+                } catch (IOException e) {
+                    System.out.println(e);
+                    closeEverything(socket,bufferedReader,bufferedWriter);
+                    break;
+                }
             }
+        } catch (IOException e) {
+            System.out.println(e);
+        } finally {
+            closeEverything(socket, bufferedReader, bufferedWriter);
         }
-    }
+    }          
+    
+
     public void broadcastMessage(String message){
         for (ClientHandler clientHandler: clientHandlers){
             try{
@@ -91,49 +122,210 @@ public class ClientHandler implements Runnable{
             System.out.println(e);
         }
     }
-    public JobOwner convertToJobObj(String stringJob){
-        String[]parts = stringJob.split("/",4);
-        if(parts.length ==4) {
-            int jobId =Integer.parseInt(parts[0]);
-            int jobDuration =Integer.parseInt(parts[2]);
-            int jobCompletionTime =Integer.parseInt(parts[3]);
-            return new JobOwner(jobId,parts[1],jobDuration,jobCompletionTime);
-        }
-        return null;
 
-    }
-    public void acceptJob(int idx){
+    public static void acceptJob(int idx){
         String message = "Accepted";
-        for (ClientHandler clientHandler: clientHandlers){
+        JobsCache jobCache = JobsCache.getInstance();
+        VcControllerServiceImpl vcController = new VcControllerServiceImpl();
+        ArrayList<ClientHandler> handlersToClose = new ArrayList<>(clientHandlers);
+        for(ClientHandler clientHandler: handlersToClose){
+            try {
+                clientHandler.bufferedWriter.write(message);
+                clientHandler.bufferedWriter.newLine();
+                clientHandler.bufferedWriter.flush();
+            } catch (IOException e) {
+            }
+        } 
+
+        for(ClientHandler handler: handlersToClose) {
+            handler.closeEverything(handler.socket, handler.bufferedReader, handler.bufferedWriter);
+        }
+
+        if (idx >= 0 && idx < jobCache.length()) {
+            JobOwner job = jobCache.getJob(idx);
+            if (job != null) {
+                vcController.submitJob(job);
+                jobCache.removeJob(idx);
+            }
+        }
+    }
+    public static void acceptVehicle(int idx){
+        String message = "Accepted";
+        VehicleCache vehicleCache = VehicleCache.getInstance();
+        ArrayList<ClientHandler> handlersToClose = new ArrayList<>(clientHandlers);
+        for(ClientHandler clientHandler : handlersToClose){
             try{
                 clientHandler.bufferedWriter.write(message);
                 clientHandler.bufferedWriter.newLine();
                 clientHandler.bufferedWriter.flush();
-                System.out.println(message);
-            }catch (IOException e){
+            }catch(IOException e){
 
-                System.out.println(e);
-                closeEverything(socket,bufferedReader,bufferedWriter);
             }
         }
-        vcController.submitJob(jobCache.getJob(idx));
-    }
-    public void rejectJob(int idx){
+        for(ClientHandler handler: handlersToClose){
+            handler.closeEverything(handler.socket, handler.bufferedReader, handler.bufferedWriter);
+        }
 
+        if(idx >= 0 && idx < vehicleCache.length()){
+            Vehicle vehicle = vehicleCache.getVehicle(idx);
+            if(vehicle != null){
+                String vehInfo = vehicle.toString();
+                saveVehicle(vehInfo);
+                vehicleCache.removeVehicle(idx);
+            }
+        }
+    }
+    public static void rejectJob(int idx){
         String message = "Rejected";
-        for (ClientHandler clientHandler: clientHandlers){
-            try{
+        JobsCache jobCache = JobsCache.getInstance();
+        ArrayList<ClientHandler> handlersToClose = new ArrayList<>(clientHandlers);
+        for(ClientHandler clientHandler : handlersToClose){
+            try {
                 clientHandler.bufferedWriter.write(message);
                 clientHandler.bufferedWriter.newLine();
                 clientHandler.bufferedWriter.flush();
-                System.out.println(message);
-            }catch (IOException e){
-
-                System.out.println(e);
-                closeEverything(socket,bufferedReader,bufferedWriter);
+            } catch (IOException e) {
             }
         }
-        jobCache.removeJob(idx);
 
+        for(ClientHandler handler: handlersToClose){
+            handler.closeEverything(handler.socket, handler.bufferedReader, handler.bufferedWriter);
+        }
+
+        if (idx >= 0 && idx < jobCache.length()) {
+            jobCache.removeJob(idx);
+        }
     }
+    public static void rejectVehicle(int idx){
+        String message = "Rejected";
+        VehicleCache vehicleCache = VehicleCache.getInstance();
+        ArrayList<ClientHandler> handlersToClose = new ArrayList<>(clientHandlers);
+        for(ClientHandler clientHandler : handlersToClose){
+            try {
+                clientHandler.bufferedWriter.write(message);
+                clientHandler.bufferedWriter.newLine();
+                clientHandler.bufferedWriter.flush();
+            } catch (IOException e) {
+            }
+        }
+
+        for(ClientHandler handler: handlersToClose){
+            handler.closeEverything(handler.socket, handler.bufferedReader, handler.bufferedWriter);
+        }
+
+        if (idx >= 0 && idx < vehicleCache.length()) {
+            vehicleCache.removeVehicle(idx);
+        }
+    }
+    //Splits up the client message for the client request method to work
+    public String[] splitMessage(String message){
+        String[] taskRequest = new String[2];
+        if(!message.isEmpty() && message != null){
+                    String[] parts = message.split("/");
+                    taskRequest[0] = parts[0]; // Stores the method it wants to use.
+                    StringBuilder infoBuilder = new StringBuilder();
+                    for(int i = 1; i < parts.length; i++){
+                    infoBuilder.append(parts[i]);
+                    if(i < parts.length - 1) infoBuilder.append("/");
+                }
+                    taskRequest[1] = infoBuilder.toString(); // Stores the information that it wants to use for the method.
+                    System.out.println(taskRequest[1]);
+        }
+        return taskRequest;
+    }
+    //Allows specific actions to execute depending on the task and information provided
+    public Object executeRequest(String instruction, String info){
+        switch(instruction){
+            //Placeholder code names. Feel free to change them.
+            case "V_StF":
+                saveVehicle(info);
+                return "Vehicle has been saved to File.";
+            case "J_Convert":
+                JobOwner job = convertToJobObj(info);
+                if (job != null) {
+                    jobCache.addJob(job);
+                    System.out.println("Job successfully added to cache.");
+                    javax.swing.SwingUtilities.invokeLater(() -> {
+                        ControllerPage.refreshIfOpen();
+                    });
+                    return "Job has been added to cache.";
+                }
+                return "Failed to convert job.";
+            default:
+                return "Unk nown task: " + instruction;
+        }
+    }
+    public JobOwner convertToJobObj(String stringJob){
+        if (stringJob == null || stringJob.trim().isEmpty()) {
+            return null;
+        }
+
+        String[] parts = stringJob.split("\\|", 4);
+        if (parts.length == 4 && parts[0].equals("JOB")) {
+                String jobName = parts[1].trim();
+                int jobDuration = Integer.parseInt(parts[2].trim());
+                String jobDeadline = parts[3].trim();
+
+                JobOwner job = new JobOwner();
+                job.setJobOwnerName(jobName);
+                job.setDuration(jobDuration);
+                job.setJobDeadline(jobDeadline);
+                job.setCompletionTime(0);
+                return job;
+            } 
+        
+
+        parts = stringJob.split("/", 4);
+        if (parts.length == 4) {
+                int jobId = Integer.parseInt(parts[0]);
+                int jobDuration = Integer.parseInt(parts[2]);
+                int jobCompletionTime = Integer.parseInt(parts[3]);
+                return new JobOwner(jobId, parts[1], jobDuration, jobCompletionTime);
+            }
+        return null;
+    }
+
+    public Vehicle convertTovehicleObj(String stringVehicle){
+        if (stringVehicle == null || stringVehicle.trim().isEmpty()) {
+            return null;
+        }
+
+        String[] parts = stringVehicle.split("\\|", 10);
+        if (parts.length == 10 && parts[0].equals("VEHICLE")) {
+            String vehicleModel = parts[1].trim();
+            String vehicleMake = parts[2].trim();
+            Year vehicleYear = Year.parse(parts[3].trim());
+            String vehicleLicensePlate = parts[4].trim();
+            String computingPower = parts[5].trim();
+            String arrivateDate = parts[6].trim();
+            String depatureDate = parts[7].trim();
+            String residency = parts[8].trim();
+            String email = parts[9].trim();
+            Vehicle vehicle = new Vehicle.VehicleBuilder().setVehicleOwnerEmail(email).setVehicleModel(vehicleModel).setVehicleMake(vehicleMake).setVehicleYear(vehicleYear).setLicensePlate(vehicleLicensePlate).setComputingPower(computingPower).setArrivalDate(arrivateDate).setDepatureDate(depatureDate).setResidency(residency).build();
+            return vehicle;
+        }
+
+//
+//        parts = stringVehicle.split("/", 4);
+////        if (parts.length == 4) {
+////            int jobId = Integer.parseInt(parts[0]);
+////            int jobDuration = Integer.parseInt(parts[2]);
+////            int jobCompletionTime = Integer.parseInt(parts[3]);
+////            return new Vehicle(jobId, parts[1], jobDuration, jobCompletionTime);
+////        }
+        return null;
+    }
+
+    //Saves vehicle information to the vehicle repo
+    public static void saveVehicle(String vehicleInfo){
+        try{
+            BufferedWriter writer = new BufferedWriter(new FileWriter("src/vccontroller/repo/VehicleData.txt", true)); // ,true allows for adding to file without rewriting
+            writer.write(vehicleInfo);
+            writer.newLine();
+            writer.close();
+        }catch(IOException e){
+            System.err.println("Failed to write to file:" + e.getMessage());
+        }
+    }
+
 }

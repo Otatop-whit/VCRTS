@@ -5,6 +5,7 @@ import java.time.Year;
 import java.util.Objects;
 import javax.swing.JTextField;
 import common.model.User;
+import vehicle.service.VehicleClient;
 import vehicle.service.VehicleOwnerServiceImpl;
 
 
@@ -90,8 +91,8 @@ public class VehicleOwner {
     //Stores Vehicle in userInventory
     public void storeVehicle(){
         userInventory.addVehicle(this.vehicle.getLicensePlate(), this.vehicle);
-        VehicleOwnerServiceImpl.writeFile(this);
-
+        System.out.println("Sending Request");
+        //VehicleClient.clientRequest("V_StF/" + vehicle.toString());
     }
 
     //Removes the vehicle constructed from personal Vehicle Inventory
@@ -102,7 +103,7 @@ public class VehicleOwner {
     }
     
     //Modifies Duration of Vehicle's Residency
-       public void setAvailability(String plateNumber, JTextField arriveDate, JTextField departureDate){
+    public void setAvailability(String plateNumber, JTextField arriveDate, JTextField departureDate){
         String arrivalDate = arriveDate.getText().trim();
         String departDate = departureDate.getText().trim();
         LocalDate arrDate = LocalDate.parse(arrivalDate);
@@ -112,6 +113,15 @@ public class VehicleOwner {
         System.out.println("Arrival Date: " + arrDate);
         System.out.println("Departure Date: " + depDate);
         VehicleOwnerServiceImpl.writeFile(this);
+    }
+
+    //Formats the Vehicle Information to String for Sockets
+    public String fileFormat(){
+        if(vehicle.getLicensePlate().equals(null)){
+            return null;
+        }
+        String fileFormat = vehicle.toString();
+        return fileFormat;
     }
 
     @Override

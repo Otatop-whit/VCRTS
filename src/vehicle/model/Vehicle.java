@@ -7,6 +7,7 @@ import java.util.Objects;
 
 public class Vehicle {
     //Required Vehicle Information
+    private int vehicleId;
     private String vehicleOwnerEmail;
     private String licensePlate;
     private String vehicleModel;
@@ -20,6 +21,7 @@ public class Vehicle {
     private LocalDateTime lastModified; // Records if data was changed
 
     public Vehicle(VehicleBuilder builder){
+        this.vehicleId = builder.vehicleId;
         this.vehicleOwnerEmail = builder.vehicleOwnerEmail;
         this.licensePlate = builder.licensePlate;
         this.vehicleModel = builder.vehicleModel;
@@ -34,6 +36,9 @@ public class Vehicle {
     }
 
     //Getters
+    public int getVehicleId(){
+        return vehicleId;
+    }
     public String getLicensePlate(){
         return licensePlate;
     }
@@ -108,6 +113,7 @@ public class Vehicle {
 
     //Created builder to allow null values
     public static class VehicleBuilder{
+        private int vehicleId;
         private String vehicleOwnerEmail;
         private String licensePlate;
         private String vehicleModel;
@@ -120,6 +126,10 @@ public class Vehicle {
         private LocalDateTime timestamp;
         private LocalDateTime lastModified;
 
+        public VehicleBuilder setVehicleId(int id){
+            this.vehicleId = id;
+            return this;
+        }
         public VehicleBuilder setVehicleOwnerEmail(String email){
             this.vehicleOwnerEmail = email;
             return this;
@@ -141,11 +151,14 @@ public class Vehicle {
             return this;
         }
         public VehicleBuilder setArrivalDate(String arrivalDate){
-            this.arrivalDate = LocalDate.parse(arrivalDate);
+            String date = arrivalDate.split(" ")[0];
+            this.arrivalDate = LocalDate.parse(date);
             return this;
         }
         public VehicleBuilder setDepatureDate(String departureDate){
-            this.departureDate = LocalDate.parse(departureDate);
+
+            String date = departureDate.split(" ")[0];
+            this.departureDate = LocalDate.parse(date);
             return this;
         }
         public VehicleBuilder setResidency(String residency){
@@ -173,11 +186,21 @@ public class Vehicle {
         }
     }
 
+    public String toString(){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String vehicleString = " "+ vehicleOwnerEmail + "/" + vehicleId + "/" + licensePlate + "/"
+        + vehicleModel + "/" + vehicleMake + "/" + vehicleYear.toString() + "/" + computingPower + "/"
+        + arrivalDate + "/" + departureDate + "/" + residency + "/" + timestamp.format(formatter) + "/"
+        + lastModified.format(formatter);
+        return vehicleString;
+    }
+    
     @Override
     public boolean equals(Object o){
         if (o == null || getClass() != o.getClass()) return false;
         Vehicle vehicle = (Vehicle) o;
-        return vehicleOwnerEmail == vehicle.getVehicleOwnerEmail() && 
+        return vehicleId == vehicle.getVehicleId() && 
+        Objects.equals(vehicleOwnerEmail, vehicle.vehicleOwnerEmail) &&
         Objects.equals(licensePlate, vehicle.licensePlate) && 
         Objects.equals(vehicleModel, vehicle.vehicleModel) && 
         Objects.equals(vehicleMake, vehicle.vehicleMake) &&

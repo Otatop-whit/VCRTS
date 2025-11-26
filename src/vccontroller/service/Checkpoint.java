@@ -1,4 +1,4 @@
-package controller;
+package vccontroller.service;
 
 public class Checkpoint {
     private int checkpointId;

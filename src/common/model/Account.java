@@ -24,10 +24,13 @@ public class Account {
 	public String getPassword() {
 		return password;
 	}
-    public String getRole() {return role;}
+
+    public String getRole() {
+		return role;
+	}
 
     public String toFileString() {
-		return name + "/" + email +"/" + password;
+		return name + "/" + email +"/" + password + "/" + role;
 	}
 	public static Account fromFileString(String fileString) {
 		String[]parts = fileString.split("/",4);
@@ -39,7 +42,7 @@ public class Account {
 		}
 	@Override
     public String toString() {
-        return name + "," + email + "," + password;
+        return name + "," + email + "," + password + "," + role;
     }
 }
 

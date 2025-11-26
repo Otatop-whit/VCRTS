@@ -7,6 +7,7 @@ import job.service.JobOwnerServiceImpl;
 import vccontroller.model.JobInfo;
 import vccontroller.model.JobReq;
 import vccontroller.service.VcControllerServiceImpl;
+import common.service.JobNetworkClient;
 
 import javax.swing.*;
 import java.awt.*;
@@ -30,6 +31,7 @@ public class JobOwnerPage extends JFrame {
     private static final Font buttonfont = new Font("SansSerif", Font.BOLD, 18);
     private static final Font labelfont = new Font("SansSerif", Font.PLAIN, 16);
     private static final Dimension buttonsize = new Dimension(220, 56);
+
     //Job Owner Dashboard Intro Window
     public JobOwnerPage()
     {
@@ -79,25 +81,15 @@ public class JobOwnerPage extends JFrame {
         JButton submitJob = new JButton("Submit New Job");
         styleButton(submitJob,buttoncolor, buttonfont, buttonsize);
 
-        JButton viewJob = new JButton("View Jobs History");
-        styleButton(viewJob,buttoncolorgreen, buttonfont, buttonsize);
-
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(12, 12, 12, 12);
         
         buttonPanel.add(submitJob, gbc);
-        buttonPanel.add(viewJob, gbc);
         //
 
         submitJob.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
                 new SubmitJobFrame().setVisible(true);
-            }
-        });
-
-        viewJob.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent event) {
-                new ViewJobFrame().setVisible(true);
             }
         });
 
@@ -144,11 +136,14 @@ public class JobOwnerPage extends JFrame {
     static class SubmitJobFrame extends JFrame {
 
         private JTextField jobName = new JTextField();
-        private JTextField deadline = new JTextField();
-        private JTextField durationHours = new JTextField();
+        private JSpinner deadline;
+        private JComboBox<Integer> durationHours;
 
         private void checkField(JButton submitJob) {
-            boolean filled = !jobName.getText().isEmpty() && !deadline.getText().isEmpty() && !durationHours.getText().isEmpty();
+            boolean nameFilled = !jobName.getText().trim().isEmpty();
+            boolean deadlineFilled = (deadline != null && deadline.getValue() != null);
+            boolean durationFilled = (durationHours != null && durationHours.getSelectedItem() != null);
+            boolean filled = nameFilled && deadlineFilled && durationFilled;
             submitJob.setEnabled(filled);
             if (filled) {
                 submitJob.setBackground(buttoncolorgreen);
@@ -161,6 +156,25 @@ public class JobOwnerPage extends JFrame {
             setTitle("Create New Job");
             setSize(720, 480);
             setLocationRelativeTo(null);
+
+            // Initialize deadline spinner (yyyy-MM-dd)
+            SpinnerDateModel dateModel = new SpinnerDateModel(
+                    new java.util.Date(),
+                    null,
+                    null,
+                    java.util.Calendar.DAY_OF_MONTH
+            );
+            deadline = new JSpinner(dateModel);
+            JSpinner.DateEditor editor = new JSpinner.DateEditor(deadline, "yyyy-MM-dd");
+            deadline.setEditor(editor);
+
+            // Initialize duration dropdown (1–99 hours)
+            Integer[] hoursOptions = new Integer[99];
+            for (int i = 0; i < 99; i++) {
+                hoursOptions[i] = i + 1;
+            }
+            durationHours = new JComboBox<>(hoursOptions);
+            durationHours.setSelectedIndex(-1);
 
          // === Back Arrow in Menu Bar 
         JButton backBtn = new JButton("⟵");
@@ -238,29 +252,44 @@ public class JobOwnerPage extends JFrame {
         };
 
         jobName.getDocument().addDocumentListener(listener);
-        deadline.getDocument().addDocumentListener(listener);
-        durationHours.getDocument().addDocumentListener(listener);
+        deadline.addChangeListener(e -> checkField(submitJob));
+        durationHours.addActionListener(e -> checkField(submitJob));
 
         submitJob.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
-                String enteredName = jobName.getText();
-                String enteredDeadline = deadline.getText();
-                int enteredDuration = Integer.parseInt(durationHours.getText().trim());
+                String enteredName = jobName.getText().trim();
+                java.util.Date deadlineDate = (java.util.Date) deadline.getValue();
+                String enteredDeadline = new java.text.SimpleDateFormat("yyyy-MM-dd").format(deadlineDate);
+                Integer selectedHours = (Integer) durationHours.getSelectedItem();
+                int enteredDuration = selectedHours != null ? selectedHours : 0;
 
-                JobOwner job = new JobOwner();
-                job.setJobOwnerName(enteredName);
-                job.setJobDeadline(enteredDeadline);
-                job.setDuration(enteredDuration);
-                job.setCompletionTime(0);
+                String line = String.join("|", "JOB", enteredName, String.valueOf(enteredDuration), enteredDeadline);
 
-                //new JobOwnerServiceImpl().addJobOwner(job);
-                new VcControllerServiceImpl().submitJob(job);
-
-                JOptionPane.showMessageDialog(SubmitJobFrame.this, "Job Successfully Submitted!");
+                JDialog statusDialog = new JDialog(SubmitJobFrame.this, "Job Status", false);
+                JLabel statusLabel = new JLabel("Waiting for approval...please don't close this message");
+                statusLabel.setFont(labelfont);
+                statusLabel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+                statusDialog.add(statusLabel);
+                statusDialog.pack();
+                statusDialog.setLocationRelativeTo(SubmitJobFrame.this);
+                statusDialog.setVisible(true);
+                
+                JobNetworkClient client = new JobNetworkClient("localhost", 1234);
+                client.setStatusCallback(status -> {
+                    javax.swing.SwingUtilities.invokeLater(() -> {
+                        if (status.equals("Accepted")) {
+                            statusLabel.setText("Your job has been accepted!");
+                        } else if (status.equals("Rejected")) {
+                            statusLabel.setText("Sorry, this job has been rejected.");
+                        }
+                        statusDialog.pack();
+                    });
+                });
+                client.sendJobLine(line);
 
                 jobName.setText("");
-                deadline.setText("");
-                durationHours.setText("");
+                deadline.setValue(new java.util.Date());
+                durationHours.setSelectedIndex(-1);
                 submitJob.setEnabled(false);
                 submitJob.setBackground(Color.gray);
             }
@@ -275,7 +304,6 @@ public class JobOwnerPage extends JFrame {
         }
 
     }
-
     //Estimate Job Completion Time and Submit Job
     /* static class EstimateJobFrame extends JFrame {
 
