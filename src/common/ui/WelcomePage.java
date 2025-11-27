@@ -77,23 +77,63 @@ public class WelcomePage {
         buttonPanel.add(loginBtn, gbc);
         buttonPanel.add(createBtn, gbc);
 
-        // === Controller Button 
-        JButton controllerBtn = new JButton("Controller  →");
-        controllerBtn.setFont(new Font("SansSerif", Font.PLAIN, 14));
-        controllerBtn.setFocusPainted(false);
-        controllerBtn.setContentAreaFilled(false);
-        controllerBtn.setBorder(BorderFactory.createEmptyBorder(6, 12, 6, 12));
-        controllerBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        controllerBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
+                // Controller access 
+        JPanel controllerAccessPanel = new JPanel();
+        controllerAccessPanel.setOpaque(false);
+        controllerAccessPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Logic to open ControllerPage UI
-        controllerBtn.addActionListener(e -> {
-            User.getInstance().logout();
-            
-            User.getInstance().login("test@vcrts.com", "Controller");
-            frame.dispose();
-            new ControllerPage().setVisible(true);;
+        JLabel controllerLabel = new JLabel("Are you the Controller?");
+        controllerLabel.setFont(new Font("SansSerif", Font.PLAIN, 13));
+
+        JButton controllerLink = new JButton("<HTML><U>Log in here</U></HTML>");
+        controllerLink.setFont(new Font("SansSerif", Font.PLAIN, 13));
+        controllerLink.setFocusPainted(false);
+        controllerLink.setContentAreaFilled(false);
+        controllerLink.setBorder(BorderFactory.createEmptyBorder(0, 4, 0, 0));
+        controllerLink.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        controllerAccessPanel.add(controllerLabel);
+        controllerAccessPanel.add(controllerLink);
+
+        // Small controller password panel (initially hidden)
+        JPanel controllerPasswordPanel = new JPanel();
+        controllerPasswordPanel.setOpaque(false);
+        controllerPasswordPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JLabel controllerPasswordLabel = new JLabel("Password:");
+        JPasswordField controllerPasswordField = new JPasswordField(12);
+        JButton controllerSubmitBtn = new JButton("Submit");
+
+        controllerPasswordPanel.add(controllerPasswordLabel);
+        controllerPasswordPanel.add(controllerPasswordField);
+        controllerPasswordPanel.add(controllerSubmitBtn);
+        controllerPasswordPanel.setVisible(false);
+
+        // Show password box when link is clicked
+        controllerLink.addActionListener(e -> {
+            controllerPasswordPanel.setVisible(true);
+            frame.revalidate();
+            frame.repaint();
         });
+
+        // Logic to open ControllerPage UI after password check
+        controllerSubmitBtn.addActionListener(e -> {
+            String pw = new String(controllerPasswordField.getPassword());
+            if ("controller".equals(pw)) {
+                User.getInstance().logout();
+                User.getInstance().login("controller@vcrts.com", "Controller");
+                frame.dispose();
+                new ControllerPage().setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(
+                    frame,
+                    "Incorrect controller password.",
+                    "Access denied",
+                    JOptionPane.ERROR_MESSAGE
+                );
+            }
+        });
+
 
 
         //  login box
@@ -150,9 +190,11 @@ public class WelcomePage {
         root.add(buttonPanel);
         root.add(Box.createVerticalStrut(12));
         root.add(loginPanel);
-        root.add(controllerBtn);
+        root.add(controllerAccessPanel);
+        root.add(controllerPasswordPanel);
         root.add(createPanel); 
         root.add(Box.createVerticalStrut(20));
+        
 
         // Footer 
         JPanel footerPanel = new JPanel(new BorderLayout());
@@ -293,7 +335,7 @@ public class WelcomePage {
         String email = emailField.getText().trim().toLowerCase();
         String pass = new String(passwordField.getPassword());
         if (accountCache.emailExists(email) && accountCache.getAccount(email).getPassword().equals(pass)){
-        //if (email.equalsIgnoreCase("test@vcrts.com") && pass.equals("test")) {
+        //if (email.equalsIgnoreCase("controller@vcrts.com") && pass.equals("controller")) {
             loginMsg.setForeground(new Color(20, 120, 60));
             loginMsg.setText("Login successful!");
             User.getInstance().login(email, accountCache.getAccount(email).getName());
@@ -320,7 +362,7 @@ public class WelcomePage {
             loginMsg.setForeground(new Color(20, 120, 60));
             loginMsg.setText("Login successful!");
 
-            String email = "test@vcrts.com";
+            String email = "controller@vcrts.com";
             User.getInstance().login(email, accountCache.getAccount(email).getName());
 
             JOptionPane.showMessageDialog(
