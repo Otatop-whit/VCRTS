@@ -9,10 +9,10 @@ public class AccountCache {
     private Map<String, Account> accountsCache = new HashMap<>();
 
     private AccountCache(){
-        String name = "test";
-        String email = "test@vcrts.com";
-        String pass = "test";
-        Account account = new Account(name,email,pass,"controller");
+        String name = "Controller";
+        String email = "controller@vcrts.com";
+        String pass = "controller";
+        Account account = new Account(name,email,pass,"Controller");
         accountsCache.put(email.toLowerCase(),account);
     }
     
