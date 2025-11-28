@@ -35,7 +35,7 @@ public class JobOwnerPage extends JFrame {
     //Job Owner Dashboard Intro Window
     public JobOwnerPage()
     {
-        setTitle("VCRTS — Vehicular Cloud Real Time System");
+        setTitle("VCRTS — Job Owner Dashboard");
         setSize(720,480);
         setLocationRelativeTo(null);
 
@@ -99,8 +99,33 @@ public class JobOwnerPage extends JFrame {
         root.add(dashIntro);
         root.add(buttonPanel);
         setContentPane(root);
+        
+        // Footer 
+        JPanel footerPanel = new JPanel(new BorderLayout());
+        footerPanel.setBackground(new Color(235, 240, 250));
+        footerPanel.setBorder(
+                BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(210, 220, 235))
+        );
+        footerPanel.setPreferredSize(new Dimension(Integer.MAX_VALUE, 24));
 
-    }
+        JLabel footerText = new JLabel(
+                "© 2025 Vehicular Cloud Real Time System  |  All Rights Reserved",
+                SwingConstants.CENTER
+        );
+        footerText.setFont(new Font("SansSerif", Font.PLAIN, 11));
+        footerText.setForeground(new Color(90, 90, 90));
+        footerPanel.add(footerText, BorderLayout.CENTER);
+
+        JPanel wrapper = new JPanel(new BorderLayout());
+        wrapper.setBackground(background);
+        wrapper.add(root, BorderLayout.CENTER);
+        wrapper.add(footerPanel, BorderLayout.SOUTH);
+
+        setContentPane(wrapper);
+        ((JComponent) getContentPane()).setBorder(
+                BorderFactory.createEmptyBorder(12, 12, 28, 12)
+        );
+        }
 
     //Button styling
     private static void styleButton(JButton button, Color baseColor, Font font, Dimension size) {
