@@ -39,7 +39,7 @@ public class vehicle_ui {
         //Loads Files to Vehicle Owner
         //vehicleOwner = VehicleOwnerServiceImpl.loadVehicles(vehicleOwner);
 
-        JFrame window = new JFrame("VCRTS — Vehicle Owner Portal");
+        JFrame window = new JFrame("VCRTS — Vehicle Owner Dashboard");
         window.setSize(720, 480);
         window.setLocationRelativeTo(null);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -327,16 +327,36 @@ public class vehicle_ui {
         });
 
         mainPanel.add(buttonPanel, BorderLayout.CENTER);
-        
-            
-       
-        
-        // Add all panels to window
+           
         window.add(titlePanel, BorderLayout.NORTH);
         window.add(mainPanel, BorderLayout.CENTER);
+
+        // Footer 
+        JPanel footerPanel = new JPanel(new BorderLayout());
+        footerPanel.setBackground(new Color(235, 240, 250));
+        footerPanel.setBorder(
+                BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(210, 220, 235))
+        );
+        footerPanel.setPreferredSize(new Dimension(Integer.MAX_VALUE, 24));
+
+        JLabel footerText = new JLabel(
+                "© 2025 Vehicular Cloud Real Time System  |  All Rights Reserved",
+                SwingConstants.CENTER
+        );
+        footerText.setFont(new Font("SansSerif", Font.PLAIN, 11));
+        footerText.setForeground(new Color(90, 90, 90));
+        footerPanel.add(footerText, BorderLayout.CENTER);
+
+        window.add(footerPanel, BorderLayout.SOUTH);
+
+        // Bottom padding 
+        ((JComponent) window.getContentPane()).setBorder(
+                BorderFactory.createEmptyBorder(12, 12, 28, 12)
+        );
+
         window.setVisible(true);
-    }
-    
+            } 
+            
     // Button styling method to coordinate with job owner
     private void styleButton(JButton button, Color baseColor) {
         button.setFont(BUTTON_FONT);
@@ -388,6 +408,7 @@ public class vehicle_ui {
         targetField.setText(sdf.format(selectedDate));
         
     }
+    
 }
     
     }
