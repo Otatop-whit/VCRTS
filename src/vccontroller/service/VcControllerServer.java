@@ -8,6 +8,10 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 public class VcControllerServer {
     private ServerSocket serverSocket;
@@ -48,8 +52,41 @@ public class VcControllerServer {
         socket.setReuseAddress(true);
         socket.bind(new java.net.InetSocketAddress(1234));
         VcControllerServer server = new VcControllerServer(socket);
-        server.start();
+        startVehicleTable();
+        server.start();   
 
     }
 
+    public static void startVehicleTable(){
+        Connection connection = null;
+        String url = "jdbc:mysql://localhost:3306/VC3?useTimezone=true&serverTimezone=UTC";
+        String username = "root";
+        String password = "638$8(5vsug!Fqb";
+        try {
+            connection = DriverManager.getConnection(url,username,password);
+            String query = "CREATE TABLE IF NOT EXISTS vc3.Vehicles ("
+           + "vehicleid INT NOT NULL AUTO_INCREMENT, "
+           + "vo_email VARCHAR(45) NOT NULL, "
+           + "license_plate VARCHAR(45) NOT NULL, "
+           + "model VARCHAR(45) NOT NULL, "
+           + "make VARCHAR(45) NOT NULL, "
+           + "year YEAR NOT NULL, "
+           + "computingpower VARCHAR(6) NOT NULL, "
+           + "arrivaldate DATE NOT NULL, "
+           + "departuredate DATE NOT NULL, "
+           + "residency VARCHAR(45) NOT NULL, "
+           + "timestamp DATETIME NOT NULL, "
+           + "lastmodified DATETIME NOT NULL, "
+           + "PRIMARY KEY (vehicleid), "
+           + "UNIQUE INDEX vehiclescol_UNIQUE (license_plate ASC) VISIBLE"
+           + ")";
+           Statement statement = connection.createStatement();
+           statement.executeUpdate(query);
+
+        } catch (SQLException e) {
+            
+            e.printStackTrace();
+        }
+            //Sets up the query as a java string
+    }
 }
