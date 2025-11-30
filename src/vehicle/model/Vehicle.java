@@ -74,6 +74,10 @@ public class Vehicle {
     }
 
     //Allows for users to fix any errors/typos
+    public void setVehicleId(int id){
+        vehicleId = id;
+        lastModified = LocalDateTime.now();
+    }
     public void setVehicleOwnerEmail(String email){
         vehicleOwnerEmail = email;
         lastModified = LocalDateTime.now();
