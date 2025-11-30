@@ -758,6 +758,7 @@ public class ControllerPage extends JFrame {
             String updateAt = null;
             if (vehicle != null) {
                 System.out.println(vehicle.getMake());
+                vehicle.setVehicleId(vehicleIndex);
                 String vehicleId = "#V-" + String.format("%04d", vehicleIndex++);
                 email = vehicle.getVehicleOwnerEmail();
                 license = vehicle.getLicensePlate();
