@@ -7,6 +7,7 @@ import vccontroller.ui.ControllerPage;
 import java.io.IOException;
 import java.net.Socket;
 import java.sql.Connection;
+import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -26,11 +27,11 @@ public class Main{
     //this part of the string is for time adjustment: ?useTimezone=true&serverTimezone=UTC
     static String url = "jdbc:mysql://localhost:3306/VC3?useTimezone=true&serverTimezone=UTC";
     static String username = "root";
-    static String password = "Yourpassword";
+    static String password = "638$8(5vsug!Fqb"; //Varies per user so if you wanna test, insert your root password here.
 
 
     public static void main(String args[]) throws IOException {
-
+        /* 
         try {
             //declares a connection to your database
             connection = DriverManager.getConnection(url, username, password);
@@ -51,27 +52,10 @@ public class Main{
 
         }
 
+        */
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//        AccountData accountData = new AccountData();
-//        new WelcomePage();
+        AccountData accountData = new AccountData();
+        new WelcomePage();
         //new ControllerPage().setVisible(true);
 
 
@@ -86,5 +70,5 @@ public class Main{
         //new ControllerPage().setVisible(true);
     }
 
-
+    
 }
