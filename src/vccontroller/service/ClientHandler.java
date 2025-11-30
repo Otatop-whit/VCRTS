@@ -7,7 +7,7 @@ import vccontroller.model.VehicleCache;
 import vccontroller.ui.ControllerPage;
 import vehicle.model.Vehicle;
 import vehicle.model.VehicleOwner;
-
+import java.sql.*;
 import java.io.*;
 import java.net.Socket;
 import java.time.LocalDate;
@@ -169,6 +169,7 @@ public class ClientHandler implements Runnable{
         if(idx >= 0 && idx < vehicleCache.length()){
             Vehicle vehicle = vehicleCache.getVehicle(idx);
             if(vehicle != null){
+                vehicleQuery(vehicle);
                 String vehInfo = vehicle.toString();
                 saveVehicle(vehInfo);
                 vehicleCache.removeVehicle(idx);
@@ -327,5 +328,42 @@ public class ClientHandler implements Runnable{
             System.err.println("Failed to write to file:" + e.getMessage());
         }
     }
+    public static void vehicleQuery(Vehicle vehicle){
+         try{
+            Connection connection = null;
+            String url = "jdbc:mysql://localhost:3306/VC3?useTimezone=true&serverTimezone=UTC";
+            String username = "root";
+            String password = "638$8(5vsug!Fqb";
+            connection = DriverManager.getConnection(url,username,password);
+            //Sets up the query as a java string
+            String sqlquery = 
+            "INSERT INTO vehicles (vo_email , license_plate , model , make" +
+            ", year , computingpower , arrivaldate , departuredate , residency , timestamp , lastmodified)"
+            + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
+            //PreparedStatement allows for java variables to be utilized
+            PreparedStatement ps = connection.prepareStatement(sqlquery);
+            ps.setString(1, vehicle.getVehicleOwnerEmail());
+            ps.setString(2, vehicle.getLicensePlate());
+            ps.setString(3, vehicle.getModel());
+            ps.setString(4, vehicle.getMake());
+            ps.setInt(5, vehicle.getYear().getValue());
+            ps.setString(6, vehicle.getComputingPower());
+            ps.setObject(7, vehicle.getArriveDate());
+            ps.setObject(8, vehicle.getDepartDate());
+            ps.setString(9, vehicle.getResidency());
+            ps.setObject(10, vehicle.getTimestamp());
+            ps.setObject(11, vehicle.getLastModified());
+
+            //Returns the number of rows modified
+            int delivNotif = ps.executeUpdate();
+            if(delivNotif > 0 ){
+                System.out.println("Data was successfully moved to the Database.");
+            }
+
+            connection.close();
+         }catch (SQLException e){
+            e.getMessage();
+         }
+    }
 }
