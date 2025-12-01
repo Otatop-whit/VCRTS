@@ -70,10 +70,6 @@ public class JobOwnerPage extends JFrame {
         dashTitle.setForeground(titlecolor);
         dashTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JLabel dashIntro = new JLabel("What would you like to do?", SwingConstants.CENTER);
-        dashIntro.setFont(labelfont);
-        dashIntro.setAlignmentX(Component.CENTER_ALIGNMENT);
-
         //Button design
         JPanel buttonPanel = new JPanel(new GridBagLayout());
         buttonPanel.setOpaque(false);
@@ -95,8 +91,7 @@ public class JobOwnerPage extends JFrame {
 
         root.add(Box.createVerticalStrut(35));
         root.add(dashTitle);
-        root.add(Box.createVerticalStrut(75));
-        root.add(dashIntro);
+        root.add(Box.createVerticalStrut(1));
         root.add(buttonPanel);
         setContentPane(root);
         
