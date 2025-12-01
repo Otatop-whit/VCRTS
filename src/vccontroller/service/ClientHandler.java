@@ -263,11 +263,12 @@ public class ClientHandler implements Runnable{
             return null;
         }
 
-        String[] parts = stringJob.split("\\|", 4);
-        if (parts.length == 4 && parts[0].equals("JOB")) {
-                String jobName = parts[1].trim();
-                int jobDuration = Integer.parseInt(parts[2].trim());
-                String jobDeadline = parts[3].trim();
+        String[] parts = stringJob.split("\\|", 5);
+        if (parts.length == 5 && parts[0].equals("JOB")) {
+                String jobId = parts[1].trim();
+                String jobName = parts[2].trim();
+                int jobDuration = Integer.parseInt(parts[3].trim());
+                String jobDeadline = parts[4].trim();
 
                 JobOwner job = new JobOwner();
                 job.setJobOwnerName(jobName);
@@ -275,8 +276,7 @@ public class ClientHandler implements Runnable{
                 job.setJobDeadline(jobDeadline);
                 job.setCompletionTime(0);
                 return job;
-            } 
-        
+            }
 
         parts = stringJob.split("/", 4);
         if (parts.length == 4) {
@@ -333,7 +333,7 @@ public class ClientHandler implements Runnable{
     public static void vehicleQuery(Vehicle vehicle){
          try{
             Connection connection = null;
-            String url = "jdbc:mysql://localhost:3306/VC3?useTimezone=true&serverTimezone=UTC";
+            String url = "jdbc:mysql://localhost:3306/VCRTS?useTimezone=true&serverTimezone=UTC";
             String username = "root";
             String password = "638$8(5vsug!Fqb";
             connection = DriverManager.getConnection(url,username,password);
