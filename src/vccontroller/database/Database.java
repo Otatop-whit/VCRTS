@@ -6,7 +6,7 @@ import job.model.JobOwner;
 public class Database {
 
 	static Connection connection = null;
-	static String url = "jdbc:mysql://localhost:3306/VC3?useTimezone=true&serverTimezone=UTC";
+	static String url = "jdbc:mysql://localhost:3306/VCRTS?useTimezone=true&serverTimezone=UTC";
 	static String username = "root";
 	static String password = "638$8(5vsug!Fqb";
 
