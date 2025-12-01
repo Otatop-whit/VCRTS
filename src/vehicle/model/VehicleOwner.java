@@ -21,6 +21,7 @@ public class VehicleOwner {
     public VehicleOwner(){
         email = user.getEmail();
         username = user.getUsername();
+        this.email = user.getUsername();
         this.userInventory = new VehicleInventory();
     }
     //Getters
@@ -28,6 +29,9 @@ public class VehicleOwner {
         return username;
     }
     public String getEmail(){
+        return email;
+    }
+    public String getId(){
         return email;
     }
 
@@ -53,6 +57,9 @@ public class VehicleOwner {
     }
     public void setFilename(String filename){
         this.filename = filename;
+    }
+    public void setId (String id){
+        this.id = id;
     }
 
     //Creates Vehicle from UI
