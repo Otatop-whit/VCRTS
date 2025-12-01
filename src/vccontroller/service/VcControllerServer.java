@@ -59,12 +59,12 @@ public class VcControllerServer {
 
     public static void startVehicleTable(){
         Connection connection = null;
-        String url = "jdbc:mysql://localhost:3306/VC3?useTimezone=true&serverTimezone=UTC";
+        String url = "jdbc:mysql://localhost:3306/VCRTS?useTimezone=true&serverTimezone=UTC";
         String username = "root";
         String password = "638$8(5vsug!Fqb";
         try {
             connection = DriverManager.getConnection(url,username,password);
-            String query = "CREATE TABLE IF NOT EXISTS vc3.Vehicles ("
+            String query = "CREATE TABLE IF NOT EXISTS vcrts.Vehicles ("
            + "vehicleid INT NOT NULL AUTO_INCREMENT, "
            + "vo_email VARCHAR(45) NOT NULL, "
            + "license_plate VARCHAR(45) NOT NULL, "
