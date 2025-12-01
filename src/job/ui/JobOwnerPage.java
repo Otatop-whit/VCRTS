@@ -453,6 +453,3 @@ public class JobOwnerPage extends JFrame {
     }
 
 }
-
-
-

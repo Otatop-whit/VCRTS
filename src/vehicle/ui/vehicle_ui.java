@@ -86,7 +86,6 @@ public class vehicle_ui {
         titlePanel.add(Box.createVerticalStrut(10));
         titlePanel.add(subtitleLabel);
         titlePanel.add(Box.createVerticalStrut(30));
-        
        
         JPanel mainPanel = new JPanel();
         mainPanel.setBackground(BACKGROUND_COLOR);
@@ -133,6 +132,10 @@ public class vehicle_ui {
                 String[] usStates = "AL,AK,AZ,AR,CA,CO,CT,DE,FL,GA,HI,ID,IL,IN,IA,KS,KY,LA,ME,MD,MA,MI,MN,MS,MO,MT,NE,NV,NH,NJ,NM,NY,NC,ND,OH,OK,OR,PA,RI,SC,SD,TN,TX,UT,VT,VA,WA,WV,WI,WY".split(",");
                 JComboBox<String> residency = new JComboBox<>(usStates);
                  
+                User user = User.getInstance();
+                String userEmail = user.getEmail();
+                JTextField vehicleOwnerId = new JTextField(userEmail);
+                vehicleOwnerId.setEditable(true);
                 //added panels for each date
                 JPanel arrivalDatePanel = new JPanel(new BorderLayout());
                 arrivalDatePanel.add(arrivalDate, BorderLayout.CENTER);
@@ -146,6 +149,7 @@ public class vehicle_ui {
                 departure_btn.addActionListener(e -> showSimpleDateDialog(departureDate));
 
                 Object[] message = {
+                    "Vehicle Owner ID: ", vehicleOwnerId,
                     "Model: ", model,
                     "Make: ", make,
                     "Year: ", year,
@@ -200,6 +204,7 @@ public class vehicle_ui {
 
                     //String line = String.join("|", "JOB", enteredName, String.valueOf(enteredDuration), enteredDeadline);
                     String line = String.join("|","VEHICLE",
+                    vehicleOwnerId.getText(),
                     model.getText(),
                     make.getText(),
                     (String) year.getSelectedItem(),
@@ -257,7 +262,7 @@ public class vehicle_ui {
                 JButton arrival_btn = new JButton("📅");
                 JTextField DepartureTime = new JTextField(25);
                 JButton departure_btn = new JButton("📅");
-                JTextField licensePlate = new JTextField();
+                JTextField licensePlate = new JTextField(); 
 
                 JPanel arrivalDatePanel = new JPanel(new BorderLayout());
                 arrivalDatePanel.add(ArrivalTime, BorderLayout.CENTER);
