@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.time.LocalDateTime;
 import javax.print.attribute.standard.JobSheets;
 import java.time.format.DateTimeFormatter;
+import vccontroller.database.Database;
 
 public class ClientHandler implements Runnable{
         VcControllerServiceImpl vccontroller = new VcControllerServiceImpl();
@@ -145,6 +146,7 @@ public class ClientHandler implements Runnable{
             JobOwner job = jobCache.getJob(idx);
             if (job != null) {
                 vcController.submitJob(job);
+                Database.jobInsertion(job);
                 jobCache.removeJob(idx);
             }
         }
