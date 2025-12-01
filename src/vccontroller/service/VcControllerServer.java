@@ -81,7 +81,7 @@ public class VcControllerServer {
            + "UNIQUE INDEX vehiclescol_UNIQUE (license_plate ASC) VISIBLE"
            + ")";
            Statement statement = connection.createStatement();
-           statement.executeUpdate(query);
+           statement.executeUpdate(query); // Executes the query
 
         } catch (SQLException e) {
             
