@@ -221,14 +221,12 @@ public class WelcomePage {
         actionRow.setOpaque(false);
         JButton signIn = new JButton("Sign In");
         styleButton(signIn, new Color(35, 99, 188), new Font("SansSerif", Font.BOLD, 13), new Dimension(100, 32));
-        JButton testSignIn = new JButton("Test Sign In");
-        styleButton(signIn, new Color(35, 99, 188), new Font("SansSerif", Font.BOLD, 13), new Dimension(100, 32));
-
+    
         JButton cancel = new JButton("Cancel");
         styleButton(cancel, new Color(140, 140, 140), new Font("SansSerif", Font.BOLD, 13), new Dimension(90, 30));
         actionRow.add(signIn);
         actionRow.add(cancel);
-        actionRow.add(testSignIn);
+    
 
         loginMsg = new JLabel(" ");
         loginMsg.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -236,7 +234,6 @@ public class WelcomePage {
         loginMsg.setForeground(new Color(170, 30, 30));
 
         signIn.addActionListener(e -> doLogin());
-        testSignIn.addActionListener(e -> testLogin());
         cancel.addActionListener(e -> {
             toggleLoginPanel(false);
             toggleButtons(true);

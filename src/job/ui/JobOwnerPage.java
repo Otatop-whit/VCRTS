@@ -207,9 +207,11 @@ public class JobOwnerPage extends JFrame {
         root.setBackground(background);
         root.setBorder(BorderFactory.createEmptyBorder(24,32,23,32));
 
-        JPanel form = new JPanel(new GridLayout(3, 2, 10, 10));
+        JPanel form = new JPanel(new GridLayout(4, 2, 10, 10));
         form.setOpaque(false);
             
+        JLabel jobIdLabel = new JLabel ("Job ID (email):");
+        jobIdLabel.setFont(labelfont);
         JLabel jobLabel = new JLabel("Job Name:");
         jobLabel.setFont(labelfont);
         JLabel deadlineLabel = new JLabel("Job Deadline:");
@@ -217,6 +219,13 @@ public class JobOwnerPage extends JFrame {
         JLabel reqsLabel = new JLabel("Job Duration (hours)");
         reqsLabel.setFont(labelfont);
 
+        User user = User.getInstance();
+        String userEmail = user.getEmail();
+        JTextField jobIdField = new JTextField(userEmail);
+        jobIdField.setEditable(true);
+        
+        form.add(jobIdLabel);
+        form.add(jobIdField);
         form.add(jobLabel);
         form.add(jobName);
         form.add(deadlineLabel);
@@ -258,12 +267,16 @@ public class JobOwnerPage extends JFrame {
         submitJob.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
                 String enteredName = jobName.getText().trim();
+                String JobId = jobIdField.getText().trim();
+                if(JobId.isEmpty()){
+                    JobId = userEmail;
+                }
                 java.util.Date deadlineDate = (java.util.Date) deadline.getValue();
                 String enteredDeadline = new java.text.SimpleDateFormat("yyyy-MM-dd").format(deadlineDate);
                 Integer selectedHours = (Integer) durationHours.getSelectedItem();
                 int enteredDuration = selectedHours != null ? selectedHours : 0;
 
-                String line = String.join("|", "JOB", enteredName, String.valueOf(enteredDuration), enteredDeadline);
+                String line = String.join("|", "JOB", JobId, enteredName, String.valueOf(enteredDuration), enteredDeadline);
 
                 JDialog statusDialog = new JDialog(SubmitJobFrame.this, "Job Status", false);
                 JLabel statusLabel = new JLabel("Waiting for approval...please don't close this message");
@@ -296,7 +309,7 @@ public class JobOwnerPage extends JFrame {
         });
 
         root.add(title);
-        root.add(Box.createVerticalStrut(60));
+        root.add(Box.createVerticalStrut(30));
         root.add(form);
         root.add(buttonsRow);
         setContentPane(root);
