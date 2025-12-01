@@ -4,6 +4,7 @@ import java.util.Objects;
 
 public class JobOwner {
     private int id;
+    private String jobId;
     private String jobOwnerName;
     private int duration;
     private int completionTime;
@@ -63,6 +64,14 @@ public class JobOwner {
 
     public void setRequirements(String requirements) {
         this.requirements = requirements;
+    }
+
+    public String getJobId() {
+        return jobId;
+    }
+
+    public void setJobId(String jobId) {
+        this.jobId = jobId;
     }
 
     @Override
