@@ -271,6 +271,7 @@ public class ClientHandler implements Runnable{
                 String jobDeadline = parts[4].trim();
 
                 JobOwner job = new JobOwner();
+                job.setJobId(jobId);
                 job.setJobOwnerName(jobName);
                 job.setDuration(jobDuration);
                 job.setJobDeadline(jobDeadline);

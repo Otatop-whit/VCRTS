@@ -14,7 +14,7 @@ public class Database {
 		try {
 			connection = DriverManager.getConnection(url, username, password);
 			
-			String sql = "INSERT INTO jobs (jobName, duration, completionTime, jobDeadline, timestamp) VALUES ('" + job.getJobOwnerName() + "', " + job.getDuration() + ", " + job.getCompletionTime() + ", '" + job.getJobDeadline() + "', NOW())";
+			String sql = "INSERT INTO jobs (jobId, jobName, duration, completionTime, jobDeadline, timestamp) VALUES ('" + job.getJobId() + "', '" + job.getJobOwnerName() + "', " + job.getDuration() + ", " + job.getCompletionTime() + ", '" + job.getJobDeadline() + "', NOW())";
 
 			Statement statement = connection.createStatement();
 			

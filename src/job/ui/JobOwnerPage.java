@@ -156,12 +156,13 @@ public class JobOwnerPage extends JFrame {
     static class SubmitJobFrame extends JFrame {
 
         private JTextField jobName = new JTextField();
-        private JSpinner deadline;
+        private JTextField deadline = new JTextField();
+        private JButton deadlineBtn = new JButton("📅");
         private JComboBox<Integer> durationHours;
 
         private void checkField(JButton submitJob) {
             boolean nameFilled = !jobName.getText().trim().isEmpty();
-            boolean deadlineFilled = (deadline != null && deadline.getValue() != null);
+            boolean deadlineFilled = !deadline.getText().trim().isEmpty();
             boolean durationFilled = (durationHours != null && durationHours.getSelectedItem() != null);
             boolean filled = nameFilled && deadlineFilled && durationFilled;
             submitJob.setEnabled(filled);
@@ -172,13 +173,34 @@ public class JobOwnerPage extends JFrame {
             }
         }
 
+        private void showSimpleDateDialog(JTextField targetField) {
+        SpinnerDateModel model = new SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.HOUR_OF_DAY);
+        JSpinner dateSpinner = new JSpinner(model);
+
+        JSpinner.DateEditor editor = new JSpinner.DateEditor(dateSpinner, "yyyy-MM-dd HH:mm");
+        dateSpinner.setEditor(editor);
+  
+        int result = JOptionPane.showConfirmDialog(
+            null, 
+            dateSpinner, 
+            "Select Date and Time", 
+            JOptionPane.OK_CANCEL_OPTION, 
+            JOptionPane.PLAIN_MESSAGE
+        );
+    
+        if (result == JOptionPane.OK_OPTION) {
+            java.util.Date selectedDate = (java.util.Date) dateSpinner.getValue();
+            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm");
+            targetField.setText(sdf.format(selectedDate));
+        }
+    }
         SubmitJobFrame() {
             setTitle("Create New Job");
             setSize(720, 480);
             setLocationRelativeTo(null);
 
             // Initialize deadline spinner (yyyy-MM-dd)
-            SpinnerDateModel dateModel = new SpinnerDateModel(
+            /*SpinnerDateModel dateModel = new SpinnerDateModel(
                     new java.util.Date(),
                     null,
                     null,
@@ -186,7 +208,7 @@ public class JobOwnerPage extends JFrame {
             );
             deadline = new JSpinner(dateModel);
             JSpinner.DateEditor editor = new JSpinner.DateEditor(deadline, "yyyy-MM-dd");
-            deadline.setEditor(editor);
+            deadline.setEditor(editor);*/
 
             // Initialize duration dropdown (1–99 hours)
             Integer[] hoursOptions = new Integer[99];
@@ -244,12 +266,19 @@ public class JobOwnerPage extends JFrame {
         JTextField jobIdField = new JTextField(userEmail);
         jobIdField.setEditable(true);
         
+        JPanel deadlinePanel = new JPanel(new BorderLayout());
+        deadlinePanel.setOpaque(false);
+        deadlinePanel.add(deadline, BorderLayout.CENTER);
+        deadlinePanel.add(deadlineBtn, BorderLayout.EAST);
+
+        deadlineBtn.addActionListener(e -> showSimpleDateDialog(deadline));
+
         form.add(jobIdLabel);
         form.add(jobIdField);
         form.add(jobLabel);
         form.add(jobName);
         form.add(deadlineLabel);
-        form.add(deadline);
+        form.add(deadlinePanel);
         form.add(reqsLabel);
         form.add(durationHours);
 
@@ -281,7 +310,7 @@ public class JobOwnerPage extends JFrame {
         };
 
         jobName.getDocument().addDocumentListener(listener);
-        deadline.addChangeListener(e -> checkField(submitJob));
+        deadline.getDocument().addDocumentListener(listener);
         durationHours.addActionListener(e -> checkField(submitJob));
 
         submitJob.addActionListener(new ActionListener() {
@@ -291,8 +320,8 @@ public class JobOwnerPage extends JFrame {
                 if(JobId.isEmpty()){
                     JobId = userEmail;
                 }
-                java.util.Date deadlineDate = (java.util.Date) deadline.getValue();
-                String enteredDeadline = new java.text.SimpleDateFormat("yyyy-MM-dd").format(deadlineDate);
+                //java.util.Date deadlineDate = (java.util.Date) deadline.getValue();
+                String enteredDeadline = deadline.getText().trim(); 
                 Integer selectedHours = (Integer) durationHours.getSelectedItem();
                 int enteredDuration = selectedHours != null ? selectedHours : 0;
 
@@ -321,7 +350,7 @@ public class JobOwnerPage extends JFrame {
                 client.sendJobLine(line);
 
                 jobName.setText("");
-                deadline.setValue(new java.util.Date());
+                deadline.setText("");
                 durationHours.setSelectedIndex(-1);
                 submitJob.setEnabled(false);
                 submitJob.setBackground(Color.gray);
@@ -453,6 +482,3 @@ public class JobOwnerPage extends JFrame {
     }
 
 }
-
-
-
