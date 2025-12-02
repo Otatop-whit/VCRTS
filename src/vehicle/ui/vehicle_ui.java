@@ -135,6 +135,11 @@ public class vehicle_ui {
                 String[] usStates = "AL,AK,AZ,AR,CA,CO,CT,DE,FL,GA,HI,ID,IL,IN,IA,KS,KY,LA,ME,MD,MA,MI,MN,MS,MO,MT,NE,NV,NH,NJ,NM,NY,NC,ND,OH,OK,OR,PA,RI,SC,SD,TN,TX,UT,VT,VA,WA,WV,WI,WY".split(",");
                 JComboBox<String> residency = new JComboBox<>(usStates);
                 residency.setSelectedIndex(-1);
+
+                User user = User.getInstance();
+                String userEmail = user.getEmail();
+                JTextField vehicleOwnerId = new JTextField(userEmail);
+                vehicleOwnerId.setEditable(true);
                  
                 //added panels for each date
                 JPanel arrivalDatePanel = new JPanel(new BorderLayout());
@@ -149,6 +154,7 @@ public class vehicle_ui {
                 departure_btn.addActionListener(e -> showSimpleDateDialog(departureDate));
 
                 Object[] message = {
+                    "Vehicle Owner ID: ", vehicleOwnerId,
                     "Model: ", model,
                     "Make: ", make,
                     "Year: ", year,
@@ -203,6 +209,7 @@ public class vehicle_ui {
 
                     //String line = String.join("|", "JOB", enteredName, String.valueOf(enteredDuration), enteredDeadline);
                     String line = String.join("|","VEHICLE",
+                    vehicleOwnerId.getText(),
                     model.getText(),
                     make.getText(),
                     (String) year.getSelectedItem(),
