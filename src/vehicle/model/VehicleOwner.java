@@ -10,6 +10,7 @@ import vehicle.service.VehicleOwnerServiceImpl;
 
 
 public class VehicleOwner {
+    private String id;
     private int numOfVehicles;
     private VehicleInventory userInventory;
     private Vehicle vehicle;
@@ -135,11 +136,11 @@ public class VehicleOwner {
     public boolean equals(Object o){
         if (o == null || getClass() != o.getClass()) return false;
         VehicleOwner vehicleOwner = (VehicleOwner) o;
-        return Objects.equals(email, vehicleOwner.email) && Objects.equals(username, vehicleOwner.username) && Objects.equals(numOfVehicles, vehicleOwner.numOfVehicles);
+        return Objects.equals(id, vehicleOwner.id) && Objects.equals(email, vehicleOwner.email) && Objects.equals(username, vehicleOwner.username) && Objects.equals(numOfVehicles, vehicleOwner.numOfVehicles);
     }
 
     @Override
     public int hashCode(){
-        return Objects.hash(email, username, numOfVehicles);
+        return Objects.hash(id, email, username, numOfVehicles);
     }
 }

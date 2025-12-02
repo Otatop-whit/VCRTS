@@ -12,6 +12,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import vccontroller.database.Database;
 
 public class VcControllerServer {
     private ServerSocket serverSocket;
@@ -52,41 +53,9 @@ public class VcControllerServer {
         socket.setReuseAddress(true);
         socket.bind(new java.net.InetSocketAddress(1234));
         VcControllerServer server = new VcControllerServer(socket);
-        startVehicleTable();
+        Database.startVehicleTable();
         server.start();   
 
     }
 
-    public static void startVehicleTable(){
-        Connection connection = null;
-        String url = "jdbc:mysql://localhost:3306/VCRTS?useTimezone=true&serverTimezone=UTC";
-        String username = "root";
-        String password = "638$8(5vsug!Fqb";
-        try {
-            connection = DriverManager.getConnection(url,username,password);
-            String query = "CREATE TABLE IF NOT EXISTS vcrts.Vehicles ("
-           + "vehicleid INT NOT NULL AUTO_INCREMENT, "
-           + "vo_email VARCHAR(45) NOT NULL, "
-           + "license_plate VARCHAR(45) NOT NULL, "
-           + "model VARCHAR(45) NOT NULL, "
-           + "make VARCHAR(45) NOT NULL, "
-           + "year YEAR NOT NULL, "
-           + "computingpower VARCHAR(6) NOT NULL, "
-           + "arrivaldate DATE NOT NULL, "
-           + "departuredate DATE NOT NULL, "
-           + "residency VARCHAR(45) NOT NULL, "
-           + "timestamp DATETIME NOT NULL, "
-           + "lastmodified DATETIME NOT NULL, "
-           + "PRIMARY KEY (vehicleid), "
-           + "UNIQUE INDEX vehiclescol_UNIQUE (license_plate ASC) VISIBLE"
-           + ")";
-           Statement statement = connection.createStatement();
-           statement.executeUpdate(query); // Executes the query
-
-        } catch (SQLException e) {
-            
-            e.printStackTrace();
-        }
-            //Sets up the query as a java string
-    }
 }
