@@ -15,7 +15,7 @@ public class Database {
 		try {
 			connection = DriverManager.getConnection(url, username, password);
 			
-			String sql = "INSERT INTO vcrts.jobs (jobId, jobName, duration, completionTime, jobDeadline, timestamp) VALUES ('" + job.getJobId() + "', '" + job.getJobOwnerName() + "', " + job.getDuration() + ", " + job.getCompletionTime() + ", '" + job.getJobDeadline() + "', NOW())";
+			String sql = "INSERT INTO vcrts.jobs (ID , jobName, duration , completionTime , jobDeadline , timestamp) VALUES ('" + job.getJobId() + "', '" + job.getJobOwnerName() + "', " + job.getDuration() + ", " + job.getCompletionTime() + ", '" + job.getJobDeadline() + "', NOW())";
 
 			Statement statement = connection.createStatement();
 			
@@ -35,59 +35,100 @@ public class Database {
             connection = DriverManager.getConnection(url,username,password);
             //Sets up the query as a java string
             String sqlquery = 
-            "INSERT INTO vcrts.vehicles (vo_email , license_plate , model , make" +
+            "INSERT INTO vcrts.vehicles (vehicle_ID , vo_email, license_plate , model , make" +
             ", year , computingpower , arrivaldate , departuredate , residency , timestamp , lastmodified)"
-            + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
             //PreparedStatement allows for java variables to be utilized
             PreparedStatement ps = connection.prepareStatement(sqlquery);
-            ps.setString(1, vehicle.getVehicleOwnerEmail());
-            ps.setString(2, vehicle.getLicensePlate());
-            ps.setString(3, vehicle.getModel());
-            ps.setString(4, vehicle.getMake());
-            ps.setInt(5, vehicle.getYear().getValue());
-            ps.setString(6, vehicle.getComputingPower());
-            ps.setObject(7, vehicle.getArriveDate());
-            ps.setObject(8, vehicle.getDepartDate());
-            ps.setString(9, vehicle.getResidency());
-            ps.setObject(10, vehicle.getTimestamp());
-            ps.setObject(11, vehicle.getLastModified());
+			ps.setInt(1, vehicle.getVehicleId());
+			ps.setString(2, vehicle.getVehicleOwnerEmail());
+			ps.setString(3, vehicle.getLicensePlate());
+            ps.setString(4, vehicle.getModel());
+            ps.setString(5, vehicle.getMake());
+            ps.setInt(6, vehicle.getYear().getValue());
+            ps.setString(7, vehicle.getComputingPower());
+            ps.setObject(8, vehicle.getArriveDate());
+            ps.setObject(9, vehicle.getDepartDate());
+            ps.setString(10, vehicle.getResidency());
+            ps.setObject(11, vehicle.getTimestamp());
+            ps.setObject(12, vehicle.getLastModified());
 
             //Returns the number of rows modified
-            ps.executeUpdate();
+            int response = ps.executeUpdate();
+			if (response >= 1){
+				System.out.println("Vehicle inserted successfully!");
+			}else{
+				System.out.println("Vehicle insertion failed.");
+			}
 			ps.close();
             connection.close();
          }catch (SQLException e){
+			System.err.println("Error! Vehicle insertion failed.");
             e.getMessage();
+			
          }
 	}
 
-	public static void startVehicleTable(){
-        try {
-            connection = DriverManager.getConnection(url,username,password);
-            String query = "CREATE TABLE IF NOT EXISTS vcrts.Vehicles ("
-           + "vehicleid INT NOT NULL AUTO_INCREMENT, "
-           + "vo_email VARCHAR(45) NOT NULL, "
-           + "license_plate VARCHAR(45) NOT NULL, "
-           + "model VARCHAR(45) NOT NULL, "
-           + "make VARCHAR(45) NOT NULL, "
-           + "year YEAR NOT NULL, "
-           + "computingpower VARCHAR(6) NOT NULL, "
-           + "arrivaldate DATE NOT NULL, "
-           + "departuredate DATE NOT NULL, "
-           + "residency VARCHAR(45) NOT NULL, "
-           + "timestamp DATETIME NOT NULL, "
-           + "lastmodified DATETIME NOT NULL, "
-           + "PRIMARY KEY (vehicleid), "
-           + "UNIQUE INDEX vehiclescol_UNIQUE (license_plate ASC) VISIBLE"
-           + ")";
-           Statement statement = connection.createStatement();
-           statement.executeUpdate(query); // Executes the query
+	public static void startVehiclesTable() {
+    try {
+        connection = DriverManager.getConnection(url, username, password);
 
-        } catch (SQLException e) {
-            
-            e.printStackTrace();
-        }
-            //Sets up the query as a java string
+        String query =
+            "CREATE TABLE IF NOT EXISTS vehicles ("
+          + "vehicle_ID INT NOT NULL, "
+          + "vo_email VARCHAR(45) NOT NULL, "
+          + "license_plate VARCHAR(45) NOT NULL, "
+          + "model VARCHAR(45) NOT NULL, "
+          + "make VARCHAR(45) NOT NULL, "
+          + "year YEAR NOT NULL, "
+          + "computingpower VARCHAR(6) NOT NULL, "
+          + "arrivaldate DATE NOT NULL, "
+          + "departuredate DATE NOT NULL, "
+          + "residency VARCHAR(45) NOT NULL, "
+          + "timestamp DATETIME NOT NULL, "
+          + "lastmodified DATETIME NOT NULL, "
+          + "PRIMARY KEY (vehicle_ID), "
+          + "UNIQUE KEY vehiclescol_UNIQUE (vehicle_ID), "
+          + "UNIQUE KEY license_plate_UNIQUE (license_plate)"
+          + ") ENGINE=InnoDB "
+          + "DEFAULT CHARSET=utf8mb4 "
+          + "COLLATE=utf8mb4_0900_ai_ci";
+
+        Statement statement = connection.createStatement();
+        statement.executeUpdate(query);
+
+        System.out.println("Vehicles table created successfully.");
+
+    } catch (SQLException e) {
+		System.err.println(" Failed to create Vehicles table.");
+        e.getMessage();
     }
+}
+
+	public static void startJobsTable(){
+		try {
+        connection = DriverManager.getConnection(url, username, password);
+
+        String query =
+            "CREATE TABLE IF NOT EXISTS jobs ("
+          + "jobNum INT AUTO_INCREMENT PRIMARY KEY, "
+          + "ID VARCHAR(100), "
+          + "jobName VARCHAR(100), "
+          + "duration INT, "
+          + "completionTime INT, "
+          + "jobDeadline VARCHAR(100), "
+          + "`timestamp` DATETIME"
+          + ")";
+
+        Statement statement = connection.createStatement();
+        statement.executeUpdate(query);
+
+        System.out.println("Jobs table created successfully.");
+
+    } catch (SQLException e) {
+        System.err.println("Failed to create Jobs table.");
+        e.getMessage();
+    }
+	}
 }
