@@ -73,8 +73,8 @@ public class Database {
 	public static void startVehiclesTable() {
     try {
         connection = DriverManager.getConnection(url, username, password);
-
-        String query =
+		Statement statement = connection.createStatement();
+        String createQuery =
             "CREATE TABLE IF NOT EXISTS vehicles ("
           + "vehicle_ID INT NOT NULL, "
           + "vo_email VARCHAR(45) NOT NULL, "
@@ -95,8 +95,8 @@ public class Database {
           + "DEFAULT CHARSET=utf8mb4 "
           + "COLLATE=utf8mb4_0900_ai_ci";
 
-        Statement statement = connection.createStatement();
-        statement.executeUpdate(query);
+        
+        statement.executeUpdate(createQuery);
 
         System.out.println("Vehicles table created successfully.");
 
