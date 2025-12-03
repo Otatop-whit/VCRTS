@@ -218,6 +218,7 @@ public class ClientHandler implements Runnable{
 
         if (idx >= 0 && idx < vehicleCache.length()) {
             vehicleCache.removeVehicle(idx);
+            
         }
     }
     //Splits up the client message for the client request method to work
