@@ -3,15 +3,12 @@ package vccontroller.service;
 import common.service.AccountData;
 import common.ui.WelcomePage;
 import vccontroller.model.JobsCache;
-
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+
+
+
 import vccontroller.database.Database;
 
 public class VcControllerServer {
@@ -53,7 +50,8 @@ public class VcControllerServer {
         socket.setReuseAddress(true);
         socket.bind(new java.net.InetSocketAddress(1234));
         VcControllerServer server = new VcControllerServer(socket);
-        Database.startVehicleTable();
+        Database.startVehiclesTable();
+        Database.startJobsTable();
         server.start();   
 
     }
