@@ -252,7 +252,7 @@ public class JobOwnerPage extends JFrame {
         JPanel form = new JPanel(new GridLayout(4, 2, 10, 10));
         form.setOpaque(false);
             
-        JLabel jobIdLabel = new JLabel ("Job ID (email):");
+        JLabel jobIdLabel = new JLabel ("ID:");
         jobIdLabel.setFont(labelfont);
         JLabel jobLabel = new JLabel("Job Name:");
         jobLabel.setFont(labelfont);
