@@ -222,6 +222,8 @@ public class vehicle_ui {
                     }
 
                     //String line = String.join("|", "JOB", enteredName, String.valueOf(enteredDuration), enteredDeadline);
+                    int vehicleId = Integer.parseInt(vehicleOwnerId.getText().trim());
+                    cache.storeVehicleId(vehicleId); //Stores the new vehicle ID in cache
                     String line = String.join("|","VEHICLE",
                     vehicleOwnerId.getText(),
                     model.getText(),
@@ -262,7 +264,7 @@ public class vehicle_ui {
                     String timestamp = getCurrentTimestamp();
                     System.out.println("[" + timestamp + "] Vehicle registered: " + licensePlate.getText());
                     JOptionPane.showMessageDialog(null, 
-                        "Vehicle registered successfully!\nTimestamp: " + timestamp, 
+                        "Vehicle submitted successfully!\nTimestamp: " + timestamp, 
                         "Success", JOptionPane.INFORMATION_MESSAGE);
                 }
             }
