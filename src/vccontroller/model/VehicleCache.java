@@ -1,6 +1,7 @@
 package vccontroller.model;
 
 import vehicle.model.Vehicle;
+import vehicle.service.VehicleIDCache;
 
 import java.util.ArrayList;
 
@@ -25,6 +26,9 @@ public class VehicleCache {
 
     }
     public void removeVehicle(int index){
+        Vehicle vehicle = vehicleCache.get(index);
+        VehicleIDCache cache = VehicleIDCache.getInstance();
+        cache.removeVehicleId(vehicle.getVehicleId());
         vehicleCache.remove(index);
     }
     public int length(){
