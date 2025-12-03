@@ -825,7 +825,8 @@ public class ControllerPage extends JFrame {
                 String updatedAt      = (parts.length > 11) ? parts[11].trim() : "-";
     
                 //  UI ID for the controller
-                String vehicleId = "#V-" + String.format("%04d", vehicleIndex++);
+                String vehicleId = "#V-" + String.format("%04d", Integer.parseInt(rawId));
+                vehicleIndex++;
     
                 JPanel row = createVehicleRow(
                         vehicleId,
