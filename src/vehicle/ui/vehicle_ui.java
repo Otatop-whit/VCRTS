@@ -154,7 +154,7 @@ public class vehicle_ui {
                 departure_btn.addActionListener(e -> showSimpleDateDialog(departureDate));
 
                 Object[] message = {
-                    "Vehicle Owner ID: ", vehicleOwnerId,
+                    "ID: ", vehicleOwnerId,
                     "Model: ", model,
                     "Make: ", make,
                     "Year: ", year,
