@@ -170,19 +170,20 @@ public class vehicle_ui {
                             "Vehicle Owner ID cannot be empty!", "Error", 
                             JOptionPane.ERROR_MESSAGE);
                         return;
-                    }else if(verifyIDInput(vehicleOwnerId) == false){ //Checks if the ID is an integer
+                    }
+                    if(verifyIDInput(vehicleOwnerId) == false){ //Checks if the ID is an integer
                         JOptionPane.showMessageDialog(null, 
                             "Vehicle Owner ID must be an Integer!", "Error", 
                             JOptionPane.ERROR_MESSAGE);
                         return;
-                    }else{ //Checks if the ID already exists in cache
-                        if(cache.getVehicleIds().contains(Integer.parseInt(vehicleOwnerId.getText().trim()))){
+                    }
+                    if(cache.getVehicleIds().contains(Integer.parseInt(vehicleOwnerId.getText().trim()))){ //Checks if the ID already exists in cache
                             JOptionPane.showMessageDialog(null, 
                             "Vehicle Owner ID already exists! Please use a different ID.", "Error", 
                             JOptionPane.ERROR_MESSAGE);
                             return;
-                        }
                     }
+                    
                     if(model.getText().trim().isEmpty()) {
                         JOptionPane.showMessageDialog(null, 
                             "Model cannot be empty!", "Error", 
