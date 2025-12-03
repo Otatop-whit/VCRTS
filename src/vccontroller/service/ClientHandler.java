@@ -293,19 +293,20 @@ public class ClientHandler implements Runnable{
         if (stringVehicle == null || stringVehicle.trim().isEmpty()) {
             return null;
         }
-
-        String[] parts = stringVehicle.split("\\|", 10);
-        if (parts.length == 10 && parts[0].equals("VEHICLE")) {
-            String vehicleModel = parts[1].trim();
-            String vehicleMake = parts[2].trim();
-            Year vehicleYear = Year.parse(parts[3].trim());
-            String vehicleLicensePlate = parts[4].trim();
-            String computingPower = parts[5].trim();
-            String arrivateDate = parts[6].trim();
-            String depatureDate = parts[7].trim();
-            String residency = parts[8].trim();
-            String email = parts[9].trim();
-            Vehicle vehicle = new Vehicle.VehicleBuilder().setVehicleOwnerEmail(email).setVehicleModel(vehicleModel).setVehicleMake(vehicleMake).setVehicleYear(vehicleYear).setLicensePlate(vehicleLicensePlate).setComputingPower(computingPower).setArrivalDate(arrivateDate).setDepatureDate(depatureDate).setResidency(residency).build();
+        int limit = 11; //Indicates the number of expected parts
+        String[] parts = stringVehicle.split("\\|", limit);
+        if (parts.length == limit && parts[0].equals("VEHICLE")) {
+            int vehicleId = Integer.parseInt(parts[1].trim());
+            String vehicleModel = parts[2].trim();
+            String vehicleMake = parts[3].trim();
+            Year vehicleYear = Year.parse(parts[4].trim());
+            String vehicleLicensePlate = parts[5].trim();
+            String computingPower = parts[6].trim();
+            String arrivateDate = parts[7].trim();
+            String depatureDate = parts[8].trim();
+            String residency = parts[9].trim();
+            String email = parts[10].trim();
+            Vehicle vehicle = new Vehicle.VehicleBuilder().setVehicleId(vehicleId).setVehicleOwnerEmail(email).setVehicleModel(vehicleModel).setVehicleMake(vehicleMake).setVehicleYear(vehicleYear).setLicensePlate(vehicleLicensePlate).setComputingPower(computingPower).setArrivalDate(arrivateDate).setDepatureDate(depatureDate).setResidency(residency).build();
             return vehicle;
         }
 
