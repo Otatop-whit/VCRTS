@@ -20,9 +20,8 @@ public class VehicleOwner {
     String username;
     
     public VehicleOwner(){
-        email = user.getEmail();
-        username = user.getUsername();
-        this.email = user.getUsername();
+        this.email = user.getEmail();
+        this.username = user.getUsername();
         this.userInventory = new VehicleInventory();
     }
     //Getters
