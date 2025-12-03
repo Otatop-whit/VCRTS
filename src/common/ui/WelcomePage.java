@@ -355,7 +355,7 @@ public class WelcomePage {
             loginMsg.setText("Invalid email or password.");
         }
     }
-    private void testLogin() {
+   /* private void testLogin() {
             loginMsg.setForeground(new Color(20, 120, 60));
             loginMsg.setText("Login successful!");
 
@@ -377,7 +377,7 @@ public class WelcomePage {
             new ControllerPage();
         }
     }
-
+*/
     // Styling helper 
     private void styleButton(JButton button, Color baseColor, Font font, Dimension size) {
         button.setFont(font);
