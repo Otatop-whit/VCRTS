@@ -17,7 +17,7 @@ public class VehicleIDCache {
         loadVehicleIds();
     }
 
-    public static synchronized VehicleIDCache getInstance() {
+    public static VehicleIDCache getInstance() {
         if (instance == null) {
             instance = new VehicleIDCache();
         }
@@ -45,6 +45,9 @@ public class VehicleIDCache {
 
     public void storeVehicleId(int id) {
         vehicleIds.add(id);
+    }
+    public void removeVehicleId(int id) {
+        vehicleIds.remove(id);
     }
 
     public Set<Integer> getVehicleIds() {
