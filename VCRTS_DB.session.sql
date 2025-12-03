@@ -1,2 +1,2 @@
 SELECT * from jobs;
-SELECT * from vehicles; 
+SELECT * from vehicles;
