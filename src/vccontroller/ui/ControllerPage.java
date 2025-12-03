@@ -14,9 +14,6 @@ import java.awt.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 /*
   Controller dashboard UI.
@@ -745,6 +742,7 @@ public class ControllerPage extends JFrame {
         VehicleCache cache = VehicleCache.getInstance();
         for (int i = 0; i < cache.length(); i++) {
             Vehicle vehicle = cache.getVehicle(i);
+            String id = null;
             String email = null;
             String license = null;
             String make = null;
@@ -758,8 +756,8 @@ public class ControllerPage extends JFrame {
             String updateAt = null;
             if (vehicle != null) {
                 System.out.println(vehicle.getMake());
-                vehicle.setVehicleId(vehicleIndex);
-                String vehicleId = "#V-" + String.format("%04d", vehicleIndex++);
+                String vehicleId = "#V-" + String.format("%04d", vehicle.getVehicleId());
+                vehicleIndex++;
                 email = vehicle.getVehicleOwnerEmail();
                 license = vehicle.getLicensePlate();
                 make = vehicle.getMake();
