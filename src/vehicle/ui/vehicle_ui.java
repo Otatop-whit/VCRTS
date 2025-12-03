@@ -2,17 +2,12 @@ package vehicle.ui;
 import javax.swing.*;
 
 import common.model.User;
-import common.service.JobNetworkClient;
-import job.ui.JobOwnerPage;
-import vehicle.model.Vehicle;
 import vehicle.model.VehicleOwner;
 import vehicle.service.VehicleClient;
+import vehicle.service.VehicleIDCache;
 import vehicle.service.VehicleOwnerServiceImpl;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -34,6 +29,7 @@ public class vehicle_ui {
     private static final Dimension BUTTON_SIZE = new Dimension(220, 56); // 新增
     User user = User.getInstance();
     VehicleOwner vehicleOwner = VehicleOwnerServiceImpl.loadOwner(user);
+    VehicleIDCache cache = VehicleIDCache.getInstance();
     
     public vehicle_ui(){
         //Loads Files to Vehicle Owner
@@ -136,9 +132,7 @@ public class vehicle_ui {
                 JComboBox<String> residency = new JComboBox<>(usStates);
                 residency.setSelectedIndex(-1);
 
-                User user = User.getInstance();
-                String userEmail = user.getEmail();
-                JTextField vehicleOwnerId = new JTextField(userEmail);
+                JTextField vehicleOwnerId = new JTextField(0);
                 vehicleOwnerId.setEditable(true);
                  
                 //added panels for each date
@@ -170,6 +164,25 @@ public class vehicle_ui {
                 int registerOption = JOptionPane.showConfirmDialog(
                         window, message, "Register New Vehicle", JOptionPane.OK_CANCEL_OPTION);
                 if(registerOption == JOptionPane.OK_OPTION){
+                    
+                    if(vehicleOwnerId.getText().trim().isEmpty()) {
+                        JOptionPane.showMessageDialog(null, 
+                            "Vehicle Owner ID cannot be empty!", "Error", 
+                            JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }else if(verifyIDInput(vehicleOwnerId) == false){ //Checks if the ID is an integer
+                        JOptionPane.showMessageDialog(null, 
+                            "Vehicle Owner ID must be an Integer!", "Error", 
+                            JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }else{ //Checks if the ID already exists in cache
+                        if(cache.getVehicleIds().contains(Integer.parseInt(vehicleOwnerId.getText().trim()))){
+                            JOptionPane.showMessageDialog(null, 
+                            "Vehicle Owner ID already exists! Please use a different ID.", "Error", 
+                            JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
+                    }
                     if(model.getText().trim().isEmpty()) {
                         JOptionPane.showMessageDialog(null, 
                             "Model cannot be empty!", "Error", 
@@ -421,5 +434,14 @@ public class vehicle_ui {
     
 }
     
+    private boolean verifyIDInput(JTextField vehicleID){
+        String idInput = vehicleID.getText();
+        try{
+            Integer.parseInt(idInput);
+            return true;
+        }catch(NumberFormatException e){
+            return false;
+        }
+    }
     }
 
