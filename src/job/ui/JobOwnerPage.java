@@ -60,7 +60,6 @@ public class JobOwnerPage extends JFrame {
         menuBar.add(Box.createHorizontalStrut(8)); 
         setJMenuBar(menuBar);
 
-
         JPanel root = new JPanel();
         root.setLayout(new BoxLayout(root, BoxLayout.Y_AXIS));
         root.setBackground(background);
