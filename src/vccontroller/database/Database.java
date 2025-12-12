@@ -12,7 +12,7 @@ public class Database {
 	static Connection connection = null;
 	static String url = "jdbc:mysql://localhost:3306/VCRTS?useTimezone=true&serverTimezone=UTC";
 	static String username = "root";
-	static String password = "Buttpoop123";
+	static String password = "password";
 
 	public static void jobInsertion(JobOwner job) {
 		try {
