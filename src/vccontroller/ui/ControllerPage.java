@@ -70,7 +70,7 @@ public class ControllerPage extends JFrame {
 
         contentPanel.add(homePanel, "JOBREQUESTS");
         contentPanel.add(acceptedJobPanel, "ACCEPTEDJOB");
-        contentPanel.add(vehiclesPanel, "VEHICLES");
+        contentPanel.add(vehiclesPanel, "VEHICLEREQUESTS");
         contentPanel.add(acceptedVehiclesPanel, "ACCEPTEDVEHICLES");
         contentPanel.add(notificationsPanel, "NOTIFICATIONS");
         contentPanel.add(viewAccountsPanel, "View Accounts");
@@ -111,14 +111,14 @@ public class ControllerPage extends JFrame {
         // Navigation buttons
         JButton homeBtn = createNavButton("Job Requests");
         JButton acceptedJobsBtn = createNavButton("Accepted Jobs");
-        JButton vehiclesBtn = createNavButton("Vehicles");
+        JButton vehiclesBtn = createNavButton("Vehicle Requests");
         JButton acceptedVehiclesBtn = createNavButton("Accepted Vehicles");
         JButton notifBtn = createNavButton("Notifications");
         JButton viewAccButton = createNavButton("View Accounts");
 
         homeBtn.addActionListener(e -> cardLayout.show(contentPanel, "JOBREQUESTS"));
         acceptedJobsBtn.addActionListener(e -> cardLayout.show(contentPanel, "ACCEPTEDJOB"));
-        vehiclesBtn.addActionListener(e -> cardLayout.show(contentPanel, "VEHICLES"));
+        vehiclesBtn.addActionListener(e -> cardLayout.show(contentPanel, "VEHICLEREQUESTS"));
         acceptedVehiclesBtn.addActionListener(e -> cardLayout.show(contentPanel, "ACCEPTEDVEHICLES"));
         notifBtn.addActionListener(e -> cardLayout.show(contentPanel, "NOTIFICATIONS"));
         viewAccButton.addActionListener(e -> cardLayout.show(contentPanel, "View Accounts"));
@@ -263,7 +263,7 @@ public class ControllerPage extends JFrame {
         title.setForeground(Color.WHITE);
         title.setFont(new Font("SansSerif", Font.BOLD, 22));
 
-        JLabel subtitle = new JLabel("View all accepted jobs");
+        JLabel subtitle = new JLabel("View all accepted Jobs");
         subtitle.setForeground(new Color(148, 163, 184));
         subtitle.setFont(new Font("SansSerif", Font.PLAIN, 13));
 
@@ -749,7 +749,7 @@ public class ControllerPage extends JFrame {
         titleBox.setLayout(new BoxLayout(titleBox, BoxLayout.Y_AXIS));
         titleBox.setBackground(new Color(15, 23, 42));
 
-        JLabel title = new JLabel("Vehicles");
+        JLabel title = new JLabel("Vehicle Requests");
         title.setForeground(Color.WHITE);
         title.setFont(new Font("SansSerif", Font.BOLD, 22));
 
@@ -762,6 +762,34 @@ public class ControllerPage extends JFrame {
         titleBox.add(subtitle);
 
         header.add(titleBox, BorderLayout.WEST);
+        JPanel userBox = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+        userBox.setBackground(new Color(15, 23, 42));
+
+        String emailText = (user != null && user.getEmail() != null)
+                ? user.getEmail()
+                : "controller@vcrts.com";
+
+        JLabel userLabel = new JLabel(emailText);
+        userLabel.setForeground(new Color(148, 163, 184));
+        userLabel.setFont(new Font("SansSerif", Font.PLAIN, 12));
+
+        JLabel avatar = new JLabel();
+        avatar.setPreferredSize(new Dimension(32, 32));
+        avatar.setOpaque(true);
+        avatar.setBackground(new Color(30, 64, 175));
+        avatar.setBorder(BorderFactory.createLineBorder(new Color(15, 23, 42), 2));
+
+        String initials = String.valueOf(Character.toUpperCase(emailText.charAt(0)));
+        avatar.setText(initials);
+        avatar.setHorizontalAlignment(SwingConstants.CENTER);
+        avatar.setForeground(Color.WHITE);
+        avatar.setFont(new Font("SansSerif", Font.BOLD, 12));
+
+        userBox.add(userLabel);
+        userBox.add(avatar);
+
+        header.add(userBox, BorderLayout.EAST);
+
         vehicles.add(header, BorderLayout.NORTH);
 
         vehiclesListPanel = new JPanel();
@@ -797,7 +825,7 @@ public class ControllerPage extends JFrame {
         title.setForeground(Color.WHITE);
         title.setFont(new Font("SansSerif", Font.BOLD, 22));
 
-        JLabel subtitle = new JLabel("View Accepted Vehicles");
+        JLabel subtitle = new JLabel("View all accepted Vehicles");
         subtitle.setForeground(new Color(148, 163, 184));
         subtitle.setFont(new Font("SansSerif", Font.PLAIN, 13));
 
@@ -806,6 +834,34 @@ public class ControllerPage extends JFrame {
         titleBox.add(subtitle);
 
         header.add(titleBox, BorderLayout.WEST);
+        JPanel userBox = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+        userBox.setBackground(new Color(15, 23, 42));
+
+        String emailText = (user != null && user.getEmail() != null)
+                ? user.getEmail()
+                : "controller@vcrts.com";
+
+        JLabel userLabel = new JLabel(emailText);
+        userLabel.setForeground(new Color(148, 163, 184));
+        userLabel.setFont(new Font("SansSerif", Font.PLAIN, 12));
+
+        JLabel avatar = new JLabel();
+        avatar.setPreferredSize(new Dimension(32, 32));
+        avatar.setOpaque(true);
+        avatar.setBackground(new Color(30, 64, 175));
+        avatar.setBorder(BorderFactory.createLineBorder(new Color(15, 23, 42), 2));
+
+        String initials = String.valueOf(Character.toUpperCase(emailText.charAt(0)));
+        avatar.setText(initials);
+        avatar.setHorizontalAlignment(SwingConstants.CENTER);
+        avatar.setForeground(Color.WHITE);
+        avatar.setFont(new Font("SansSerif", Font.BOLD, 12));
+
+        userBox.add(userLabel);
+        userBox.add(avatar);
+
+        header.add(userBox, BorderLayout.EAST);
+
         acceptedVehicles.add(header, BorderLayout.NORTH);
 
         acceptedVehiclesListPanel = new JPanel();
