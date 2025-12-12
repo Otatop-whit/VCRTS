@@ -4,6 +4,8 @@ import common.model.Account;
 import common.model.User;
 import common.service.AccountData;
 import common.ui.WelcomePage;
+import job.model.JobOwner;
+import vccontroller.database.Database;
 import vccontroller.model.JobsCache;
 import vccontroller.model.VehicleCache;
 import vehicle.model.Vehicle;
@@ -14,6 +16,7 @@ import java.awt.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 /*
   Controller dashboard UI.
@@ -36,6 +39,7 @@ public class ControllerPage extends JFrame {
     private JPanel contentPanel;   // CardLayout 
     private CardLayout cardLayout;
     private JPanel jobsListPanel;  // Holds header + job rows on Home
+    private JPanel acceptedJobsListPanel;  // Holds header + job rows on Home
     private JPanel vehiclesListPanel;  // Holds header + vehicle rows on Vehicles tab
 
     public ControllerPage() {
@@ -57,11 +61,13 @@ public class ControllerPage extends JFrame {
         contentPanel.setBackground(new Color(15, 23, 42));
 
         JPanel homePanel = buildHomePanel();
+        JPanel acceptedJobPanel = buildAcceptedJobPanel();
         JPanel vehiclesPanel = buildVehiclesPanel();
         JPanel notificationsPanel = createPlaceholderPanel("Notifications");
         JPanel viewAccountsPanel = createViewAccountsPanel();
 
-        contentPanel.add(homePanel, "HOME");
+        contentPanel.add(homePanel, "JOBREQUESTS");
+        contentPanel.add(acceptedJobPanel, "ACCEPTEDJOB");
         contentPanel.add(vehiclesPanel, "VEHICLES");
         contentPanel.add(notificationsPanel, "NOTIFICATIONS");
         contentPanel.add(viewAccountsPanel, "View Accounts");
@@ -100,17 +106,21 @@ public class ControllerPage extends JFrame {
         sidebar.add(Box.createVerticalStrut(24));
 
         // Navigation buttons
-        JButton homeBtn = createNavButton("Home");
+        JButton homeBtn = createNavButton("Job Requests");
+        JButton acceptedJobsBtn = createNavButton("Accepted Jobs");
         JButton vehiclesBtn = createNavButton("Vehicles");
         JButton notifBtn = createNavButton("Notifications");
         JButton viewAccButton = createNavButton("View Accounts");
 
-        homeBtn.addActionListener(e -> cardLayout.show(contentPanel, "HOME"));
+        homeBtn.addActionListener(e -> cardLayout.show(contentPanel, "JOBREQUESTS"));
+        acceptedJobsBtn.addActionListener(e -> cardLayout.show(contentPanel, "ACCEPTEDJOB"));
         vehiclesBtn.addActionListener(e -> cardLayout.show(contentPanel, "VEHICLES"));
         notifBtn.addActionListener(e -> cardLayout.show(contentPanel, "NOTIFICATIONS"));
         viewAccButton.addActionListener(e -> cardLayout.show(contentPanel, "View Accounts"));
 
         sidebar.add(homeBtn);
+        sidebar.add(Box.createVerticalStrut(8));
+        sidebar.add(acceptedJobsBtn);
         sidebar.add(Box.createVerticalStrut(8));
         sidebar.add(vehiclesBtn);
         sidebar.add(Box.createVerticalStrut(8));
@@ -230,6 +240,78 @@ public class ControllerPage extends JFrame {
 
         return home;
     }
+    private JPanel buildAcceptedJobPanel() {
+        JPanel acceptedJobPanel = new JPanel(new BorderLayout());
+        acceptedJobPanel.setBackground(new Color(15, 23, 42));
+
+        JPanel header = new JPanel(new BorderLayout());
+        header.setBackground(new Color(15, 23, 42));
+        header.setBorder(new EmptyBorder(16, 20, 8, 20));
+
+        JPanel titleBox = new JPanel();
+        titleBox.setLayout(new BoxLayout(titleBox, BoxLayout.Y_AXIS));
+        titleBox.setBackground(new Color(15, 23, 42));
+
+        JLabel title = new JLabel("Accepted Jobs");
+        title.setForeground(Color.WHITE);
+        title.setFont(new Font("SansSerif", Font.BOLD, 22));
+
+        JLabel subtitle = new JLabel("View all accepted jobs");
+        subtitle.setForeground(new Color(148, 163, 184));
+        subtitle.setFont(new Font("SansSerif", Font.PLAIN, 13));
+
+        titleBox.add(title);
+        titleBox.add(Box.createVerticalStrut(4));
+        titleBox.add(subtitle);
+
+        header.add(titleBox, BorderLayout.WEST);
+
+        JPanel userBox = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+        userBox.setBackground(new Color(15, 23, 42));
+
+        String emailText = (user != null && user.getEmail() != null) ? user.getEmail() : "controller@vcrts.com";
+        JLabel userLabel = new JLabel(emailText);
+        userLabel.setForeground(new Color(148, 163, 184));
+        userLabel.setFont(new Font("SansSerif", Font.PLAIN, 12));
+
+        JLabel avatar = new JLabel();
+        avatar.setPreferredSize(new Dimension(32, 32));
+        avatar.setOpaque(true);
+        avatar.setBackground(new Color(30, 64, 175));
+        avatar.setBorder(BorderFactory.createLineBorder(new Color(15, 23, 42), 2));
+
+        String initials = "C";
+        if (emailText != null && !emailText.isEmpty()) {
+            initials = String.valueOf(Character.toUpperCase(emailText.charAt(0)));
+        }
+        avatar.setText(initials);
+        avatar.setHorizontalAlignment(SwingConstants.CENTER);
+        avatar.setForeground(Color.WHITE);
+        avatar.setFont(new Font("SansSerif", Font.BOLD, 12));
+
+        userBox.add(userLabel);
+        userBox.add(avatar);
+
+        header.add(userBox, BorderLayout.EAST);
+        acceptedJobPanel.add(header, BorderLayout.NORTH);
+
+        // List area (header row + jobs)
+        acceptedJobsListPanel = new JPanel();
+        acceptedJobsListPanel.setBackground(new Color(15, 23, 42));
+        acceptedJobsListPanel.setBorder(new EmptyBorder(10, 20, 20, 20));
+        acceptedJobsListPanel.setLayout(new GridBagLayout()); // top alignment
+
+        loadAcceptedJobsFromBackendFile(); // backend hook
+
+        JScrollPane scrollPane = new JScrollPane(acceptedJobsListPanel);
+        scrollPane.setBorder(null);
+        scrollPane.getViewport().setBackground(new Color(15, 23, 42));
+        scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
+        acceptedJobPanel.add(scrollPane, BorderLayout.CENTER);
+
+        return acceptedJobPanel;
+    }
 
     // Reads job records from src/vccontroller/repo/JobData.txt and creates one row per record.
     private void loadJobsFromBackendFile() {
@@ -269,60 +351,6 @@ public class ControllerPage extends JFrame {
             }
         }
 
-        String filePath = "src/vccontroller/repo/JobData.txt";
-        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-            String line;
-            String timestamp = null;
-            String jobName = null;
-            String duration = null;
-            String completionTime = null;
-            String deadline = null;
-
-
-            while ((line = reader.readLine()) != null) {
-                line = line.trim();
-
-                if (line.startsWith("Timestamp:")) {
-                    timestamp = line.substring("Timestamp:".length()).trim();
-                } else if (line.startsWith("Job Name:")) {
-                    jobName = line.substring("Job Name:".length()).trim();
-                } else if (line.startsWith("Duration:")) {
-                    duration = line.substring("Duration:".length()).trim();
-                } else if (line.startsWith("Job Completion Time:")) {
-                    completionTime = line.substring("Job Completion Time:".length()).trim();
-                } else if (line.startsWith("Job Deadline:")) {
-                    deadline = line.substring("Job Deadline:".length()).trim();
-                } else if (line.startsWith("~~~~")) {
-                    String jobId = "#J-" + String.format("%04d", jobIndex++);
-
-                    JPanel row = createJobRow(
-                            jobId,
-                            jobName != null ? jobName : "Job " + (jobIndex - 1),
-                            deadline != null ? deadline : "-",
-                            "N/A",  // requirements removed
-                            duration != null ? duration : "-",
-                            completionTime != null ? completionTime : "-",
-                            "Accepted"   // initial status
-                    );
-
-                    gbc.gridy = rowY++;
-                    gbc.weighty = 0;
-                    jobsListPanel.add(row, gbc);
-
-                    // reset for next record
-                    timestamp = jobName = duration = completionTime = deadline  = null;
-                }
-            }
-
-            if (jobIndex == 1) {
-                gbc.gridy = 1;
-                gbc.weighty = 0;
-                JLabel empty = new JLabel("No job requests found.");
-                empty.setForeground(new Color(148, 163, 184));
-                empty.setFont(new Font("SansSerif", Font.PLAIN, 13));
-                jobsListPanel.add(empty, gbc);
-            }
-
             // Filler so everything sticks to the top
             gbc.gridy++;
             gbc.weighty = 1.0;
@@ -330,23 +358,57 @@ public class ControllerPage extends JFrame {
             filler.setOpaque(false);
             jobsListPanel.add(filler, gbc);
 
-        } catch (IOException ex) {
-            GridBagConstraints errGbc = new GridBagConstraints();
-            errGbc.gridx = 0;
-            errGbc.gridy = 1;
-            errGbc.weightx = 1.0;
-            errGbc.weighty = 0;
-            errGbc.fill = GridBagConstraints.HORIZONTAL;
-            errGbc.anchor = GridBagConstraints.NORTHWEST;
-
-            JLabel error = new JLabel("Error loading jobs: " + ex.getMessage());
-            error.setForeground(new Color(248, 113, 113));
-            error.setFont(new Font("SansSerif", Font.PLAIN, 13));
-            jobsListPanel.add(error, errGbc);
-        }
 
         jobsListPanel.revalidate();
         jobsListPanel.repaint();
+    }
+    private void loadAcceptedJobsFromBackendFile() {
+        acceptedJobsListPanel.removeAll();
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.anchor = GridBagConstraints.NORTHWEST;
+
+        gbc.gridy = 0;
+        gbc.weighty = 0;
+        acceptedJobsListPanel.add(createHeaderRow(), gbc);
+
+        int jobIndex = 1;
+        int rowY = 1;
+
+        ArrayList<JobOwner> res = (ArrayList) Database.jobSelection();
+        for (int i = 0; i < res.size(); i++) {
+            job.model.JobOwner job = res.get(i);
+            if (job != null) {
+                String jobId = "#J-" + String.format("%04d", jobIndex++);
+                JPanel row = createJobRow(
+                        jobId,
+                        job.getJobOwnerName() != null ? job.getJobOwnerName() : "Job " + (jobIndex - 1),
+                        job.getJobDeadline() != null ? job.getJobDeadline() : "-",
+                        "-",
+                        String.valueOf(job.getDuration()) + " hours",
+                        job.getCompletionTime() > 0 ? String.valueOf(job.getCompletionTime()) : "-",
+                        "Accepted"
+                );
+
+                gbc.gridy = rowY++;
+                gbc.weighty = 0;
+                acceptedJobsListPanel.add(row, gbc);
+            }
+        }
+
+
+            // Filler so everything sticks to the top
+            gbc.gridy++;
+            gbc.weighty = 1.0;
+            JPanel filler = new JPanel();
+            filler.setOpaque(false);
+            acceptedJobsListPanel.add(filler, gbc);
+
+        acceptedJobsListPanel.revalidate();
+        acceptedJobsListPanel.repaint();
     }
 
     // Header row for column labels
@@ -1211,6 +1273,7 @@ public class ControllerPage extends JFrame {
         if (INSTANCE != null) {
             INSTANCE.loadJobsFromBackendFile();
             INSTANCE.loadVehiclesFromBackendFile();
+            INSTANCE.loadAcceptedJobsFromBackendFile();
         }
     }
 
