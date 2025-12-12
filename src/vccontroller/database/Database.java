@@ -1,6 +1,7 @@
 package vccontroller.database;
 
 import java.sql.*;
+import java.time.Year;
 import java.util.AbstractList;
 import java.util.ArrayList;
 
@@ -12,7 +13,7 @@ public class Database {
 	static Connection connection = null;
 	static String url = "jdbc:mysql://localhost:3306/VCRTS?useTimezone=true&serverTimezone=UTC";
 	static String username = "root";
-	static String password = "password";
+	static String password = "Buttpoop123";
 
 	public static void jobInsertion(JobOwner job) {
 		try {
@@ -60,6 +61,43 @@ public class Database {
         }
 
         return acceptedJobs;
+    }
+    public static AbstractList<Vehicle> vehicleSelection() {
+
+        ArrayList<Vehicle> acceptedVehicles = new ArrayList<>();
+        ResultSet res = null;
+        try {
+            connection = DriverManager.getConnection(url, username, password);
+
+            String sql = "SELECT * from vehicles";
+
+            Statement statement = connection.createStatement();
+
+            res = statement.executeQuery(sql);
+            while (res.next()){
+                String email = res.getString("vo_email");
+                String licensePlate = res.getString("license_plate");
+                String model = res.getString("model");
+                String make = res.getString("make");
+                String year = res.getString("year");
+                String computingPower = res.getString("computingpower");
+                Date arrivalDate = res.getDate("arrivaldate");
+                Date deperatureDate = res.getDate("departuredate");
+                String residency = res.getString("residency");
+                System.out.println(computingPower);
+                System.out.println(make);
+                System.out.println(year.split("-")[0]);
+                Vehicle vehicle = new Vehicle.VehicleBuilder().setVehicleOwnerEmail(email).setLicensePlate(licensePlate).setVehicleModel(model).setVehicleMake(make).setVehicleYear( Year.parse(year.split("-")[0])).setComputingPower(String.valueOf(computingPower)).setArrivalDate(String.valueOf(arrivalDate)).setDepatureDate(String.valueOf(deperatureDate)).setResidency(residency).build();
+               acceptedVehicles.add(vehicle);
+
+            }
+            statement.close();
+            connection.close();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return acceptedVehicles;
     }
 
 	public static void vehicleInsertion(Vehicle vehicle){

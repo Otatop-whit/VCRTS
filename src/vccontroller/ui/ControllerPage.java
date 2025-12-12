@@ -41,6 +41,7 @@ public class ControllerPage extends JFrame {
     private JPanel jobsListPanel;  // Holds header + job rows on Home
     private JPanel acceptedJobsListPanel;  // Holds header + job rows on Home
     private JPanel vehiclesListPanel;  // Holds header + vehicle rows on Vehicles tab
+    private JPanel acceptedVehiclesListPanel;  // Holds header + vehicle rows on Vehicles tab
 
     public ControllerPage() {
         initUI();
@@ -63,12 +64,14 @@ public class ControllerPage extends JFrame {
         JPanel homePanel = buildHomePanel();
         JPanel acceptedJobPanel = buildAcceptedJobPanel();
         JPanel vehiclesPanel = buildVehiclesPanel();
+        JPanel acceptedVehiclesPanel = buildAcceptedVehiclesPanel();
         JPanel notificationsPanel = createPlaceholderPanel("Notifications");
         JPanel viewAccountsPanel = createViewAccountsPanel();
 
         contentPanel.add(homePanel, "JOBREQUESTS");
         contentPanel.add(acceptedJobPanel, "ACCEPTEDJOB");
         contentPanel.add(vehiclesPanel, "VEHICLES");
+        contentPanel.add(acceptedVehiclesPanel, "ACCEPTEDVEHICLES");
         contentPanel.add(notificationsPanel, "NOTIFICATIONS");
         contentPanel.add(viewAccountsPanel, "View Accounts");
 
@@ -109,12 +112,14 @@ public class ControllerPage extends JFrame {
         JButton homeBtn = createNavButton("Job Requests");
         JButton acceptedJobsBtn = createNavButton("Accepted Jobs");
         JButton vehiclesBtn = createNavButton("Vehicles");
+        JButton acceptedVehiclesBtn = createNavButton("Accepted Vehicles");
         JButton notifBtn = createNavButton("Notifications");
         JButton viewAccButton = createNavButton("View Accounts");
 
         homeBtn.addActionListener(e -> cardLayout.show(contentPanel, "JOBREQUESTS"));
         acceptedJobsBtn.addActionListener(e -> cardLayout.show(contentPanel, "ACCEPTEDJOB"));
         vehiclesBtn.addActionListener(e -> cardLayout.show(contentPanel, "VEHICLES"));
+        acceptedVehiclesBtn.addActionListener(e -> cardLayout.show(contentPanel, "ACCEPTEDVEHICLES"));
         notifBtn.addActionListener(e -> cardLayout.show(contentPanel, "NOTIFICATIONS"));
         viewAccButton.addActionListener(e -> cardLayout.show(contentPanel, "View Accounts"));
 
@@ -123,6 +128,8 @@ public class ControllerPage extends JFrame {
         sidebar.add(acceptedJobsBtn);
         sidebar.add(Box.createVerticalStrut(8));
         sidebar.add(vehiclesBtn);
+        sidebar.add(Box.createVerticalStrut(8));
+        sidebar.add(acceptedVehiclesBtn);
         sidebar.add(Box.createVerticalStrut(8));
         sidebar.add(notifBtn);
         sidebar.add(Box.createVerticalStrut(8));
@@ -773,6 +780,50 @@ public class ControllerPage extends JFrame {
 
         return vehicles;
     }
+
+    private JPanel buildAcceptedVehiclesPanel() {
+        JPanel acceptedVehicles = new JPanel(new BorderLayout());
+        acceptedVehicles.setBackground(new Color(15, 23, 42));
+
+        JPanel header = new JPanel(new BorderLayout());
+        header.setBackground(new Color(15, 23, 42));
+        header.setBorder(new EmptyBorder(16, 20, 8, 20));
+
+        JPanel titleBox = new JPanel();
+        titleBox.setLayout(new BoxLayout(titleBox, BoxLayout.Y_AXIS));
+        titleBox.setBackground(new Color(15, 23, 42));
+
+        JLabel title = new JLabel("Accepted Vehicles");
+        title.setForeground(Color.WHITE);
+        title.setFont(new Font("SansSerif", Font.BOLD, 22));
+
+        JLabel subtitle = new JLabel("View Accepted Vehicles");
+        subtitle.setForeground(new Color(148, 163, 184));
+        subtitle.setFont(new Font("SansSerif", Font.PLAIN, 13));
+
+        titleBox.add(title);
+        titleBox.add(Box.createVerticalStrut(4));
+        titleBox.add(subtitle);
+
+        header.add(titleBox, BorderLayout.WEST);
+        acceptedVehicles.add(header, BorderLayout.NORTH);
+
+        acceptedVehiclesListPanel = new JPanel();
+        acceptedVehiclesListPanel.setBackground(new Color(15, 23, 42));
+        acceptedVehiclesListPanel.setBorder(new EmptyBorder(10, 20, 20, 20));
+        acceptedVehiclesListPanel.setLayout(new GridBagLayout());
+
+        loadAcceptedVehiclesFromBackendFile();
+        JScrollPane scrollPane = new JScrollPane(acceptedVehiclesListPanel);
+        scrollPane.setBorder(null);
+        scrollPane.getViewport().setBackground(new Color(15, 23, 42));
+        scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
+        acceptedVehicles.add(scrollPane, BorderLayout.CENTER);
+
+        return acceptedVehicles;
+    }
+
     /*
      Reads vehicle records from src/vccontroller/repo/VehicleData.txt and creates one row per record.
         Model: 
@@ -854,102 +905,104 @@ public class ControllerPage extends JFrame {
             }
         }
 
-
-        String filePath = "src/vccontroller/repo/VehicleData.txt";
-        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-            String line;
-    
-            while ((line = reader.readLine()) != null) {
-                line = line.trim();
-                if (line.isEmpty()) {
-                    continue; // skip blanks
-                }
-    
-                // Split by "/"
-                String[] parts = line.split("/");
-    
-                // Expect at least: email / id / plate / model / make / year / power / arrival / departure / residency
-                if (parts.length < 10) {
-                    continue;
-                }
-    
-                String ownerEmail     = parts[0].trim();
-                String rawId          = parts[1].trim();   // internal id, not used in UI right now
-                String licensePlate   = parts[2].trim();
-                String model          = parts[3].trim();
-                String make           = parts[4].trim();
-                String year           = parts[5].trim();
-                String computingPower = parts[6].trim();
-                String arrivalDate    = parts[7].trim();
-                String departureDate  = parts[8].trim();
-                String residency      = parts[9].trim();
-                String createdAt      = (parts.length > 10) ? parts[10].trim() : "-";
-                String updatedAt      = (parts.length > 11) ? parts[11].trim() : "-";
-    
-                //  UI ID for the controller
-                String vehicleId = "#V-" + String.format("%04d", Integer.parseInt(rawId));
-                vehicleIndex++;
-    
-                JPanel row = createVehicleRow(
-                        vehicleId,
-                        model,
-                        make,
-                        year,
-                        computingPower,
-                        licensePlate,
-                        arrivalDate,
-                        departureDate,
-                        residency,
-                        ownerEmail,
-                        createdAt,
-                        updatedAt, "Accepted"
-                       
-                );
-    
-                gbc.gridy = rowY++;
-                gbc.weighty = 0;
-                vehiclesListPanel.add(row, gbc);
-            }
-    
-            if (vehicleIndex == 1) {
-                // no vehicles added
-                gbc.gridy = 1;
-                gbc.weighty = 0;
-                JLabel empty = new JLabel("No vehicle records found.");
-                empty.setForeground(new Color(148, 163, 184));
-                empty.setFont(new Font("SansSerif", Font.PLAIN, 13));
-                vehiclesListPanel.add(empty, gbc);
-            }
-    
-            // Filler so everything sticks to the top
+           // Filler so everything sticks to the top
             gbc.gridy++;
             gbc.weighty = 1.0;
             JPanel filler = new JPanel();
             filler.setOpaque(false);
             vehiclesListPanel.add(filler, gbc);
-    
-        } catch (IOException ex) {
-            GridBagConstraints errGbc = new GridBagConstraints();
-            errGbc.gridx = 0;
-            errGbc.gridy = 1;
-            errGbc.weightx = 1.0;
-            errGbc.weighty = 0;
-            errGbc.fill = GridBagConstraints.HORIZONTAL;
-            errGbc.anchor = GridBagConstraints.NORTHWEST;
-    
-            JLabel error = new JLabel("Error loading vehicles: " + ex.getMessage());
-            error.setForeground(new Color(248, 113, 113));
-            error.setFont(new Font("SansSerif", Font.PLAIN, 13));
-            vehiclesListPanel.add(error, errGbc);
-        }
-    
+
         vehiclesListPanel.revalidate();
         vehiclesListPanel.repaint();
     }
-    
-    
+    private void loadAcceptedVehiclesFromBackendFile() {
+        acceptedVehiclesListPanel.removeAll();
 
-        private JPanel createVehicleHeaderRow() {
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.anchor = GridBagConstraints.NORTHWEST;
+
+        // Header row
+        gbc.gridy = 0;
+        gbc.weighty = 0;
+        acceptedVehiclesListPanel.add(createVehicleHeaderRow(), gbc);
+
+        int vehicleIndex = 1;
+        int rowY = 1;
+
+
+        ArrayList<Vehicle> res = (ArrayList) Database.vehicleSelection();
+        //VehicleCache cache = VehicleCache.getInstance();
+        for (int i = 0; i < res.size(); i++) {
+            Vehicle vehicle = res.get(i);
+            String id = null;
+            String email = null;
+            String license = null;
+            String make = null;
+            String model = null;
+            String year = null;
+            String computePower = null;
+            String arrDate = null;
+            String depDate = null;
+            String resident = null;
+            String createdAt = null;
+            String updateAt = null;
+            if (vehicle != null) {
+                System.out.println(vehicle.getMake());
+                String vehicleId = "#V-" + String.format("%04d", vehicle.getVehicleId());
+                vehicleIndex++;
+                email = vehicle.getVehicleOwnerEmail();
+                license = vehicle.getLicensePlate();
+                make = vehicle.getMake();
+                model = vehicle.getModel();
+                year = vehicle.getYear().toString();
+                computePower = vehicle.getComputingPower();
+                arrDate = vehicle.getArriveDate().toString();
+                depDate = vehicle.getDepartDate().toString();
+                resident = vehicle.getResidency();
+                createdAt = vehicle.getTimestamp().toString();
+                updateAt = vehicle.getLastModified().toString();
+
+
+                JPanel row = createVehicleRow(
+                        vehicleId,
+                        model,
+                        make,
+                        year,
+                        computePower,
+                        license,
+                        arrDate,
+                        depDate,
+                        resident,
+                        email,
+                        createdAt,
+                        updateAt, "Accepted"
+                );
+
+                gbc.gridy = rowY++;
+                gbc.weighty = 0;
+                acceptedVehiclesListPanel.add(row, gbc);
+            }
+        }
+
+
+
+            // Filler so everything sticks to the top
+            gbc.gridy++;
+            gbc.weighty = 1.0;
+            JPanel filler = new JPanel();
+            filler.setOpaque(false);
+            acceptedVehiclesListPanel.add(filler, gbc);
+
+        acceptedVehiclesListPanel.revalidate();
+        acceptedVehiclesListPanel.repaint();
+    }
+
+
+
+    private JPanel createVehicleHeaderRow() {
             // 7 columns: Vehicle ID, Model, Make, Year, License Plate, Status, Actions
             JPanel header = new JPanel(new GridLayout(1, 7));
             header.setBackground(new Color(15, 23, 42));
@@ -1274,6 +1327,7 @@ public class ControllerPage extends JFrame {
             INSTANCE.loadJobsFromBackendFile();
             INSTANCE.loadVehiclesFromBackendFile();
             INSTANCE.loadAcceptedJobsFromBackendFile();
+            INSTANCE.loadAcceptedVehiclesFromBackendFile();
         }
     }
 
