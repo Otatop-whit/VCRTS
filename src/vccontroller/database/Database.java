@@ -1,6 +1,11 @@
 package vccontroller.database;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.nio.Buffer;
 import java.sql.*;
+import java.util.HashMap;
+
 import job.model.JobOwner;
 import vehicle.model.Vehicle;
 
@@ -8,8 +13,10 @@ public class Database {
 
 	static Connection connection = null;
 	static String url = "jdbc:mysql://localhost:3306/VCRTS?useTimezone=true&serverTimezone=UTC";
-	static String username = "root";
-	static String password = "638$8(5vsug!Fqb";
+	static String username = getUsername();
+    static String password = getPassword();
+
+  
 
 	public static void jobInsertion(JobOwner job) {
 		try {
@@ -71,7 +78,7 @@ public class Database {
 	}
 
 	public static void startVehiclesTable() {
-    try {
+        try {
         connection = DriverManager.getConnection(url, username, password);
 		Statement statement = connection.createStatement();
         String createQuery =
@@ -101,16 +108,16 @@ public class Database {
         System.out.println("Vehicles table created successfully.");
 
     } catch (SQLException e) {
-		System.err.println(" Failed to create Vehicles table.");
+		System.err.println("Failed to create Vehicles table.");
         e.getMessage();
     }
 }
 
 	public static void startJobsTable(){
 		try {
-        connection = DriverManager.getConnection(url, username, password);
+            connection = DriverManager.getConnection(url, username, password);
 
-        String query =
+            String query =
             "CREATE TABLE IF NOT EXISTS jobs ("
           + "jobNum INT AUTO_INCREMENT PRIMARY KEY, "
           + "ID VARCHAR(100), "
@@ -121,14 +128,43 @@ public class Database {
           + "`timestamp` DATETIME"
           + ")";
 
-        Statement statement = connection.createStatement();
-        statement.executeUpdate(query);
+            Statement statement = connection.createStatement();
+            statement.executeUpdate(query);
 
-        System.out.println("Jobs table created successfully.");
+            System.out.println("Jobs table created successfully.");
 
-    } catch (SQLException e) {
-        System.err.println("Failed to create Jobs table.");
-        e.getMessage();
-    }
+        } catch (SQLException e) {
+            System.err.println("Failed to create Jobs table.");
+            e.getMessage();
+        }
 	}
+
+    private static void readEnv(){
+        try{
+            BufferedReader reader = new BufferedReader(new FileReader(".env"));
+            String line;
+            while ((line = reader.readLine()) != null){
+                String[] parts = line.split("=");
+                if (parts[0].trim().equals("DB_USER")) {
+                    username = parts[1].trim();
+                }else if (parts[0].trim().equals("DB_PASS")) {
+                    password = parts[1].trim();
+                }
+            }
+            reader.close();
+        }catch(Exception e){
+            System.out.println("Error reading environment variables.");
+        }
+    }
+
+    private static String getPassword(){
+        readEnv();
+        return password;
+    }
+
+    private static String getUsername(){
+        readEnv();
+        return username;
+    }
+
 }
