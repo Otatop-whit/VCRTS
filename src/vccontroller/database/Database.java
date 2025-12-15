@@ -4,7 +4,8 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.nio.Buffer;
 import java.sql.*;
-import java.util.HashMap;
+import java.util.AbstractList;
+import java.util.ArrayList;
 
 import job.model.JobOwner;
 import vehicle.model.Vehicle;
@@ -16,25 +17,56 @@ public class Database {
 	static String username = getUsername();
     static String password = getPassword();
 
-  
+
+
 
 	public static void jobInsertion(JobOwner job) {
 		try {
 			connection = DriverManager.getConnection(url, username, password);
-			
+
 			String sql = "INSERT INTO vcrts.jobs (ID , jobName, duration , completionTime , jobDeadline , timestamp) VALUES ('" + job.getJobId() + "', '" + job.getJobOwnerName() + "', " + job.getDuration() + ", " + job.getCompletionTime() + ", '" + job.getJobDeadline() + "', NOW())";
 
 			Statement statement = connection.createStatement();
-			
+
 			statement.executeUpdate(sql);
 
 			statement.close();
 			connection.close();
-			
+
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
 		}
 	}
+    public static AbstractList<JobOwner> jobSelection() {
+
+        ArrayList<JobOwner> acceptedJobs = new ArrayList<>();
+        ResultSet res = null;
+        try {
+            connection = DriverManager.getConnection(url, username, password);
+
+            String sql = "SELECT * from jobs";
+
+            Statement statement = connection.createStatement();
+
+            res = statement.executeQuery(sql);
+            System.out.println(res);
+            while (res.next()){
+                JobOwner job = new JobOwner();
+                job.setJobId(res.getString("ID"));
+                job.setJobOwnerName(res.getString("jobName"));
+                job.setDuration(res.getInt("duration"));
+                job.setCompletionTime(res.getInt("completionTime"));
+                job.setJobDeadline(res.getString("jobDeadline"));
+                acceptedJobs.add(job);
+            }
+            statement.close();
+            connection.close();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return acceptedJobs;
+    }
 
 	public static void vehicleInsertion(Vehicle vehicle){
 		try{

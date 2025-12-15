@@ -2,15 +2,14 @@
 import common.service.AccountData;
 import common.service.Client;
 import common.ui.WelcomePage;
+import job.model.JobOwner;
+import vccontroller.database.Database;
 import vccontroller.ui.ControllerPage;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.sql.Connection;
-import java.sql.Driver;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import java.util.ArrayList;
 import java.util.Scanner;
 //import vccontroller.model.JobInfo;
 //import vccontroller.model.JobReq;
@@ -31,43 +30,9 @@ public class Main{
 
 
     public static void main(String args[]) throws IOException {
-        /* 
-        try {
-            //declares a connection to your database
-            connection = DriverManager.getConnection(url, username, password);
-            //creates an insert query
-            String sql = "INSERT INTO table1" + "(ClientID , name)" + "VALUES (23, 'David Cruise')";
-            //establishes the connection session
-            Statement statement = connection.createStatement();
-            //executes the query
-            int row = statement.executeUpdate(sql);
-            //the return value is the indication of success or failure of the query execution
-            if (row > 0)
-                System.out.println("Data was inserted!");
-
-            connection.close();
-
-        } catch (SQLException e) {
-            e.getMessage();
-
-        }
-
-        */
 
         AccountData accountData = new AccountData();
         new WelcomePage();
-        //new ControllerPage().setVisible(true);
-
-
-//        Scanner scanner = new Scanner(System.in);
-//        System.out.println("What is ur username");
-//        String request = scanner.nextLine();
-//        Socket socket = new Socket("localhost",1234);
-//        Client client = new Client(socket,request);
-//        client.listenForMessage();
-//        client.sendMessage();
-
-        //new ControllerPage().setVisible(true);
     }
 
     
