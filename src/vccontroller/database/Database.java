@@ -80,6 +80,7 @@ public class Database {
 
             res = statement.executeQuery(sql);
             while (res.next()){
+                int Id = res.getInt("ID");
                 String email = res.getString("vo_email");
                 String licensePlate = res.getString("license_plate");
                 String model = res.getString("model");
@@ -92,7 +93,7 @@ public class Database {
                 System.out.println(computingPower);
                 System.out.println(make);
                 System.out.println(year.split("-")[0]);
-                Vehicle vehicle = new Vehicle.VehicleBuilder().setVehicleOwnerEmail(email).setLicensePlate(licensePlate).setVehicleModel(model).setVehicleMake(make).setVehicleYear( Year.parse(year.split("-")[0])).setComputingPower(String.valueOf(computingPower)).setArrivalDate(String.valueOf(arrivalDate)).setDepatureDate(String.valueOf(deperatureDate)).setResidency(residency).build();
+                Vehicle vehicle = new Vehicle.VehicleBuilder().setVehicleId(Id).setVehicleOwnerEmail(email).setLicensePlate(licensePlate).setVehicleModel(model).setVehicleMake(make).setVehicleYear( Year.parse(year.split("-")[0])).setComputingPower(String.valueOf(computingPower)).setArrivalDate(String.valueOf(arrivalDate)).setDepatureDate(String.valueOf(deperatureDate)).setResidency(residency).build();
                acceptedVehicles.add(vehicle);
 
             }
