@@ -49,6 +49,18 @@ public class ClientHandler implements Runnable{
                         if(messageFromClient.startsWith("JOB|")) {
                             JobOwner job = convertToJobObj(messageFromClient);
                             if (job != null) {
+                                if (job.getCompletionTime() == 0) {
+                                    int currentTotal = 0; 
+                                    try (BufferedReader reader = new BufferedReader(new FileReader("src/vccontroller/repo/Data.txt"))) {
+                                        String line = reader.readLine();
+                                        if (line != null && !line.isEmpty()) {
+                                            currentTotal = Integer.parseInt(line.trim());
+                                        }
+                                    } catch (IOException e) {
+                                    
+                                    }
+                                    job.setCompletionTime(currentTotal + job.getDuration());
+                                }
                                 jobCache.addJob(job);
                                 System.out.println("Job successfully added to cache.");
                                 javax.swing.SwingUtilities.invokeLater(() -> {
