@@ -186,7 +186,7 @@ public class vehicle_ui {
                 form.setOpaque(false);                
 
                 //input fields
-                JLabel vehicleOwnerIDLabel = new JLabel("Vehicle ID:");
+                JLabel vehicleOwnerIDLabel = new JLabel("ID:");
                 vehicleOwnerIDLabel.setFont(LABEL_FONT);
         
                 JLabel modelLabel = new JLabel("Model:");

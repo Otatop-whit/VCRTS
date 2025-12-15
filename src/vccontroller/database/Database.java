@@ -2,8 +2,8 @@ package vccontroller.database;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.nio.Buffer;
 import java.sql.*;
+import java.time.Year;
 import java.util.AbstractList;
 import java.util.ArrayList;
 
@@ -67,13 +67,50 @@ public class Database {
 
         return acceptedJobs;
     }
+    public static AbstractList<Vehicle> vehicleSelection() {
+
+        ArrayList<Vehicle> acceptedVehicles = new ArrayList<>();
+        ResultSet res = null;
+        try {
+            connection = DriverManager.getConnection(url, username, password);
+
+            String sql = "SELECT * from vehicles";
+
+            Statement statement = connection.createStatement();
+
+            res = statement.executeQuery(sql);
+            while (res.next()){
+                String email = res.getString("vo_email");
+                String licensePlate = res.getString("license_plate");
+                String model = res.getString("model");
+                String make = res.getString("make");
+                String year = res.getString("year");
+                String computingPower = res.getString("computingpower");
+                Date arrivalDate = res.getDate("arrivaldate");
+                Date deperatureDate = res.getDate("departuredate");
+                String residency = res.getString("residency");
+                System.out.println(computingPower);
+                System.out.println(make);
+                System.out.println(year.split("-")[0]);
+                Vehicle vehicle = new Vehicle.VehicleBuilder().setVehicleOwnerEmail(email).setLicensePlate(licensePlate).setVehicleModel(model).setVehicleMake(make).setVehicleYear( Year.parse(year.split("-")[0])).setComputingPower(String.valueOf(computingPower)).setArrivalDate(String.valueOf(arrivalDate)).setDepatureDate(String.valueOf(deperatureDate)).setResidency(residency).build();
+               acceptedVehicles.add(vehicle);
+
+            }
+            statement.close();
+            connection.close();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return acceptedVehicles;
+    }
 
 	public static void vehicleInsertion(Vehicle vehicle){
 		try{
             Connection connection = null;
             connection = DriverManager.getConnection(url,username,password);
             //Sets up the query as a java string
-            String sqlquery = 
+            String sqlquery =
             "INSERT INTO vcrts.vehicles (vehicle_ID , vo_email, license_plate , model , make" +
             ", year , computingpower , arrivaldate , departuredate , residency , timestamp , lastmodified)"
             + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -105,12 +142,12 @@ public class Database {
          }catch (SQLException e){
 			System.err.println("Error! Vehicle insertion failed.");
             e.getMessage();
-			
+
          }
 	}
 
 	public static void startVehiclesTable() {
-        try {
+    try {
         connection = DriverManager.getConnection(url, username, password);
 		Statement statement = connection.createStatement();
         String createQuery =
@@ -134,22 +171,22 @@ public class Database {
           + "DEFAULT CHARSET=utf8mb4 "
           + "COLLATE=utf8mb4_0900_ai_ci";
 
-        
+
         statement.executeUpdate(createQuery);
 
         System.out.println("Vehicles table created successfully.");
 
     } catch (SQLException e) {
-		System.err.println("Failed to create Vehicles table.");
+		System.err.println(" Failed to create Vehicles table.");
         e.getMessage();
     }
 }
 
 	public static void startJobsTable(){
 		try {
-            connection = DriverManager.getConnection(url, username, password);
+        connection = DriverManager.getConnection(url, username, password);
 
-            String query =
+        String query =
             "CREATE TABLE IF NOT EXISTS jobs ("
           + "jobNum INT AUTO_INCREMENT PRIMARY KEY, "
           + "ID VARCHAR(100), "
@@ -160,18 +197,18 @@ public class Database {
           + "`timestamp` DATETIME"
           + ")";
 
-            Statement statement = connection.createStatement();
-            statement.executeUpdate(query);
+        Statement statement = connection.createStatement();
+        statement.executeUpdate(query);
 
-            System.out.println("Jobs table created successfully.");
+        System.out.println("Jobs table created successfully.");
 
-        } catch (SQLException e) {
-            System.err.println("Failed to create Jobs table.");
-            e.getMessage();
-        }
+    } catch (SQLException e) {
+        System.err.println("Failed to create Jobs table.");
+        e.getMessage();
+    }
 	}
 
-    private static void readEnv(){
+ private static void readEnv(){
         try{
             BufferedReader reader = new BufferedReader(new FileReader(".env"));
             String line;
