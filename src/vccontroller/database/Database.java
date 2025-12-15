@@ -38,7 +38,6 @@ public class Database {
 		}
 	}
     public static AbstractList<JobOwner> jobSelection() {
-
         ArrayList<JobOwner> acceptedJobs = new ArrayList<>();
         ResultSet res = null;
         try {
@@ -112,7 +111,7 @@ public class Database {
             connection = DriverManager.getConnection(url,username,password);
             //Sets up the query as a java string
             String sqlquery =
-            "INSERT INTO vcrts.vehicles (vehicle_ID , vo_email, license_plate , model , make" +
+            "INSERT INTO vcrts.vehicles (ID , vo_email, license_plate , model , make" +
             ", year , computingpower , arrivaldate , departuredate , residency , timestamp , lastmodified)"
             + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -153,7 +152,7 @@ public class Database {
 		Statement statement = connection.createStatement();
         String createQuery =
             "CREATE TABLE IF NOT EXISTS vehicles ("
-          + "vehicle_ID INT NOT NULL, "
+          + "ID INT NOT NULL, "
           + "vo_email VARCHAR(45) NOT NULL, "
           + "license_plate VARCHAR(45) NOT NULL, "
           + "model VARCHAR(45) NOT NULL, "
@@ -165,8 +164,8 @@ public class Database {
           + "residency VARCHAR(45) NOT NULL, "
           + "timestamp DATETIME NOT NULL, "
           + "lastmodified DATETIME NOT NULL, "
-          + "PRIMARY KEY (vehicle_ID), "
-          + "UNIQUE KEY vehiclescol_UNIQUE (vehicle_ID), "
+          + "PRIMARY KEY (ID), "
+          + "UNIQUE KEY vehiclescol_UNIQUE (ID), "
           + "UNIQUE KEY license_plate_UNIQUE (license_plate)"
           + ") ENGINE=InnoDB "
           + "DEFAULT CHARSET=utf8mb4 "
