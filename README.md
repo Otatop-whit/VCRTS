@@ -4,6 +4,22 @@
 
 ### *A cloud-enhanced computing platform leveraging unused vehicular processing power to execute distributed tasks in real-time.*
 
+## 📸 App Preview
+
+<p align="center">
+  <img src="assets/screenshots/ControllerDashboard.png" width="900" alt="Controller Dashboard" />
+</p>
+
+<p align="center">
+  <img src="assets/screenshots/WelcomePage.png" width="440" alt="Welcome Page" />
+  <img src="assets/screenshots/ClientDashboard.png" width="440" alt="Client Dashboard" />
+</p>
+
+<p align="center">
+  <img src="assets/screenshots/CreateJob.png" width="440" alt="Create Job" />
+  <img src="assets/screenshots/RegisterVehicle.png" width="440" alt="Register Vehicle" />
+</p>
+
 ---
 
 ## 📖 Overview
