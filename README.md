@@ -6,19 +6,33 @@
 
 ## 📸 App Preview
 
-<p align="center">
-  <img src="assets/screenshots/ControllerDashboard.png" width="820" alt="Controller Dashboard" />
-</p>
+<table align="center">
+  <tr>
+    <!-- HERO spans both columns -->
+    <td colspan="2" align="center" style="padding: 6px;">
+      <img src="assets/screenshots/ControllerDashboard.png" width="660" alt="Controller Dashboard" />
+    </td>
+  </tr>
 
-<p align="center">
-  <img src="assets/screenshots/WelcomePage.png" width="330" alt="Welcome Page" />
-  <img src="assets/screenshots/ClientDashboard.png" width="330" alt="Client Dashboard" />
-</p>
+  <tr>
+    <td align="center" style="padding: 6px;">
+      <img src="assets/screenshots/WelcomePage.png" width="330" alt="Welcome Page" />
+    </td>
+    <td align="center" style="padding: 6px;">
+      <img src="assets/screenshots/ClientDashboard.png" width="330" alt="Client Dashboard" />
+    </td>
+  </tr>
 
-<p align="center">
-  <img src="assets/screenshots/CreateJob.png" width="330" alt="Create Job" />
-  <img src="assets/screenshots/RegisterVehicle.png" width="330" alt="Register Vehicle" />
-</p>
+  <tr>
+    <td align="center" style="padding: 6px;">
+      <img src="assets/screenshots/CreateJob.png" width="330" alt="Create Job" />
+    </td>
+    <td align="center" style="padding: 6px;">
+      <img src="assets/screenshots/RegisterVehicle.png" width="330" alt="Register Vehicle" />
+    </td>
+  </tr>
+</table>
+
 ---
 
 ## 📖 Overview
